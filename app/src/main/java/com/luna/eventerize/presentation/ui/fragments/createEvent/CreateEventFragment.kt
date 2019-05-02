@@ -1,17 +1,15 @@
 package com.luna.eventerize.presentation.ui.fragments.createEvent
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
+import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
@@ -36,11 +34,16 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class CreateEventFragment : Fragment() {
+class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
+    override fun onClick(v: View?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    override var viewModelClass = CreateEventViewModel::class
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,32 +89,69 @@ class CreateEventFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadDateTimePicker(begin_event_date,begin_date_layout)
+        initPickers()
     }
 
-    private fun loadDateTimePicker(editText:TextInputLayout, layout:ConstraintLayout){
-        editText.setOnClickListener {
-            val now = Calendar.getInstance()
+    private fun initPickers() {
+        setDateEvents()
+        setHourEvents()
+    }
 
-            val dpd = DatePickerDialog.newInstance(
-                DatePickerDialog.OnDateSetListener(function = { view, year, monthOfYear, dayOfMonth ->
-                }),
-                now.get(Calendar.YEAR), // Initial year selection
-                now.get(Calendar.MONTH), // Initial month selection
-                now.get(Calendar.DAY_OF_MONTH) // Inital day selection
-            )
-            dpd.version = DatePickerDialog.Version.VERSION_2
-            dpd.show(fragmentManager,"Datepickerdialog")
+    private fun setDateEvents() {
+        loadDateTimePicker(begin_date_edit_text,CreateEventViewModel.BEGINDATE)
+        loadDateTimePicker(end_day_edit_text,CreateEventViewModel.ENDDATE)
+    }
 
-            val htd = TimePickerDialog.newInstance(
-                TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute, second ->
-                    Toast.makeText(context, "Heure changée", Toast.LENGTH_LONG).show()
-                },true
-            )
-            htd.version = TimePickerDialog.Version.VERSION_2
-            htd.show(fragmentManager,"TimePickerDialog")
-            Toast.makeText(context, "Date changée", Toast.LENGTH_LONG).show()
-        }
+    private fun setHourEvents() {
+        loadDateTimePicker(begin_hour_edit_text,CreateEventViewModel.BEGINHOUR)
+        loadDateTimePicker(end_hour_edit_text,CreateEventViewModel.ENDHOUR)
+    }
+
+    private fun loadDateTimePicker(editText: TextInputEditText, eventType: String){
+            editText.setOnClickListener {
+                if(eventType == CreateEventViewModel.BEGINDATE || eventType == CreateEventViewModel.ENDDATE){
+                    initDatePicker(Calendar.getInstance(), eventType, editText)
+                }else {
+                    initTimePicker(eventType, editText)
+                }
+            }
+    }
+
+    private fun initDatePicker(now: Calendar, eventDateType: String, editText: TextInputEditText) {
+        val dpd = DatePickerDialog.newInstance(
+            { _, yearDatePicker, monthDatePicker, dayDatePicker ->
+                viewModel.updateDate(eventDateType,viewModel.createDate(yearDatePicker,monthDatePicker,dayDatePicker))
+            },
+            now.get(Calendar.YEAR), // Initial year selection
+            now.get(Calendar.MONTH), // Initial month selection
+            now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+        )
+        dpd.version = DatePickerDialog.Version.VERSION_2
+        dpd.show(fragmentManager, "Datepickerdialog")
+        updateDateTextInputLayout(editText,eventDateType)
+    }
+
+    private fun initTimePicker(eventHourType: String, editText: TextInputEditText) {
+        val htd = TimePickerDialog.newInstance(
+            { _, hourDatePicker, minuteDatePicker, secondDatePicker ->
+                viewModel.updateHour(eventHourType,viewModel.createTime(hourDatePicker,minuteDatePicker,secondDatePicker))
+            }, true
+        )
+        htd.version = TimePickerDialog.Version.VERSION_2
+        htd.show(fragmentManager, "TimePickerDialog")
+        updateHourTextInputLayout(editText,eventHourType)
+    }
+
+    private fun updateDateTextInputLayout(editText: TextInputEditText, eventDate:String){
+        viewModel.getEventDate(eventDate).observe(this,androidx.lifecycle.Observer {
+            editText.setText("${it.day}/${it.month}/${it.year}")
+        })
+    }
+
+    private fun updateHourTextInputLayout(editText: TextInputEditText, eventHour:String){
+        viewModel.getEventHour(eventHour).observe(this,androidx.lifecycle.Observer {
+            editText.setText("${it.hour}:${it.minutes}")
+        })
     }
 
     companion object {

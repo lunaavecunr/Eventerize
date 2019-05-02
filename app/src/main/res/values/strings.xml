@@ -6,5 +6,9 @@
     <string name="event_title_hint">Titre de l\'évènement</string>
     <string name="event_location_hint">Lieu de l\'évènement</string>
     <string name="beginning_event_date_label">Date de début de l\'évènement</string>
-    <string name="ending_event_date_label">Date de fin de l\'évènement</string>
+    <string name="begin_date_event">Date de début</string>
+    <string name="begin_hour_event">Heure de début</string>
+    <string name="end_date_event_label">Date de fin</string>
+    <string name="end_hour_event_label">Heure de fin</string>
+    <string name="generate_invitations">Générer les invitations</string>
 </resources>
