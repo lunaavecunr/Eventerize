@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Eventerize</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Mot de passe</string>
+    <string name="confirm_password_hint">Confirmer le mot de passe</string>
+    <string name="cgu_label">Conditions générales d\'utilisation</string>
+    <string name="accept_cgu_label">J\'accepte les conditions générales d\'utilisation</string>
+    <string name="register_button">S\'inscrire!</string>
+    <string name="sign_in_title">Inscription</string>
+    <string name="username">Pseudonyme</string>
 </resources>
