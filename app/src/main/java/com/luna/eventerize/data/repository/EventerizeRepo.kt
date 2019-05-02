@@ -13,18 +13,3 @@ class EventerizeRepo {
        return parseManager.signup(user)
     }
 }
-
-/*
-.continueWith {
-    when {
-        it.isCancelled -> {
-            // the save was cancelled.
-        }
-        it.isFaulted -> {
-            Log.d("mlk", it.error.message)
-        } // the save failed
-        else -> {
-            Log.d("mlk", it.result.toString())
-        }
-    }
-}*/
