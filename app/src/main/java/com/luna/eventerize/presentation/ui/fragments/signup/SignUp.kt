@@ -56,6 +56,15 @@ class SignUp : Fragment() {
         listener = null
     }
 
+    fun setTitle(){
+        activity!!.title = context!!.getString(R.string.sign_in_title)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setTitle()
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
