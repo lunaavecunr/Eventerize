@@ -1,6 +1,5 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.data.model.EventDate
