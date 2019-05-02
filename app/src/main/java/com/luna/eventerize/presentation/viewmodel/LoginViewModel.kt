@@ -1,13 +1,11 @@
 package com.luna.eventerize.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
-import com.luna.eventerize.data.repository.EventerizeRepo
 import com.parse.ParseUser
 
 class LoginViewModel: ViewModel() {
@@ -17,7 +15,7 @@ class LoginViewModel: ViewModel() {
 
     fun login(username : String, password : String) {
         if(username.isBlank() || password.isBlank()) {
-            error.postValue(EventerizeError(EventerizeApp.getInstance().getString(R.string.fill_all_fields), EventerizeApp.getInstance().getString(R.string.login_error_title)))
+            error.postValue(EventerizeError(EventerizeApp.getInstance().getString(R.string.error_field_empty), EventerizeApp.getInstance().getString(R.string.login_error_title)))
             return
         }
         repository.login(username, password)

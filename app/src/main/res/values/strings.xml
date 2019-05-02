@@ -19,10 +19,9 @@
 
 
     <!-- ERROR MESSAGES -->
-    <string name="fill_all_fields">Veuillez remplir tous les champs</string>
     <string name="login_error_title">Erreur de connexion</string>
     <string name="login_connection_failed">La connexion a échoué</string>
-    <string name="signup_error_field_empty">Vous devez remplir tous les champs</string>
+    <string name="error_field_empty">Vous devez remplir tous les champs</string>
     <string name="signup_error">Erreur d\'inscription</string>
     <string name="signup_error_cgu">Vous devez accepter les conditions</string>
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
