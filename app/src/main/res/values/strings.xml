@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">Eventerize</string>
 
+    <!-- LOGIN -->
+    <string name="login_button">Se connecter</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="create_an_account">Créer un compte</string>
+    <string name="login_title">Connexion</string>
+
+    <!-- SIGNUP -->
     <string name="email_hint">Email</string>
     <string name="password_hint">Mot de passe</string>
     <string name="confirm_password_hint">Confirmer le mot de passe</string>
@@ -9,10 +16,20 @@
     <string name="register_button">S\'inscrire!</string>
     <string name="sign_in_title">Inscription</string>
     <string name="username">Pseudonyme</string>
-    <string name="signup_error_field_empty">Vous devez remplir tous les champs</string>
+
+
+    <!-- ERROR MESSAGES -->
+    <string name="login_error_title">Erreur de connexion</string>
+    <string name="login_connection_failed">La connexion a échoué</string>
+    <string name="error_field_empty">Vous devez remplir tous les champs</string>
     <string name="signup_error">Erreur d\'inscription</string>
     <string name="signup_error_cgu">Vous devez accepter les conditions</string>
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
+    
+
+
+
+
 </resources>

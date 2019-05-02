@@ -1,6 +1,5 @@
 package com.luna.eventerize.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +18,7 @@ class SignUpViewModel : ViewModel() {
 
     fun signUp(email: String, username: String, password: String, confirmPassword: String, cgu: Boolean) {
         if (email.isBlank() || username.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-            error.postValue(EventerizeError(EventerizeApp.getInstance().getString(R.string.signup_error_field_empty), EventerizeApp.getInstance().getString(R.string.signup_error)))
+            error.postValue(EventerizeError(EventerizeApp.getInstance().getString(R.string.error_field_empty), EventerizeApp.getInstance().getString(R.string.signup_error)))
             return
         }
         if (!cgu) {
