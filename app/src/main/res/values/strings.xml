@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Eventerize</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event_title_hint">Titre de l\'évènement</string>
+    <string name="event_location_hint">Lieu de l\'évènement</string>
+    <string name="beginning_event_date_label">Date de début de l\'évènement</string>
+    <string name="ending_event_date_label">Date de fin de l\'évènement</string>
 </resources>
