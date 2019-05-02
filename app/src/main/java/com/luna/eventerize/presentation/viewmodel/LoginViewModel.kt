@@ -22,15 +22,12 @@ class LoginViewModel: ViewModel() {
             .continueWith {
                 when {
                     it.isCancelled -> {
-                        // the save was cancelled.
                         error.postValue(EventerizeError("La connexion a échoué", "Erreur de connexion"))
                     }
                     it.isFaulted -> {
-                        Log.d("mlk", "Faulted: " + it.error.message)
                         error.postValue(EventerizeError(it.error.message.toString(), "Erreur de connexion"))
-                    } // the save failed
+                    }
                     else -> {
-                        Log.d("mlk", "Success: " + it.result.toString())
                         user.postValue(it.result)
                     }
                 }
