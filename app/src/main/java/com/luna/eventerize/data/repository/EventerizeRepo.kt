@@ -12,4 +12,7 @@ class EventerizeRepo {
         return parseManager.login(username, password)
 
     }
+    fun signup(user: ParseUser) : Task<Void> {
+       return parseManager.signup(user)
+    }
 }

@@ -8,4 +8,7 @@ class ParseApiImpl : ParseApi {
         return ParseUser.logInInBackground(username, password)
     }
 
+    override fun signup(user: ParseUser): Task<Void> {
+        return user.signUpInBackground()
+    }
 }
