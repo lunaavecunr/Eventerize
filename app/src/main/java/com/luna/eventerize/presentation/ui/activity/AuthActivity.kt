@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
+import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
 
@@ -20,4 +21,13 @@ class AuthActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 }
