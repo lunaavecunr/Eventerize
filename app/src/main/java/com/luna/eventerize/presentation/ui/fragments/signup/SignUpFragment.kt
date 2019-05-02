@@ -46,7 +46,7 @@ class SignUpFragment : BaseFragment<SignUpViewModel>(), View.OnClickListener {
     override fun onClick(v: View) {
         when(v.id) {
             R.id.fragment_signup_button_signup -> {
-                viewModel.signup(fragment_signup_email.text.toString(), fragment_signup_username.text.toString(), fragment_signup_password.text.toString(), fragment_signup_confirm_password.text.toString(), fragment_signup_cgu.isChecked )
+                viewModel.signUp(fragment_signup_email.text.toString(), fragment_signup_username.text.toString(), fragment_signup_password.text.toString(), fragment_signup_confirm_password.text.toString(), fragment_signup_cgu.isChecked )
             }
         }
     }

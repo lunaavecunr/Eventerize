@@ -14,4 +14,5 @@
     <string name="signup_error_cgu">Vous devez accepter les conditions</string>
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
+    <string name="signup_error_save">La sauvegarde a échouée</string>
 </resources>
