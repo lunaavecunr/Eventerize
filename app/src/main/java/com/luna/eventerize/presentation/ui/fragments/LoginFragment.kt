@@ -5,13 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import com.luna.eventerize.R
+import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.LoginViewModel
+import com.parse.ParseUser
 import kotlinx.android.synthetic.main.fragment_login.*
 
 
-class LoginFragment : BaseFragment<LoginViewModel>() {
+class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
+
     override val viewModelClass = LoginViewModel::class
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -20,19 +25,29 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragment_login_loginButton.setOnClickListener {
-            verifyFieldsAndLogin()
+        fragment_login_loginButton.setOnClickListener(this)
+
+        val updateError = Observer<EventerizeError>{
+            showError(activity!!, it.message)
         }
 
+        val updateUser = Observer<ParseUser> {
+            TODO()
+        }
+
+        viewModel.getError().observe(this, updateError)
+        viewModel.getUser().observe(this, updateUser)
 
     }
 
-    fun verifyFieldsAndLogin() {
-        if(fragment_login_emailField.text!!.isEmpty() || fragment_login_passwordField.text!!.isEmpty()){
-            Toast.makeText(context, getString(R.string.fillAllFields), Toast.LENGTH_SHORT).show()
-        } else {
-
-        }
+    override fun onClick(v: View) {
+       when(v.id) {
+           R.id.fragment_login_loginButton -> {
+                viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+           }
+       }
     }
+
+
 
 }
