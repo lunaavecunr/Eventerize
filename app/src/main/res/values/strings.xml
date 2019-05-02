@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Eventerize</string>
+
+    <!-- LOGIN -->
+    <string name="emailHint">Email</string>
+    <string name="passwordHint">Mot de passe</string>
+    <string name="loginButton">Se connecter</string>
+    <string name="forgotPassword">Mot de passe oublié ?</string>
+    <string name="createAnAccount">Créer un compte</string>
+
+
+    <!-- ERROR MESSAGES -->
+    <style name="fillAllFields">Veuillez remplir tous les champs</style>
+    <style name="emailNotValid">L\'adresse email n\'est pas valide, utilisez un adresse de type test@example.com </style>
+    
 </resources>
