@@ -1,7 +1,8 @@
-package com.luna.eventerize
+package com.luna.eventerize.presentation.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.luna.eventerize.R
 
 class MainActivity : AppCompatActivity() {
 
