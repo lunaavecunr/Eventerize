@@ -1,4 +1,4 @@
 package com.luna.eventerize.data.repository
 
-class RepositoryTmp {
+class EventerizeRepo {
 }
