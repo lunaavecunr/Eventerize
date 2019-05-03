@@ -1,8 +1,13 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -10,8 +15,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.luna.eventerize.BuildConfig
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
@@ -21,13 +28,17 @@ import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 
 import java.util.*
-
+/*
 
 class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
-    override fun onClick(v: View?) {
+}
+   /* override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.manage_invitations_label -> {
                 //Todo : Générer les invitations
@@ -50,23 +61,22 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                     .setMessage(getString(R.string.logo_choice_message))
                     .setPositiveButton(getString(R.string.camera_chosen)
                     ) { dialog, id ->
-                        Toast.makeText(context,"Caméra choisie",Toast.LENGTH_SHORT).show()
+                        takePhoto()
                     }
                     .setNegativeButton(getString(R.string.gallery_chosen)
                     ) { dialog, id ->
-                        Toast.makeText(context,"Gallerie choisie",Toast.LENGTH_SHORT).show()
+                        selectImageInAlbum()
                     }
                 dialog.create()
                 dialog.show()
             }
             R.id.validate_event ->{
-
             }
         }
     }
 
-    private fun initLogo(){
-        Picasso.get().load(R.drawable.add_image).transform(CircleTransform()).into(event_creation_logo)
+    private fun initLogo(code : Int){
+        Picasso.get().load(code).transform(CircleTransform()).into(event_creation_logo)
     }
 
     private fun logoClickListener(){
@@ -105,7 +115,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         generateInvitations()
         logoClickListener()
         buttonListener()
-        initLogo()
+        initLogo(R.drawable.add_image)
     }
 
     private fun correctlyFilled():Boolean{
@@ -242,9 +252,9 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
      * Set the date for the [TextInputEditText]
      */
     private fun updateHourTextInputLayout(editText: TextInputEditText, eventHour: String) {
-        viewModel.getEventHour(eventHour).observe(this, androidx.lifecycle.Observer {
+        /*viewModel.getEventHour(eventHour).observe(this, androidx.lifecycle.Observer {
             editText.setText("${viewModel.formatNumber(it.hour)}:${viewModel.formatNumber(it.minutes)}")
-        })
+        })*/
     }
 
     /**
@@ -261,6 +271,57 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
      */
     private fun initToolbarTitle() {
         activity!!.title = getString(R.string.creating_event)
+    }
+
+    fun selectImageInAlbum() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+            startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+    }
+    fun takePhoto() {
+        try {
+           val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+           startActivityForResult(intent, REQUEST_TAKE_PHOTO)
+       } catch (ex:IOException) {
+           ex.printStackTrace()
+       }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK){
+            when(requestCode){
+                REQUEST_SELECT_IMAGE_IN_ALBUM ->{
+                    val selectedImage = data!!.data
+                    Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
+                }
+                REQUEST_TAKE_PHOTO ->{
+                    if (data != null && data.getExtras() != null) {
+                        val imageBitmap = data.getExtras().get("data") as Bitmap
+                        //viewModel.saveBitmap("Mon titre",imageBitmap)
+                        event_creation_logo.setImageBitmap(imageBitmap)
+                        //Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
+                    }
+                }
+            }
+        }
+    }
+
+private fun createImageFile():File{
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_";
+        //This is the directory in which the file will be created. This is the default location of Camera photos
+        val storageDir = File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        val image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for using again
+        //viewModel.imagePath = "file://" + image.getAbsolutePath();
+        return image;
     }
 
     /**
@@ -291,5 +352,8 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() = CreateEventFragment()
-    }
+        private val REQUEST_TAKE_PHOTO = 0
+        private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+    }*/
 }
+*/

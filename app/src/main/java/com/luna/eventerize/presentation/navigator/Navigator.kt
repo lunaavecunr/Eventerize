@@ -3,7 +3,7 @@ package com.luna.eventerize.presentation.navigator
 import androidx.fragment.app.FragmentManager
 import com.luna.eventerize.presentation.ui.fragments.LoginFragment
 import com.luna.eventerize.R
-import com.luna.eventerize.presentation.ui.fragments.CreateEventFragment
+import com.luna.eventerize.presentation.ui.fragments.CreateEventFragmentNe
 import com.luna.eventerize.presentation.ui.fragments.SignUpFragment
 
 class Navigator(fragmentManager: FragmentManager) {
@@ -15,7 +15,7 @@ class Navigator(fragmentManager: FragmentManager) {
     }
 
     fun displayEvents() {
-        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, CreateEventFragment.newInstance()).addToBackStack(null).commit()
+        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, CreateEventFragmentNe.newInstance()).addToBackStack(null).commit()
     }
 
     fun displaySignUp() {

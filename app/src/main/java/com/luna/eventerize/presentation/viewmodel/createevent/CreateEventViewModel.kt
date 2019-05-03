@@ -1,29 +1,45 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
+import android.graphics.Bitmap
+import android.os.Environment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.data.model.EventDate
 import com.luna.eventerize.data.model.EventHour
 import java.util.*
+import java.io.File
+import java.io.FileOutputStream
+
 
 class CreateEventViewModel : ViewModel(){
-    //Mutable Live Data
-    var beginEvent = MutableLiveData<Date>()
-    var endEvent = MutableLiveData<Date>()
-    var beginEventHour = MutableLiveData<EventHour>()
-    var endEventHour = MutableLiveData<EventHour>()
-    var areDateSame = MutableLiveData<Boolean>()
 
     /**
      * Return the [EventDate] [MutableLiveData]
      */
-    fun getEventDate(eventType:String): MutableLiveData<Date> {
+    /*fun getEventDate(eventType:String): MutableLiveData<Date> {
         if(eventType == BEGINDATE){
             return beginEvent
         }else{
             return endEvent
         }
     }
+
+    fun saveBitmap(eventTitle:String, bitmap: Bitmap){
+        val file_path = Environment.getExternalStorageDirectory().absolutePath + "/PhysicsSketchpad"
+        val dir = File(file_path)
+        if (!dir.exists())
+            dir.mkdirs()
+        val file = File(dir, eventTitle)
+        val fOut = FileOutputStream(file)
+
+        bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut)
+        fOut.flush()
+        fOut.close()
+    }
+
+    /*fun isAllSet(title:String, location:String, beginDate:String, endDate:String, ){
+
+    }*/
 
     fun updateAreDateSame(newValue:Boolean){
         areDateSame.postValue(newValue)
@@ -89,5 +105,5 @@ class CreateEventViewModel : ViewModel(){
         const val ENDDATE = "ENDDATE"
         const val BEGINHOUR = "BEGINHOUR"
         const val ENDHOUR = "ENDHOUR"
-    }
+    }*/
 }

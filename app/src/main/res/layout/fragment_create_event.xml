@@ -187,11 +187,10 @@
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
                 app:layout_constraintTop_toBottomOf="@+id/create_event_fragment_toolbar">
             <ImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="@android:dimen/thumbnail_width"
+                    android:layout_height="@android:dimen/thumbnail_height"
                     android:id="@+id/event_creation_logo"
                     android:clickable="true"
-                    android:background="@drawable/add_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
