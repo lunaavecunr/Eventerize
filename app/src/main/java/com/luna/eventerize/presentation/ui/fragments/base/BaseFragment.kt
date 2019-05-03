@@ -2,8 +2,10 @@ package com.luna.eventerize.presentation.ui.fragments.base
 
 import android.content.Context
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.presentation.viewmodel.factory.ViewModelFactory
 import kotlin.reflect.KClass
 
@@ -19,7 +21,5 @@ abstract class BaseFragment<T : ViewModel>: Fragment() {
         super.onAttach(context)
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(viewModelClass.java)
     }
-
-
 
 }
