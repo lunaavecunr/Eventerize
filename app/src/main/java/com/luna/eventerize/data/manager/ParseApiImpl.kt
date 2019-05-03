@@ -19,7 +19,7 @@ class ParseApiImpl : ParseApi {
     override fun getEvent(): Task<List<EventParse>> {
         var query: ParseQuery<EventParse> = ParseQuery.getQuery("Event")
         return query.findInBackground()
-    }
+    0}
 
     override fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>> {
         return relation.query.findInBackground()

@@ -38,43 +38,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         }
 
         val updateUser = Observer<ParseUser> {
-            TODO()
-        }
 
-        val updateEvent = Observer<ArrayList<Event>> {
-            for (event in it) {
-                Log.d("mlk", "Title: " + event.title)
-                Log.d("mlk", "StartDate: " + event.startDate)
-                Log.d("mlk", "EndDate: " + event.endDate)
-                Log.d("mlk", "Location: " + event.location)
-                Log.d("mlk", "Logo: " + event.logo!!.url)
-            }
-            viewModel.getMembersEvent()
         }
-
-        val updateEventImage = Observer<ArrayList<Event>> {
-            for (event in it) {
-                for (image in event.images!!) {
-                    Log.d("mlk", "URL: "+image.file!!.url)
-                    Log.d("mlk", "ID user: "+image.user!!.objectId)
-                    Log.d("mlk", "string: "+image.string)
-                }
-            }
-        }
-
-        val updateEventMembers = Observer<ArrayList<Event>> {
-            for (event in it) {
-               for(user in event.members!!){
-                   Log.d("mlk", "id User: "+user.objectId)
-                   Log.d("mlk", "username: "+user.username)
-               }
-            }
-            viewModel.getImageEvent()
-        }
-
-        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
-        viewModel.getEventsImageRetrivial().observe(this,updateEventImage)
-        viewModel.getEventsRetrivial().observe(this, updateEvent)
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)
 
@@ -83,8 +48,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.fragment_login_loginButton -> {
-//                viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
-                viewModel.getEvent()
+                viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+
             }
             R.id.fragment_login_createAccountTV -> {
                 navigator.displaySignUp()

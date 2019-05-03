@@ -2,6 +2,7 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,14 +40,46 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         fragment_event_list_fab.setOnClickListener(this)
 
-        val updateEvent = Observer<List<Event>> { postEvent ->
-            this.updateList(postEvent)
+        val updateEvent = Observer<ArrayList<Event>> {
+//            for (event in it) {
+//                Log.d("mlk", "Title: " + event.title)
+//                Log.d("mlk", "StartDate: " + event.startDate)
+//                Log.d("mlk", "EndDate: " + event.endDate)
+//                Log.d("mlk", "Location: " + event.location)
+//                Log.d("mlk", "Logo: " + event.logo!!.url)
+//            }
+
+            updateList(it)
+//            viewModel.getMembersEvent()
+        }
+/*
+
+        val updateEventImage = Observer<ArrayList<Event>> {
+            for (event in it) {
+                for (image in event.images!!) {
+                    Log.d("mlk", "URL: "+image.file!!.url)
+                    Log.d("mlk", "ID user: "+image.user!!.objectId)
+                    Log.d("mlk", "string: "+image.string)
+                }
+            }
         }
 
-        viewModel.getListEvents().observe(this, updateEvent)
+        val updateEventMembers = Observer<ArrayList<Event>> {
+            for (event in it) {
+                for(user in event.members!!){
+                    Log.d("mlk", "id User: "+user.objectId)
+                    Log.d("mlk", "username: "+user.username)
+                }
+            }
+            viewModel.getImageEvent()
+        }
+*/
 
-        viewModel.getEvents()
+//        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
+//        viewModel.getEventsImageRetrivial().observe(this,updateEventImage)
+        viewModel.getEventsRetrivial().observe(this, updateEvent)
 
+        viewModel.getEvent()
     }
 
     fun updateList(eventList: List<Event>) {

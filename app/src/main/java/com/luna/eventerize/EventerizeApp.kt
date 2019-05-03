@@ -14,13 +14,14 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 import com.parse.ParseObject
-
-
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
 
 
 class EventerizeApp: Application() {
 
     lateinit var repository: EventerizeRepo
+    lateinit var picasso: Picasso
 
     override fun onCreate() {
         super.onCreate()
@@ -37,6 +38,7 @@ class EventerizeApp: Application() {
                 .build()
         )
         ParseInstallation.getCurrentInstallation().saveInBackground()
+        picasso = Picasso.Builder(this).downloader(OkHttp3Downloader(getOkHttpClientBuilder().build())).build()
     }
 
     fun getOkHttpClientBuilder() : OkHttpClient.Builder

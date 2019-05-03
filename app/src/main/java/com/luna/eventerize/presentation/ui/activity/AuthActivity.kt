@@ -17,7 +17,8 @@ class AuthActivity : AppCompatActivity() {
         navigator = Navigator(supportFragmentManager)
 
         if(savedInstanceState == null){
-            navigator.displayLogin()
+//            navigator.displayLogin()
+            navigator.displayEventList()
         }
 
     }

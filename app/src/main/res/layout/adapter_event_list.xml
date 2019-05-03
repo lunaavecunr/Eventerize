@@ -9,7 +9,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" app:cardElevation="6dp" app:cardMaxElevation="6dp"
+            app:cardCornerRadius="8dp"
+            android:layout_margin="8dp" app:layout_constraintBottom_toBottomOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -40,17 +42,20 @@
                     android:id="@+id/adapter_event_list_image"
                     app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="4dp" android:layout_marginEnd="8dp"
-                    app:layout_constraintEnd_toStartOf="@+id/adapter_event_list_calendar_image" android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/adapter_event_list_calendar_image"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/adapter_event_list_title"
                     app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="1.0"
-            />
+                    app:srcCompat="@drawable/ic_empty_image" android:layout_marginBottom="4dp"/>
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/adapter_event_list_map_pin_image" app:layout_constraintStart_toEndOf="@+id/adapter_event_list_image"
+                    android:id="@+id/adapter_event_list_map_pin_image"
+                    app:layout_constraintStart_toEndOf="@+id/adapter_event_list_image"
                     android:layout_marginStart="8dp"
                     app:layout_constraintTop_toBottomOf="@+id/adapter_event_list_orangeBar"
-                    android:layout_marginTop="20dp" tools:srcCompat="@drawable/map_pin_marked"/>
+                    android:layout_marginTop="20dp" app:srcCompat="@drawable/map_pin_marked"
+                    tools:srcCompat="@drawable/map_pin_marked"/>
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -58,9 +63,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/adapter_event_list_map_pin_image"
                     android:layout_marginTop="16dp" app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginBottom="8dp" app:layout_constraintVertical_bias="1.0"
-                    tools:srcCompat="@drawable/calendar" app:layout_constraintStart_toEndOf="@+id/adapter_event_list_image"
+                    tools:srcCompat="@drawable/calendar"
+                    app:layout_constraintStart_toEndOf="@+id/adapter_event_list_image"
                     android:layout_marginEnd="267dp" app:layout_constraintEnd_toEndOf="parent"
-            />
+                    app:srcCompat="@drawable/calendar"/>
             <TextView
                     android:text="TextView"
                     android:layout_width="0dp"
@@ -69,16 +75,17 @@
                     android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="8dp"
                     app:layout_constraintTop_toBottomOf="@+id/adapter_event_list_orangeBar"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp" android:textColor="@color/brown"/>
             <TextView
                     android:text="TextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" android:id="@+id/adapter_event_list_calendar_text"
                     app:layout_constraintTop_toBottomOf="@+id/adapter_event_list_map_text"
-                    android:layout_marginTop="20dp" app:layout_constraintStart_toEndOf="@+id/adapter_event_list_calendar_image"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintStart_toEndOf="@+id/adapter_event_list_calendar_image"
                     android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="8dp" app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp" android:textColor="@color/brown"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,7 @@ class Navigator(fragmentManager: FragmentManager) {
         * A REMPLACER
         *
         * */
-        fragmentManager.beginTransaction().replace(R.id.fragment_event_list_recycler_view, EventListFragment.newInstance()).commit()
+        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, EventListFragment.newInstance()).commit()
     }
 
     fun createList(){
