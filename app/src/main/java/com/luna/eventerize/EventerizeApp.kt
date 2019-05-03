@@ -1,6 +1,8 @@
 package com.luna.eventerize
 
 import android.app.Application
+import com.luna.eventerize.data.model.EventParse
+import com.luna.eventerize.data.model.ImageParse
 import com.luna.eventerize.data.repository.EventerizeRepo
 import com.parse.Parse
 import com.parse.ParseInstallation
@@ -11,6 +13,9 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
+import com.parse.ParseObject
+
+
 
 
 class EventerizeApp: Application() {
@@ -21,6 +26,8 @@ class EventerizeApp: Application() {
         super.onCreate()
         app = this
         repository = EventerizeRepo()
+        ParseObject.registerSubclass(EventParse::class.java)
+        ParseObject.registerSubclass(ImageParse::class.java)
         Parse.initialize(
             Parse.Configuration.Builder(this)
                 .applicationId("11558475925")

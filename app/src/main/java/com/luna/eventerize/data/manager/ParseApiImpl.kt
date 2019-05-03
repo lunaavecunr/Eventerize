@@ -1,8 +1,10 @@
 package com.luna.eventerize.data.manager
 
 import bolts.Task
-import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.EventParse
+import com.parse.ParseObject
 import com.parse.ParseQuery
+import com.parse.ParseRelation
 import com.parse.ParseUser
 
 class ParseApiImpl : ParseApi {
@@ -14,8 +16,12 @@ class ParseApiImpl : ParseApi {
         return user.signUpInBackground()
     }
 
-    override fun getEvent(): Task<List<Event>> {
-        var query: ParseQuery<Event> = ParseQuery.getQuery(Event.cla)
+    override fun getEvent(): Task<List<EventParse>> {
+        var query: ParseQuery<EventParse> = ParseQuery.getQuery("Event")
         return query.findInBackground()
+    }
+
+    override fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>> {
+        return relation.query.findInBackground()
     }
 }

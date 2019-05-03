@@ -1,23 +1,26 @@
 package com.luna.eventerize.data.model
 
-import android.os.Bundle
-import com.parse.ParseClassName
-import com.parse.ParseObject
+import com.parse.ParseFile
 import com.parse.ParseRelation
+import com.parse.ParseUser
+import java.util.*
+import kotlin.collections.ArrayList
 
-@ParseClassName("Event")
-class Event(
-    var name: String,
-    var date: String,
-    var place: String,
-    var image: ParseRelation<Image>
-) : ParseObject() {
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putString("name", name)
+class Event(eventParse: EventParse) {
+    var parse: EventParse = eventParse
+    var title: String? = null
+    var startDate: Date? = null
+    var endDate: Date? = null
+    var location: String? = null
+    var members: ArrayList<ParseUser>? = null
+    var images: ArrayList<Image>? = null
+    var logo: ParseFile? = null
 
-    }
-    override fun onRestoreInstanceState(savedState: Bundle?) {
-        this.name = savedState?.getString("name")!!
-
+    init {
+        this.title = eventParse.name
+        this.startDate = eventParse.startDate
+        this.endDate = eventParse.endDate
+        this.location = eventParse.location
+        this.logo = eventParse.logo
     }
 }
