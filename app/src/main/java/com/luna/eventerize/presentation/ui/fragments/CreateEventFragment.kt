@@ -17,9 +17,6 @@ import kotlinx.android.synthetic.main.fragment_create_event.*
 
 import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val EVENT_ID = "param1"
 
 class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
     override fun onClick(v: View?) {
@@ -41,9 +38,6 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
             }
         }
     }
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
     override var viewModelClass = CreateEventViewModel::class
     lateinit var navigator: Navigator
 
