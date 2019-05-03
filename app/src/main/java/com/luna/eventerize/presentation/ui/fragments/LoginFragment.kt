@@ -47,7 +47,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
     override fun onClick(v: View) {
        when(v.id) {
            R.id.fragment_login_loginButton -> {
-                viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+//                viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+               viewModel.getEvent()
            }
            R.id.fragment_login_createAccountTV -> {
                navigator.displaySignUp()

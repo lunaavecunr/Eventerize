@@ -1,5 +1,6 @@
 package com.luna.eventerize.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,6 +33,32 @@ class LoginViewModel: ViewModel() {
                     }
                 }
             }
+    }
+
+    fun getEvent() {
+        repository.getEvent().continueWith {
+            when {
+                it.isCancelled -> {
+                    error.postValue(
+                        EventerizeError(
+                            EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                            EventerizeApp.getInstance().getString(R.string.login_error_title)
+                        )
+                    )
+                }
+                it.isFaulted -> {
+                    error.postValue(
+                        EventerizeError(
+                            it.error.message.toString(),
+                            EventerizeApp.getInstance().getString(R.string.login_error_title)
+                        )
+                    )
+                }
+                else -> {
+                    Log.d("mlk",it.result.last().getString("name"))
+                }
+            }
+        }
     }
 
     fun getError() : LiveData<EventerizeError> = error
