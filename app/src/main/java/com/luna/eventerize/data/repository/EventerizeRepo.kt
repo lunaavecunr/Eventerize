@@ -3,6 +3,9 @@ package com.luna.eventerize.data.repository
 import bolts.Task
 import com.luna.eventerize.data.manager.ParseApi
 import com.luna.eventerize.data.manager.ParseApiImpl
+import com.luna.eventerize.data.model.EventParse
+import com.parse.ParseObject
+import com.parse.ParseRelation
 import com.parse.ParseUser
 
 class EventerizeRepo {
@@ -13,5 +16,13 @@ class EventerizeRepo {
     }
     fun signup(user: ParseUser) : Task<Void> {
        return parseManager.signup(user)
+    }
+
+    fun getEvent(): Task<List<EventParse>> {
+        return parseManager.getEvent()
+    }
+
+    fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>> {
+        return parseManager.getRelation(relation)
     }
 }
