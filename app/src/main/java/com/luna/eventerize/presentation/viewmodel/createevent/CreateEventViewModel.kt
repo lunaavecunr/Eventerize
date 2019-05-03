@@ -12,6 +12,8 @@ class CreateEventViewModel : ViewModel(){
     var beginEventHour = MutableLiveData<EventHour>()
     var endEventHour = MutableLiveData<EventHour>()
 
+    var areDateSame = MutableLiveData<Boolean>()
+
     /**
      * Return the [EventDate] [MutableLiveData]
      */
@@ -21,6 +23,21 @@ class CreateEventViewModel : ViewModel(){
         }else{
             return endEvent
         }
+    }
+
+    fun updateAreDateSame(newValue:Boolean){
+        areDateSame.postValue(newValue)
+    }
+
+    fun isEndBeforeBegin(beginDate: EventDate, endDate: EventDate) : Boolean{
+        if(beginDate.year>=endDate.year){
+            if(beginDate.month>=endDate.month){
+                if(beginDate.day>=endDate.day){
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**

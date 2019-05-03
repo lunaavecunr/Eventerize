@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
+import com.luna.eventerize.data.model.EventDate
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
@@ -20,32 +22,30 @@ import java.util.*
 
 class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
     override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.manage_invitations_label->{
+        when (v!!.id) {
+            R.id.manage_invitations_label -> {
                 //Todo : Générer les invitations
             }
-            R.id.begin_date_edit_text->{
+            R.id.begin_date_edit_text -> {
                 initDatePicker(Calendar.getInstance(), CreateEventViewModel.BEGINDATE, begin_date_edit_text)
             }
-            R.id.begin_hour_edit_text->{
-                initTimePicker(CreateEventViewModel.BEGINHOUR,begin_hour_edit_text)
+            R.id.begin_hour_edit_text -> {
+                initTimePicker(CreateEventViewModel.BEGINHOUR, begin_hour_edit_text)
             }
-            R.id.end_day_edit_text->{
+            R.id.end_day_edit_text -> {
                 initDatePicker(Calendar.getInstance(), CreateEventViewModel.ENDDATE, end_day_edit_text)
             }
-            R.id.end_hour_edit_text->{
-                initTimePicker(CreateEventViewModel.ENDHOUR,end_hour_edit_text)
+            R.id.end_hour_edit_text -> {
+                initTimePicker(CreateEventViewModel.ENDHOUR, end_hour_edit_text)
             }
         }
     }
+
     override var viewModelClass = CreateEventViewModel::class
     lateinit var navigator: Navigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(EVENT_ID)
-        }
     }
 
     override fun onCreateView(
@@ -69,7 +69,23 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         super.onViewCreated(view, savedInstanceState)
         initPickers()
         initToolbar()
+        initMutableLiveData()
         generateInvitations()
+    }
+
+    private fun setDateTextView(
+        firstDate:EventDate,
+        endDate: EventDate
+    ) {
+        val isSecondEmpty = end_day_edit_text.editableText.isNullOrEmpty()
+        viewModel.updateDate(CreateEventViewModel.BEGINDATE,firstDate)
+        if(isSecondEmpty){
+            updateEndDateEditText(firstDate,endDate)
+        }
+    }
+
+    private fun updateDate(date: EventDate, eventType:String){
+        viewModel.updateDate(eventType,date)
     }
 
     /**
@@ -77,6 +93,11 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
      */
     private fun initPickers() {
         setTextEditOnClickListener()
+    }
+
+    private fun initMutableLiveData(){
+        updateDateTextInputLayout(begin_date_edit_text,CreateEventViewModel.BEGINDATE)
+        updateDateTextInputLayout(end_day_edit_text,CreateEventViewModel.ENDDATE)
     }
 
     /**
@@ -89,10 +110,18 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         initEditTextListener(end_hour_edit_text)
     }
 
+    private fun updateEndDateEditText(beginDate: EventDate, endDate: EventDate){
+                if(!viewModel.isEndBeforeBegin(beginDate,endDate)){
+                    Toast.makeText(activity,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
+                }else{
+                    updateDate(endDate,CreateEventViewModel.ENDDATE)
+                }
+    }
+
     /**
      * Init a [TextInputEditText.setOnClickListener]
      */
-    private fun initEditTextListener(editText: TextInputEditText){
+    private fun initEditTextListener(editText: TextInputEditText) {
         editText.setOnClickListener(this)
     }
 
@@ -105,23 +134,32 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     private fun initDatePicker(now: Calendar, eventDateType: String, editText: TextInputEditText) {
         val dpd = DatePickerDialog.newInstance(
             { _, yearDatePicker, monthDatePicker, dayDatePicker ->
-                viewModel.updateDate(eventDateType,viewModel.createDate(yearDatePicker,monthDatePicker,dayDatePicker))
+                if (eventDateType == CreateEventViewModel.BEGINDATE) {
+                    setDateTextView(EventDate(yearDatePicker,monthDatePicker,dayDatePicker),EventDate(yearDatePicker,monthDatePicker,dayDatePicker))
+                } else {
+                    updateEndDateEditText(EventDate(yearDatePicker,monthDatePicker,dayDatePicker),EventDate(yearDatePicker,monthDatePicker,dayDatePicker))
+                }
             },
             now.get(Calendar.YEAR), // Initial year selection
             now.get(Calendar.MONTH), // Initial month selection
             now.get(Calendar.DAY_OF_MONTH) // Inital day selection
+
         )
         dpd.version = DatePickerDialog.Version.VERSION_2
         dpd.show(fragmentManager, "Datepickerdialog")
-        updateDateTextInputLayout(editText,eventDateType)
     }
 
     /**
      * Set the date for the [TextInputEditText]
      */
-    private fun updateDateTextInputLayout(editText: TextInputEditText, eventDate:String){
-        viewModel.getEventDate(eventDate).observe(this,androidx.lifecycle.Observer {
-            editText.setText("${viewModel.formatNumber(it.day)}/${viewModel.formatNumber(it.month)}/${viewModel.formatNumber(it.year)}")
+    private fun updateDateTextInputLayout(editText: TextInputEditText, eventDate: String) {
+        viewModel.getEventDate(eventDate).observe(this, androidx.lifecycle.Observer {
+            val event = eventDate
+            editText.setText(
+                "${viewModel.formatNumber(it.day)}/${viewModel.formatNumber(it.month)}/${viewModel.formatNumber(
+                    it.year
+                )}"
+            )
         })
     }
 
@@ -134,19 +172,23 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     private fun initTimePicker(eventHourType: String, editText: TextInputEditText) {
         val htd = TimePickerDialog.newInstance(
             { _, hourDatePicker, minuteDatePicker, secondDatePicker ->
-                viewModel.updateHour(eventHourType,viewModel.createTime(hourDatePicker,minuteDatePicker,secondDatePicker))
+                viewModel.updateHour(
+                    eventHourType,
+                    viewModel.createTime(hourDatePicker, minuteDatePicker, secondDatePicker)
+                )
             }, true
         )
+
         htd.version = TimePickerDialog.Version.VERSION_2
         htd.show(fragmentManager, "TimePickerDialog")
-        updateHourTextInputLayout(editText,eventHourType)
+        updateHourTextInputLayout(editText, eventHourType)
     }
 
     /**
      * Set the date for the [TextInputEditText]
      */
-    private fun updateHourTextInputLayout(editText: TextInputEditText, eventHour:String){
-        viewModel.getEventHour(eventHour).observe(this,androidx.lifecycle.Observer {
+    private fun updateHourTextInputLayout(editText: TextInputEditText, eventHour: String) {
+        viewModel.getEventHour(eventHour).observe(this, androidx.lifecycle.Observer {
             editText.setText("${viewModel.formatNumber(it.hour)}:${viewModel.formatNumber(it.minutes)}")
         })
     }
@@ -154,7 +196,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     /**
      * Init the toolbar
      */
-    private fun initToolbar(){
+    private fun initToolbar() {
         navigator = Navigator(fragmentManager!!)
         initToolbarTitle()
         initToolbarBackNavigation()
@@ -179,7 +221,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     /**
      * Initialisation of the invitations generation
      */
-    private fun generateInvitations(){
+    private fun generateInvitations() {
         manage_invitations_label.setOnClickListener(this)
     }
 
