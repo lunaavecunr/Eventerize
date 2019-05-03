@@ -200,13 +200,6 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
-            CreateEventFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EVENT_ID, param1)
-                }
-            }
-        @JvmStatic
         fun newInstance() = CreateEventFragment()
     }
 }
