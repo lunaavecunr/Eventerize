@@ -1,21 +1,27 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.EventDate
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.ui.picasso.CircleTransform
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
+import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
+import java.time.LocalDateTime
 
 import java.util.*
 
@@ -38,15 +44,41 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
             R.id.end_hour_edit_text -> {
                 initTimePicker(CreateEventViewModel.ENDHOUR, end_hour_edit_text)
             }
+            R.id.event_creation_logo ->{
+                val dialog = AlertDialog.Builder(context!!)
+                    .setTitle(getString(R.string.logo_choice))
+                    .setMessage(getString(R.string.logo_choice_message))
+                    .setPositiveButton(getString(R.string.camera_chosen)
+                    ) { dialog, id ->
+                        Toast.makeText(context,"Caméra choisie",Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton(getString(R.string.gallery_chosen)
+                    ) { dialog, id ->
+                        Toast.makeText(context,"Gallerie choisie",Toast.LENGTH_SHORT).show()
+                    }
+                dialog.create()
+                dialog.show()
+            }
+            R.id.validate_event ->{
+
+            }
         }
+    }
+
+    private fun initLogo(){
+        Picasso.get().load(R.drawable.add_image).transform(CircleTransform()).into(event_creation_logo)
+    }
+
+    private fun logoClickListener(){
+        event_creation_logo.setOnClickListener(this)
+    }
+
+    private fun buttonListener(){
+        validate_event.setOnClickListener(this)
     }
 
     override var viewModelClass = CreateEventViewModel::class
     lateinit var navigator: Navigator
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,20 +103,39 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         initToolbar()
         initMutableLiveData()
         generateInvitations()
+        logoClickListener()
+        buttonListener()
+        initLogo()
+    }
+
+    private fun correctlyFilled():Boolean{
+        return (isEditTextEmpty(event_title_input_layout)
+                && isEditTextEmpty(event_location_layout)
+                && isEditTextEmpty(begin_hour_text_input)
+                && isEditTextEmpty(begin_date_text_input)
+                && isEditTextEmpty(end_date_edit_text)
+                && isEditTextEmpty(end_time_edit_text))
+    }
+
+    private fun isEditTextEmpty(editText: TextInputLayout):Boolean{
+        return editText.editText!!.editableText.toString().isEmpty()
     }
 
     private fun setDateTextView(
-        firstDate:EventDate,
-        endDate: EventDate
+        firstDate:Date,
+        endDate: Date
     ) {
         val isSecondEmpty = end_day_edit_text.editableText.isNullOrEmpty()
-        viewModel.updateDate(CreateEventViewModel.BEGINDATE,firstDate)
         if(isSecondEmpty){
             updateEndDateEditText(firstDate,endDate)
+        }else if(firstDate.after(viewModel.endEvent.value)){
+            Toast.makeText(context,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
+        }else{
+            viewModel.updateDate(CreateEventViewModel.BEGINDATE,firstDate)
         }
     }
 
-    private fun updateDate(date: EventDate, eventType:String){
+    private fun updateDate(date: Date, eventType:String){
         viewModel.updateDate(eventType,date)
     }
 
@@ -110,7 +161,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         initEditTextListener(end_hour_edit_text)
     }
 
-    private fun updateEndDateEditText(beginDate: EventDate, endDate: EventDate){
+    private fun updateEndDateEditText(beginDate: Date, endDate: Date){
                 if(!viewModel.isEndBeforeBegin(beginDate,endDate)){
                     Toast.makeText(activity,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
                 }else{
@@ -135,9 +186,13 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         val dpd = DatePickerDialog.newInstance(
             { _, yearDatePicker, monthDatePicker, dayDatePicker ->
                 if (eventDateType == CreateEventViewModel.BEGINDATE) {
-                    setDateTextView(EventDate(yearDatePicker,monthDatePicker,dayDatePicker),EventDate(yearDatePicker,monthDatePicker,dayDatePicker))
+                    setDateTextView(Date(yearDatePicker,monthDatePicker,dayDatePicker),Date(yearDatePicker,monthDatePicker,dayDatePicker))
                 } else {
-                    updateEndDateEditText(EventDate(yearDatePicker,monthDatePicker,dayDatePicker),EventDate(yearDatePicker,monthDatePicker,dayDatePicker))
+                    val currentDate = Date()
+                    if(viewModel.beginEvent.value == null) currentDate else viewModel.beginEvent.value?.let {
+                        updateEndDateEditText(
+                            it,Date(yearDatePicker,monthDatePicker,dayDatePicker))
+                    }
                 }
             },
             now.get(Calendar.YEAR), // Initial year selection
@@ -154,9 +209,8 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
      */
     private fun updateDateTextInputLayout(editText: TextInputEditText, eventDate: String) {
         viewModel.getEventDate(eventDate).observe(this, androidx.lifecycle.Observer {
-            val event = eventDate
             editText.setText(
-                "${viewModel.formatNumber(it.day)}/${viewModel.formatNumber(it.month)}/${viewModel.formatNumber(
+                "${viewModel.formatNumber(it.date)}/${viewModel.formatNumber(it.month+1)}/${viewModel.formatNumber(
                     it.year
                 )}"
             )

@@ -4,20 +4,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.data.model.EventDate
 import com.luna.eventerize.data.model.EventHour
+import java.util.*
 
 class CreateEventViewModel : ViewModel(){
     //Mutable Live Data
-    var beginEvent = MutableLiveData<EventDate>()
-    var endEvent = MutableLiveData<EventDate>()
+    var beginEvent = MutableLiveData<Date>()
+    var endEvent = MutableLiveData<Date>()
     var beginEventHour = MutableLiveData<EventHour>()
     var endEventHour = MutableLiveData<EventHour>()
-
     var areDateSame = MutableLiveData<Boolean>()
 
     /**
      * Return the [EventDate] [MutableLiveData]
      */
-    fun getEventDate(eventType:String): MutableLiveData<EventDate> {
+    fun getEventDate(eventType:String): MutableLiveData<Date> {
         if(eventType == BEGINDATE){
             return beginEvent
         }else{
@@ -29,15 +29,13 @@ class CreateEventViewModel : ViewModel(){
         areDateSame.postValue(newValue)
     }
 
-    fun isEndBeforeBegin(beginDate: EventDate, endDate: EventDate) : Boolean{
-        if(beginDate.year>=endDate.year){
-            if(beginDate.month>=endDate.month){
-                if(beginDate.day>=endDate.day){
-                    return true
-                }
+    fun isEndBeforeBegin(beginDate: Date, endDate: Date) : Boolean{
+        if(beginDate != endDate){
+            if(endDate.before(beginDate)){
+                return false
             }
         }
-        return false
+        return true
     }
 
     /**
@@ -54,7 +52,7 @@ class CreateEventViewModel : ViewModel(){
     /**
      * Post value of an [EventDate] [MutableLiveData]
      */
-    fun updateDate(eventType: String, data:EventDate){
+    fun updateDate(eventType: String, data:Date){
         getEventDate(eventType).postValue(data)
     }
 
@@ -76,14 +74,6 @@ class CreateEventViewModel : ViewModel(){
         }else{
             return endEventHour
         }
-    }
-
-
-    /**
-     * Create an [EventDate] from three [Integer]
-     */
-    fun createDate(year:Int = 0, month:Int = 0, day:Int = 0):EventDate{
-        return EventDate(year,month,day)
     }
 
 

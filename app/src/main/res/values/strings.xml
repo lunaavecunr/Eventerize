@@ -41,6 +41,11 @@
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
     <string name="end_date_before_begin_date">La date de fin se trouve avant la date de début!</string>
+    <string name="generate_event">Générer un évènement</string>
+    <string name="logo_choice">Choix du logo</string>
+    <string name="logo_choice_message">Veuillez choisir une option pour ce logo</string>
+    <string name="camera_chosen">Appareil photo</string>
+    <string name="gallery_chosen">Gallerie de photos</string>
 
 
 </resources>
