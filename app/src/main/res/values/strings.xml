@@ -12,6 +12,7 @@
     <string name="end_date_event_label">Date de fin</string>
     <string name="end_hour_event_label">Heure de fin</string>
     <string name="generate_invitations">Générer les invitations</string>
+    <string name="creating_event">Création d\'évènement</string>
 
     <!-- LOGIN -->
     <string name="login_button">Se connecter</string>

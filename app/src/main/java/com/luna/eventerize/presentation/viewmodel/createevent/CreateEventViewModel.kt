@@ -12,6 +12,9 @@ class CreateEventViewModel : ViewModel(){
     var beginEventHour = MutableLiveData<EventHour>()
     var endEventHour = MutableLiveData<EventHour>()
 
+    /**
+     * Return the [EventDate] [MutableLiveData]
+     */
     fun getEventDate(eventType:String): MutableLiveData<EventDate> {
         if(eventType == BEGINDATE){
             return beginEvent
@@ -20,14 +23,36 @@ class CreateEventViewModel : ViewModel(){
         }
     }
 
+    /**
+     * Format an [Integer] to have two digits
+     */
+    fun formatNumber(number:Int):String{
+        if(number<10){
+            return "0$number"
+        }else{
+            return "$number"
+        }
+    }
+
+    /**
+     * Post value of an [EventDate] [MutableLiveData]
+     */
     fun updateDate(eventType: String, data:EventDate){
         getEventDate(eventType).postValue(data)
     }
 
+
+    /**
+     * Post value of an [EventDate] [MutableLiveData]
+     */
     fun updateHour(eventType: String, data:EventHour){
         getEventHour(eventType).postValue(data)
     }
 
+
+    /**
+     * Return the [EventHour] [MutableLiveData]
+     */
     fun getEventHour(eventType:String): MutableLiveData<EventHour> {
         if(eventType == BEGINHOUR){
             return beginEventHour
@@ -36,10 +61,18 @@ class CreateEventViewModel : ViewModel(){
         }
     }
 
+
+    /**
+     * Create an [EventDate] from three [Integer]
+     */
     fun createDate(year:Int = 0, month:Int = 0, day:Int = 0):EventDate{
         return EventDate(year,month,day)
     }
 
+
+    /**
+     * Create an [EventHour] from three [Integer]
+     */
     fun createTime(hour:Int = 0, minutes:Int = 0, seconds:Int = 0):EventHour{
         return EventHour(hour,minutes,seconds)
     }
