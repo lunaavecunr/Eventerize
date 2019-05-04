@@ -46,6 +46,11 @@
     <string name="logo_choice_message">Veuillez choisir une option pour ce logo</string>
     <string name="camera_chosen">Appareil photo</string>
     <string name="gallery_chosen">Gallerie de photos</string>
+    <string name="no_title_event">Aucun titre n\'a été entré!</string>
+    <string name="no_start_date">Aucune date de début n\'a été choisie!</string>
+    <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
+    <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
+    <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
 
-
+    <string name="newEventDefaultValue">Nouvel évènement</string>
 </resources>
