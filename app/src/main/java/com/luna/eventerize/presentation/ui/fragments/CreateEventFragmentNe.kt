@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
@@ -46,7 +47,8 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     private var startHour: Date? = null
     private var endHour: Date? = null
     private var isFormCorrectlyFilled: Boolean = false
-    private var photoFilePath:String = ""
+    private var photoFilePath = MutableLiveData<String>()
+    private var permissionsGranted: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -236,27 +238,34 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     }
 
     private fun takePhoto() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(context!!.packageManager)?.also {
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
-            }
+        val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (pictureIntent.resolveActivity(context!!.packageManager) != null) {
+            startActivityForResult(
+                pictureIntent,
+                REQUEST_TAKE_PHOTO
+            )
         }
     }
 
 
     @Throws(IOException::class)
-    private fun createImageFile(): File {
+    private fun createImageFile(bitmap: Bitmap): String {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File = context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "${timeStamp}_logo", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
-            photoFilePath = absolutePath
+        var file = File.createTempFile(
+            timeStamp,
+            ".jpg",
+            storageDir
+        )
+        try {
+            var out = FileOutputStream(file.absolutePath)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            return file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
+        return ""
     }
 
 
@@ -269,33 +278,50 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
                     Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
                 }
                 REQUEST_TAKE_PHOTO -> {
-                    if (data?.extras != null) {
+                    if (data != null && data.extras != null) {
                         val imageBitmap = data.extras.get("data") as Bitmap
-
-                        Picasso.get().load(photoFilePath).transform(CircleTransform()).into(event_creation_logo)
+                        event_creation_logo.setImageBitmap(imageBitmap)
                     }
                 }
             }
         }
     }
 
-    private fun permissions(){
-        if (ContextCompat.checkSelfPermission(context!!,
-                Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context!!,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity as AppCompatActivity,
-                    Manifest.permission.READ_CONTACTS)) {
-                ActivityCompat.requestPermissions(activity as AppCompatActivity,
-                    arrayOf(Manifest.permission.READ_CONTACTS))
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+    private fun permissions() {
+        if (ContextCompat.checkSelfPermission(
+                context!!,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
+                ).toString()
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
+                    ).toString()
+                )
+            ) {
+                Toast.makeText(context, getString(R.string.permissions_not_granted), Toast.LENGTH_SHORT).show()
+                permissionsGranted = false
+            } else {
+                ActivityCompat.requestPermissions(
+                    activity!!,
+                    arrayOf(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
+                    ),
+                    REQUEST_TAKE_PHOTO
+                )
             }
         } else {
-            // Permission has already been granted
+            permissionsGranted = true
         }
     }
 
@@ -326,7 +352,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     companion object {
         fun newInstance() = CreateEventFragmentNe()
 
-        private val REQUEST_TAKE_PHOTO = 0
+        private val REQUEST_TAKE_PHOTO = 100
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
 
     }
