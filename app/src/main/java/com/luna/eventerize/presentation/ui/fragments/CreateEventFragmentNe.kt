@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -31,6 +32,7 @@ import kotlinx.android.synthetic.main.fragment_create_event.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,7 +49,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     private var startHour: Date? = null
     private var endHour: Date? = null
     private var isFormCorrectlyFilled: Boolean = false
-    private var photoFilePath = MutableLiveData<String>()
+    private var photoFilePath:String? = null
     private var permissionsGranted: Boolean = false
 
     override fun onCreateView(
@@ -85,13 +87,13 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     }
 
     private fun initListeners() {
-        event_creation_logo.setOnClickListener(this)
         begin_date_edit_text.setOnClickListener(this)
         begin_hour_edit_text.setOnClickListener(this)
         end_day_edit_text.setOnClickListener(this)
         end_hour_edit_text.setOnClickListener(this)
         manage_invitations.setOnClickListener(this)
         validate_event.setOnClickListener(this)
+        add_logo_floating_button.setOnClickListener(this)
     }
 
     private fun checkIfFormIsCorrectlyFilled(): Boolean {
@@ -239,33 +241,42 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
 
     private fun takePhoto() {
         val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (pictureIntent.resolveActivity(context!!.packageManager) != null) {
-            startActivityForResult(
-                pictureIntent,
-                REQUEST_TAKE_PHOTO
-            )
-        }
+        startActivityForResult(pictureIntent, REQUEST_TAKE_PHOTO)
     }
 
 
-    @Throws(IOException::class)
-    private fun createImageFile(bitmap: Bitmap): String {
-        // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        var file = File.createTempFile(
-            timeStamp,
-            ".jpg",
-            storageDir
-        )
-        try {
-            var out = FileOutputStream(file.absolutePath)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-            return file.absolutePath
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun saveImage(bitmap: Bitmap){
+        val root = Environment.getExternalStorageDirectory().toString()
+        var folderTitle: String
+
+        if(event_creation_title_text.editableText.toString().isNullOrBlank()){
+            val date = Date()
+            folderTitle = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(date)
+        }else{
+            folderTitle = event_creation_title_text.editableText.toString()
         }
-        return ""
+
+        val myDir = File("$root/Eventerize/$folderTitle/")
+
+        if(!myDir.exists()){
+            myDir.mkdirs()
+        }
+
+        val fileName = "logo.jpg"
+        val file = File(myDir,fileName)
+        if(file.exists()){
+            file.delete()
+        }
+
+        try{
+            val out = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.flush()
+            out.close()
+            photoFilePath = file.absolutePath
+        }catch (e: Exception){
+            Log.e("Error",e.localizedMessage)
+        }
     }
 
 
@@ -275,53 +286,32 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
             when (requestCode) {
                 REQUEST_SELECT_IMAGE_IN_ALBUM -> {
                     val selectedImage = data!!.data
-                    Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
+                    Picasso.get().load(selectedImage).centerCrop().resize(360,360).into(event_creation_logo)
                 }
                 REQUEST_TAKE_PHOTO -> {
                     if (data != null && data.extras != null) {
+                        Picasso.get().isLoggingEnabled = true
                         val imageBitmap = data.extras.get("data") as Bitmap
-                        event_creation_logo.setImageBitmap(imageBitmap)
+                        saveImage(imageBitmap)
+                        Picasso.get().load(photoFilePath!!.trim()).into(event_creation_logo)
+                        //event_creation_logo.setImageBitmap(imageBitmap)
+
                     }
                 }
             }
         }
     }
 
-    private fun permissions() {
-        if (ContextCompat.checkSelfPermission(
-                context!!,
-                arrayOf(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA
-                ).toString()
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    activity!!,
-                    arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                    ).toString()
-                )
-            ) {
-                Toast.makeText(context, getString(R.string.permissions_not_granted), Toast.LENGTH_SHORT).show()
-                permissionsGranted = false
-            } else {
-                ActivityCompat.requestPermissions(
-                    activity!!,
-                    arrayOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                    ),
-                    REQUEST_TAKE_PHOTO
-                )
-            }
-        } else {
-            permissionsGranted = true
+    private fun permissions(requestCode: String) {
+        if(ContextCompat.checkSelfPermission(activity as Activity, Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity as Activity, arrayOf(Manifest.permission.CAMERA),
+                PERMISSION_CAMERA)
+        }
+        if(ContextCompat.checkSelfPermission(activity as Activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity as Activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_WRITE_STORAGE)
         }
     }
 
@@ -343,7 +333,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
                 initTimePicker(ENDHOUR, end_hour_edit_text)
                 isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
             }
-            R.id.event_creation_logo -> {
+            R.id.add_logo_floating_button -> {
                 initPopup()
             }
         }
@@ -354,6 +344,8 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
 
         private val REQUEST_TAKE_PHOTO = 100
         private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+        private val PERMISSION_CAMERA = 102
+        private val PERMISSION_WRITE_STORAGE = 2
 
     }
 }
