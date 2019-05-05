@@ -4,7 +4,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".presentation.ui.fragments.CreateEventFragment">
+             tools:context=".presentation.ui.fragments.CreateEventFragmentNe">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -256,6 +256,7 @@
                             android:layout_height="wrap_content" android:id="@+id/validate_event"
                             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            android:clickable="true"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

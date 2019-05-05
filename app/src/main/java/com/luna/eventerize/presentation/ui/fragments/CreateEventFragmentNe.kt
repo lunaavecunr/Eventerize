@@ -1,10 +1,12 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -18,12 +20,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
-import com.luna.eventerize.presentation.ui.picasso.CircleTransform
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
@@ -31,7 +31,6 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -75,6 +74,9 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
 
         //Logo
         Picasso.get().load(R.drawable.add_image).into(event_creation_logo)
+
+        //Permissions
+        checkPermissions(Manifest.permission.CAMERA, PERMISSION_CAMERA)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -98,23 +100,28 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
 
     private fun checkIfFormIsCorrectlyFilled(): Boolean {
         if (event_creation_title_text.editableText.toString().isNullOrBlank()) {
+            event_title_input_layout.boxStrokeColor = Color.RED
             displayErrorMessage(getString(R.string.no_title_event))
             return false
         }
         if (startDate == null) {
             displayErrorMessage(getString(R.string.no_start_date))
+            begin_date_text_input.boxStrokeColor = Color.RED
             return false
         }
         if (startHour == null) {
             displayErrorMessage(getString(R.string.no_start_hour))
+            begin_hour_text_input.boxStrokeColor = Color.RED
             return false
         }
         if (endDate == null) {
             displayErrorMessage(getString(R.string.no_end_date))
+            end_date_edit_text.boxStrokeColor = Color.RED
             return false
         }
         if (endHour == null) {
             displayErrorMessage(getString(R.string.no_end_hour))
+            end_time_edit_text.boxStrokeColor = Color.RED
             return false
         }
         return true
@@ -293,8 +300,8 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
                         Picasso.get().isLoggingEnabled = true
                         val imageBitmap = data.extras.get("data") as Bitmap
                         saveImage(imageBitmap)
-                        Picasso.get().load(photoFilePath!!.trim()).into(event_creation_logo)
-                        //event_creation_logo.setImageBitmap(imageBitmap)
+                        //Picasso.get().load(photoFilePath!!.trim()).into(event_creation_logo)
+                        event_creation_logo.setImageBitmap(imageBitmap)
 
                     }
                 }
@@ -302,16 +309,15 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
         }
     }
 
-    private fun permissions(requestCode: String) {
-        if(ContextCompat.checkSelfPermission(activity as Activity, Manifest.permission.CAMERA)
+    private fun generateEvent(){
+        isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
+    }
+
+    private fun checkPermissions(requestCode: String, requestPermission: Int) {
+        if(ContextCompat.checkSelfPermission(activity as Activity, requestCode)
         != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(activity as Activity, arrayOf(Manifest.permission.CAMERA),
-                PERMISSION_CAMERA)
-        }
-        if(ContextCompat.checkSelfPermission(activity as Activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(activity as Activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                PERMISSION_WRITE_STORAGE)
+            ActivityCompat.requestPermissions(activity as Activity, arrayOf(requestCode),
+                requestPermission)
         }
     }
 
@@ -319,22 +325,21 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
         when (v.id) {
             R.id.begin_date_edit_text -> {
                 initDatePicker(begin_date_edit_text, BEGINDATE)
-                isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
             }
             R.id.end_day_edit_text -> {
                 initDatePicker(end_day_edit_text, ENDDATE)
-                isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
             }
             R.id.begin_hour_edit_text -> {
                 initTimePicker(BEGINHOUR, begin_hour_edit_text)
-                isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
             }
             R.id.end_hour_edit_text -> {
                 initTimePicker(ENDHOUR, end_hour_edit_text)
-                isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
             }
             R.id.add_logo_floating_button -> {
                 initPopup()
+            }
+            R.id.validate_event -> {
+                generateEvent()
             }
         }
     }
