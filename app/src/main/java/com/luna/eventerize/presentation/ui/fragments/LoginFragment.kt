@@ -50,7 +50,7 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
            }
            R.id.fragment_login_createAccountTV -> {
-               navigator.displaySignUp()
+               navigator.displayEventDetails()
            }
 
        }

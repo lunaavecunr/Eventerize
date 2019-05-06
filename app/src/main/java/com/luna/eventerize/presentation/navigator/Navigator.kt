@@ -17,4 +17,8 @@ class Navigator(fragmentManager: FragmentManager) {
     fun displaySignUp() {
         fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, SignUpFragment.newInstance()).addToBackStack(null).commit()
     }
+
+    fun displayEventDetails() {
+        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, EventDetailsFragment.newInstance()).addToBackStack(null).commit()
+    }
 }

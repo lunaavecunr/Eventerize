@@ -28,6 +28,10 @@
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
 
+    <!--EVENT DETAILS-->
+    <string name="participant_label_single">participant</string>
+    <string name="participant_label_plural">participants</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="event_details_title">Détails de l\'évènement</string>
