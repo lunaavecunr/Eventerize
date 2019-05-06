@@ -36,7 +36,9 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         }
 
         val updateUser = Observer<ParseUser> {
-            TODO()
+
+            //TEMP
+            navigator.displaySignUp()
         }
 
         viewModel.getError().observe(this, updateError)

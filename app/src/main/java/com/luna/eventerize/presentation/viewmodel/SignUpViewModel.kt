@@ -48,7 +48,28 @@ class SignUpViewModel : ViewModel() {
         }
     }
 
+    //TEMP
+    fun logout() {
+        repository.logout()
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(EventerizeError(EventerizeApp.getInstance().getString(R.string.login_connection_failed), EventerizeApp.getInstance().getString(R.string.login_error_title)))
+                    }
+                    it.isFaulted -> {
+                        error.postValue(EventerizeError(it.error.message.toString(), EventerizeApp.getInstance().getString(R.string.login_error_title)))
+                    }
+                    else -> {
+                        success.postValue(true)
+                    }
+                }
+            }
+    }
+
     fun getError(): LiveData<EventerizeError> = error
 
     fun getSuccess(): LiveData<Boolean> = success
+
+    //TEMP
+    fun getSucess2(): LiveData<Boolean> = success
 }
