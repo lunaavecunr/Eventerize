@@ -11,7 +11,7 @@ class Navigator(fragmentManager: FragmentManager) {
     private val fragmentManager: FragmentManager = fragmentManager
 
     fun displayLogin() {
-        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, EventDetailsFragment()).commit()
+        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, LoginFragment()).commit()
     }
 
     fun displaySignUp() {

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 
@@ -17,6 +18,7 @@ import com.luna.eventerize.presentation.ui.adapter.EventDetailsAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import kotlinx.android.synthetic.main.fragment_event_details.*
+import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,11 +47,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_details, container, false)
     }
 
@@ -58,13 +56,14 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         event = Event(13,"Rue de la Fraternité","13/06/1983","16/06/1987","BRUNON",
             ContextCompat.getDrawable(context!!,R.drawable.ic_calendar)!!,
-            arrayListOf())
+            arrayListOf(),"Marriage")
 
         //Toolbar
         navigator = Navigator(fragmentManager!!)
-        activity!!.title = getString(R.string.event_details_title)
+        activity!!.title = "${event!!.title} - ${getString(R.string.event_details_title)}"
         event_detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
         setHasOptionsMenu(true)
+        (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
 
         initOnClickListener()
 

@@ -5,6 +5,7 @@
                                    android:layout_height="wrap_content">
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" tools:srcCompat="@tools:sample/avatars" android:id="@+id/event_details_ressource_photo"/>
+            android:layout_width="@android:dimen/thumbnail_width"
+            android:layout_height="@android:dimen/thumbnail_height" tools:srcCompat="@tools:sample/avatars"
+            android:id="@+id/event_details_ressource_photo"/>
 </androidx.cardview.widget.CardView>
