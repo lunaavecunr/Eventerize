@@ -1,12 +1,12 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.Manifest
 import android.app.Activity
-import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,80 +15,36 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.luna.eventerize.BuildConfig
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
-import com.luna.eventerize.presentation.ui.picasso.CircleTransform
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
-import java.io.File
-import java.io.IOException
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-
 import java.util.*
-/*
 
-class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
-}
-   /* override fun onClick(v: View?) {
-        when (v!!.id) {
-            R.id.manage_invitations_label -> {
-                //Todo : Générer les invitations
-            }
-            R.id.begin_date_edit_text -> {
-                initDatePicker(Calendar.getInstance(), CreateEventViewModel.BEGIN_DATE, begin_date_edit_text)
-            }
-            R.id.begin_hour_edit_text -> {
-                initTimePicker(CreateEventViewModel.BEGIN_HOUR, begin_hour_edit_text)
-            }
-            R.id.end_day_edit_text -> {
-                initDatePicker(Calendar.getInstance(), CreateEventViewModel.END_DATE, end_day_edit_text)
-            }
-            R.id.end_hour_edit_text -> {
-                initTimePicker(CreateEventViewModel.END_HOUR, end_hour_edit_text)
-            }
-            R.id.event_creation_logo ->{
-                val dialog = AlertDialog.Builder(context!!)
-                    .setTitle(getString(R.string.logo_choice))
-                    .setMessage(getString(R.string.logo_choice_message))
-                    .setPositiveButton(getString(R.string.camera_chosen)
-                    ) { dialog, id ->
-                        takePhoto()
-                    }
-                    .setNegativeButton(getString(R.string.gallery_chosen)
-                    ) { dialog, id ->
-                        selectImageInAlbum()
-                    }
-                dialog.create()
-                dialog.show()
-            }
-            R.id.validate_event ->{
-            }
-        }
-    }
+const val BEGIN_DATE = "BEGIN_DATE"
+const val END_DATE = "END_DATE"
+const val BEGIN_HOUR = "BEGIN_HOUR"
+const val END_HOUR = "END_HOUR"
+const val REQUEST_TAKE_PHOTO = 100
+const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+const val PERMISSION_CAMERA = 102
 
-    private fun initLogo(code : Int){
-        Picasso.get().load(code).transform(CircleTransform()).into(event_creation_logo)
-    }
-
-    private fun logoClickListener(){
-        event_creation_logo.setOnClickListener(this)
-    }
-
-    private fun buttonListener(){
-        validate_event.setOnClickListener(this)
-    }
-
-    override var viewModelClass = CreateEventViewModel::class
-    lateinit var navigator: Navigator
+class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
+    override val viewModelClass = CreateEventViewModel::class
+    private lateinit var navigator: Navigator
+    private var startDate: Date? = null
+    private var endDate: Date? = null
+    private var startHour: Date? = null
+    private var endHour: Date? = null
+    private var isFormCorrectlyFilled: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,6 +52,25 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_event, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //SetListeners
+        initListeners()
+
+        //Toolbar
+        navigator = Navigator(fragmentManager!!)
+        activity!!.title = getString(R.string.creating_event)
+        create_event_fragment_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity).setSupportActionBar(create_event_fragment_toolbar)
+
+        //Logo
+        val addImage = ContextCompat.getDrawable(context!!, R.drawable.ic_add_image)
+        event_creation_logo.setImageDrawable(addImage)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -107,101 +82,108 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initPickers()
-        initToolbar()
-        initMutableLiveData()
-        generateInvitations()
-        logoClickListener()
-        buttonListener()
-        initLogo(R.drawable.add_image)
+    private fun initListeners() {
+        begin_date_edit_text.setOnClickListener(this)
+        begin_hour_edit_text.setOnClickListener(this)
+        end_day_edit_text.setOnClickListener(this)
+        end_hour_edit_text.setOnClickListener(this)
+        manage_invitations.setOnClickListener(this)
+        validate_event.setOnClickListener(this)
+        event_creation_logo.setOnClickListener(this)
     }
 
-    private fun correctlyFilled():Boolean{
-        return (isEditTextEmpty(event_title_input_layout)
-                && isEditTextEmpty(event_location_layout)
-                && isEditTextEmpty(begin_hour_text_input)
-                && isEditTextEmpty(begin_date_text_input)
-                && isEditTextEmpty(end_date_edit_text)
-                && isEditTextEmpty(end_time_edit_text))
-    }
-
-    private fun isEditTextEmpty(editText: TextInputLayout):Boolean{
-        return editText.editText!!.editableText.toString().isEmpty()
-    }
-
-    private fun setDateTextView(
-        firstDate:Date,
-        endDate: Date
-    ) {
-        val isSecondEmpty = end_day_edit_text.editableText.isNullOrEmpty()
-        if(isSecondEmpty){
-            updateEndDateEditText(firstDate,endDate)
-        }else if(firstDate.after(viewModel.endEvent.value)){
-            Toast.makeText(context,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
-        }else{
-            viewModel.updateDate(CreateEventViewModel.BEGIN_DATE,firstDate)
+    private fun checkIfFormIsCorrectlyFilled(): Boolean {
+        if (event_creation_title_text.editableText.toString().isNullOrBlank()) {
+            event_title_input_layout.boxStrokeColor = Color.RED
+            displayErrorMessage(getString(R.string.no_title_event))
+            return false
         }
+        if(event_location_edit_text.editableText.toString().isNullOrBlank()){
+            displayErrorMessage(getString(R.string.no_location_given))
+            return false
+        }
+        if (startDate == null) {
+            displayErrorMessage(getString(R.string.no_start_date))
+            begin_date_text_input.boxStrokeColor = Color.RED
+            return false
+        }
+        if (startHour == null) {
+            displayErrorMessage(getString(R.string.no_start_hour))
+            begin_hour_text_input.boxStrokeColor = Color.RED
+            return false
+        }
+        if (endDate == null) {
+            displayErrorMessage(getString(R.string.no_end_date))
+            end_date_edit_text.boxStrokeColor = Color.RED
+            return false
+        }
+        if (endHour == null) {
+            displayErrorMessage(getString(R.string.no_end_hour))
+            end_time_edit_text.boxStrokeColor = Color.RED
+            return false
+        }
+        return true
     }
 
-    private fun updateDate(date: Date, eventType:String){
-        viewModel.updateDate(eventType,date)
+    private fun displayErrorMessage(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * Init [DatePickerDialog] and [TimePickerDialog] pickers
-     */
-    private fun initPickers() {
-        setTextEditOnClickListener()
-    }
-
-    private fun initMutableLiveData(){
-        updateDateTextInputLayout(begin_date_edit_text,CreateEventViewModel.BEGIN_DATE)
-        updateDateTextInputLayout(end_day_edit_text,CreateEventViewModel.END_DATE)
-    }
-
-    /**
-     * Init [TextInputEditText] listeners
-     */
-    private fun setTextEditOnClickListener() {
-        initEditTextListener(begin_date_edit_text)
-        initEditTextListener(end_day_edit_text)
-        initEditTextListener(begin_hour_edit_text)
-        initEditTextListener(end_hour_edit_text)
-    }
-
-    private fun updateEndDateEditText(beginDate: Date, endDate: Date){
-                if(!viewModel.isEndBeforeBegin(beginDate,endDate)){
-                    Toast.makeText(activity,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
-                }else{
-                    updateDate(endDate,CreateEventViewModel.END_DATE)
-                }
-    }
-
-    /**
-     * Init a [TextInputEditText.setOnClickListener]
-     */
-    private fun initEditTextListener(editText: TextInputEditText) {
-        editText.setOnClickListener(this)
-    }
-
-
-    /**
-     * Init single [DatePickerDialog] for a [TextInputEditText]
-     * @param eventDateType eventDataType for the [DatePickerDialog] ([CreateEventViewModel.BEGIN_DATE] or [CreateEventViewModel.END_DATE])
-     * @param editText [TextInputEditText] which will receive data
-     */
-    private fun initDatePicker(now: Calendar, eventDateType: String, editText: TextInputEditText) {
+    private fun initDatePicker(editText: TextInputEditText, editTextType: String) {
+        var now = Calendar.getInstance()
         val dpd = DatePickerDialog.newInstance(
             { _, yearDatePicker, monthDatePicker, dayDatePicker ->
-                if (eventDateType == CreateEventViewModel.BEGIN_DATE) {
-                    setDateTextView(Date(yearDatePicker,monthDatePicker,dayDatePicker),Date(yearDatePicker,monthDatePicker,dayDatePicker))
-                } else {
-                    val currentDate = Date()
-                    if(viewModel.beginEvent.value == null) currentDate else viewModel.beginEvent.value?.let {
-                        updateEndDateEditText(
-                            it,Date(yearDatePicker,monthDatePicker,dayDatePicker))
+                when (editTextType) {
+                    BEGIN_DATE -> {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(yearDatePicker, monthDatePicker, dayDatePicker)
+                        calendar.set(Calendar.HOUR_OF_DAY, 0)
+                        calendar.set(Calendar.MINUTE, 0)
+                        calendar.set(Calendar.SECOND, 0)
+                        calendar.set(Calendar.MILLISECOND, 0)
+
+                        var date = Date(calendar.timeInMillis)
+                        if (endDate != null) {
+                            if (endDate!!.after(date)) {
+                                updateTextEdit(date, editText, "dd/MM/yyyy")
+                                startDate = date
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    getString(R.string.end_date_before_begin_date),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            updateTextEdit(date, editText, "dd/MM/yyyy")
+                            startDate = date
+                        }
+
+                    }
+                    END_DATE -> {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(yearDatePicker, monthDatePicker, dayDatePicker)
+                        calendar.set(Calendar.HOUR_OF_DAY, 0)
+                        calendar.set(Calendar.MINUTE, 0)
+                        calendar.set(Calendar.SECOND, 0)
+                        calendar.set(Calendar.MILLISECOND, 0)
+
+                        var date = Date(calendar.timeInMillis)
+                        if (startDate != null) {
+                            if (startDate!!.before(date) || startDate!! == date) {
+                                updateTextEdit(date, editText, "dd/MM/yyyy")
+                                endDate = date
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    getString(R.string.end_date_before_begin_date),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            updateTextEdit(date, editText, "dd/MM/yyyy")
+                            endDate = date
+                        }
                     }
                 }
             },
@@ -214,146 +196,150 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         dpd.show(fragmentManager, "Datepickerdialog")
     }
 
-    /**
-     * Set the date for the [TextInputEditText]
-     */
-    private fun updateDateTextInputLayout(editText: TextInputEditText, eventDate: String) {
-        viewModel.getEventDate(eventDate).observe(this, androidx.lifecycle.Observer {
-            editText.setText(
-                "${viewModel.formatNumber(it.date)}/${viewModel.formatNumber(it.month+1)}/${viewModel.formatNumber(
-                    it.year
-                )}"
-            )
-        })
-    }
-
-
-    /**
-     * Init single date picker event for a [TextInputEditText]
-     * @param eventHourType type event for the time picker ([CreateEventViewModel.BEGIN_HOUR] or [CreateEventViewModel.END_HOUR])
-     * @param editText edit text which will receive data
-     */
     private fun initTimePicker(eventHourType: String, editText: TextInputEditText) {
         val htd = TimePickerDialog.newInstance(
-            { _, hourDatePicker, minuteDatePicker, secondDatePicker ->
-                viewModel.updateHour(
-                    eventHourType,
-                    viewModel.createTime(hourDatePicker, minuteDatePicker, secondDatePicker)
-                )
+            { _, hourDatePicker, minuteDatePicker, _ ->
+                when (eventHourType) {
+                    BEGIN_HOUR -> {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(Calendar.HOUR_OF_DAY, hourDatePicker)
+                        calendar.set(Calendar.MINUTE, minuteDatePicker)
+                        var date = Date(calendar.timeInMillis)
+                        if((startDate != null && endDate!= null) && startDate!! == endDate){
+                            if((endHour != null && date.before(endHour)) ||(endHour == null)){
+                                updateTextEdit(date, editText,"HH:mm")
+                                startHour = date
+                            }else{
+                                Toast.makeText(context,getString(R.string.end_hour_before_start_hour),Toast.LENGTH_SHORT).show()
+                            }
+                        } else  {
+                            updateTextEdit(date, editText,"HH:mm")
+                            startHour = date
+                        }
+                    }
+                    END_HOUR -> {
+                        val calendar = Calendar.getInstance()
+                        calendar.set(Calendar.HOUR_OF_DAY, hourDatePicker)
+                        calendar.set(Calendar.MINUTE, minuteDatePicker)
+                        var date = Date(calendar.timeInMillis)
+
+                        if((startDate != null && endDate!= null) && startDate!! == endDate){
+                            if((startHour != null && startHour!!.before(date)) || (startHour == null)){
+                                updateTextEdit(date, editText,"HH:mm")
+                                endHour = date
+                            }else{
+                                Toast.makeText(context,getString(R.string.end_hour_before_start_hour),Toast.LENGTH_SHORT).show()
+                            }
+                        } else  {
+                            updateTextEdit(date, editText,"HH:mm")
+                            endHour = date
+                        }
+                    }
+                }
             }, true
         )
 
         htd.version = TimePickerDialog.Version.VERSION_2
         htd.show(fragmentManager, "TimePickerDialog")
-        updateHourTextInputLayout(editText, eventHourType)
     }
 
-    /**
-     * Set the date for the [TextInputEditText]
-     */
-    private fun updateHourTextInputLayout(editText: TextInputEditText, eventHour: String) {
-        /*viewModel.getEventHour(eventHour).observe(this, androidx.lifecycle.Observer {
-            editText.setText("${viewModel.formatNumber(it.hour)}:${viewModel.formatNumber(it.minutes)}")
-        })*/
+    private fun updateTextEdit(
+        date: Date,
+        editText: TextInputEditText,
+        formatDate: String
+    ) {
+        val format = SimpleDateFormat(formatDate, Locale.FRENCH)
+        var formattedDate = format.format(date)
+        editText.setText(formattedDate)
     }
 
-    /**
-     * Init the toolbar
-     */
-    private fun initToolbar() {
-        navigator = Navigator(fragmentManager!!)
-        initToolbarTitle()
-        initToolbarBackNavigation()
+    private fun initPopup() {
+        val dialog = AlertDialog.Builder(context!!)
+            .setTitle(getString(R.string.logo_choice))
+            .setMessage(getString(R.string.logo_choice_message))
+            .setPositiveButton(
+                getString(R.string.camera_chosen)
+            ) { _, _ ->
+                takePhoto()
+            }
+            .setNegativeButton(
+                getString(R.string.gallery_chosen)
+            ) { _, _ ->
+                selectImageInAlbum()
+            }
+        dialog.create()
+        dialog.show()
     }
 
-    /**
-     * Init the toolbar title
-     */
-    private fun initToolbarTitle() {
-        activity!!.title = getString(R.string.creating_event)
-    }
-
-    fun selectImageInAlbum() {
+    private fun selectImageInAlbum() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "image/*"
-            startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
     }
-    fun takePhoto() {
-        try {
-           val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-           startActivityForResult(intent, REQUEST_TAKE_PHOTO)
-       } catch (ex:IOException) {
-           ex.printStackTrace()
-       }
+
+    private fun takePhoto() {
+        val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(pictureIntent, REQUEST_TAKE_PHOTO)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK){
-            when(requestCode){
-                REQUEST_SELECT_IMAGE_IN_ALBUM ->{
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_SELECT_IMAGE_IN_ALBUM -> {
                     val selectedImage = data!!.data
-                    Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
+                    Picasso.get().load(selectedImage).centerCrop().resize(360,360).into(event_creation_logo)
                 }
-                REQUEST_TAKE_PHOTO ->{
-                    if (data != null && data.getExtras() != null) {
-                        val imageBitmap = data.getExtras().get("data") as Bitmap
-                        //viewModel.saveBitmap("Mon titre",imageBitmap)
+                REQUEST_TAKE_PHOTO -> {
+                    if (data != null && data.extras != null) {
+                        Picasso.get().isLoggingEnabled = true
+                        val imageBitmap = data.extras.get("data") as Bitmap
                         event_creation_logo.setImageBitmap(imageBitmap)
-                        //Picasso.get().load(selectedImage).transform(CircleTransform()).into(event_creation_logo)
                     }
                 }
             }
         }
     }
 
-private fun createImageFile():File{
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_";
-        //This is the directory in which the file will be created. This is the default location of Camera photos
-        val storageDir = File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "Camera");
-        val image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for using again
-        //viewModel.imagePath = "file://" + image.getAbsolutePath();
-        return image;
+    private fun generateEvent(){
+        isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
     }
 
-    /**
-     * Init the toolbar navigation
-     */
-    private fun initToolbarBackNavigation() {
-        create_event_fragment_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-        setHasOptionsMenu(true)
-        (activity as AppCompatActivity).setSupportActionBar(create_event_fragment_toolbar)
+    private fun checkPermissions(requestCode: String, requestPermission: Int) {
+        if(ContextCompat.checkSelfPermission(activity as Activity, requestCode)
+        != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(activity as Activity, arrayOf(requestCode),
+                requestPermission)
+        }
     }
 
-    /**
-     * Initialisation of the invitations generation
-     */
-    private fun generateInvitations() {
-        manage_invitations_label.setOnClickListener(this)
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.begin_date_edit_text -> {
+                initDatePicker(begin_date_edit_text, BEGIN_DATE)
+            }
+            R.id.end_day_edit_text -> {
+                initDatePicker(end_day_edit_text, END_DATE)
+            }
+            R.id.begin_hour_edit_text -> {
+                initTimePicker(BEGIN_HOUR, begin_hour_edit_text)
+            }
+            R.id.end_hour_edit_text -> {
+                initTimePicker(END_HOUR, end_hour_edit_text)
+            }
+            R.id.event_creation_logo -> {
+                //Permissions
+                checkPermissions(Manifest.permission.CAMERA, PERMISSION_CAMERA)
+
+                initPopup()
+            }
+            R.id.validate_event -> {
+                generateEvent()
+            }
+        }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CreateEventFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance() = CreateEventFragment()
-        private val REQUEST_TAKE_PHOTO = 0
-        private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
-    }*/
+        fun newInstance() = CreateEventFragmentNe()
+    }
 }
-*/
