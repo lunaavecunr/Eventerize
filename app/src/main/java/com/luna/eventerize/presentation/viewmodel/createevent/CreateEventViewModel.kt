@@ -17,7 +17,7 @@ class CreateEventViewModel : ViewModel(){
      * Return the [EventDate] [MutableLiveData]
      */
     /*fun getEventDate(eventType:String): MutableLiveData<Date> {
-        if(eventType == BEGINDATE){
+        if(eventType == BEGIN_DATE){
             return beginEvent
         }else{
             return endEvent
@@ -85,7 +85,7 @@ class CreateEventViewModel : ViewModel(){
      * Return the [EventHour] [MutableLiveData]
      */
     fun getEventHour(eventType:String): MutableLiveData<EventHour> {
-        if(eventType == BEGINHOUR){
+        if(eventType == BEGIN_HOUR){
             return beginEventHour
         }else{
             return endEventHour
@@ -101,9 +101,9 @@ class CreateEventViewModel : ViewModel(){
     }
 
     companion object{
-        const val BEGINDATE = "BEGINDATE"
-        const val ENDDATE = "ENDDATE"
-        const val BEGINHOUR = "BEGINHOUR"
-        const val ENDHOUR = "ENDHOUR"
+        const val BEGIN_DATE = "BEGIN_DATE"
+        const val END_DATE = "END_DATE"
+        const val BEGIN_HOUR = "BEGIN_HOUR"
+        const val END_HOUR = "END_HOUR"
     }*/
 }

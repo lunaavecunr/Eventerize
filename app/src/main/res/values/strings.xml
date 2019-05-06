@@ -56,4 +56,5 @@
     <string name="permissions_not_granted">Vous devez autoriser ces permissions pour pouvoir continuer à utiliser
         l\'application!
     </string>
+    <string name="end_hour_before_start_hour">L\'heure de fin se trouve avant l\'heure de début!</string>
 </resources>

@@ -44,16 +44,16 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 //Todo : Générer les invitations
             }
             R.id.begin_date_edit_text -> {
-                initDatePicker(Calendar.getInstance(), CreateEventViewModel.BEGINDATE, begin_date_edit_text)
+                initDatePicker(Calendar.getInstance(), CreateEventViewModel.BEGIN_DATE, begin_date_edit_text)
             }
             R.id.begin_hour_edit_text -> {
-                initTimePicker(CreateEventViewModel.BEGINHOUR, begin_hour_edit_text)
+                initTimePicker(CreateEventViewModel.BEGIN_HOUR, begin_hour_edit_text)
             }
             R.id.end_day_edit_text -> {
-                initDatePicker(Calendar.getInstance(), CreateEventViewModel.ENDDATE, end_day_edit_text)
+                initDatePicker(Calendar.getInstance(), CreateEventViewModel.END_DATE, end_day_edit_text)
             }
             R.id.end_hour_edit_text -> {
-                initTimePicker(CreateEventViewModel.ENDHOUR, end_hour_edit_text)
+                initTimePicker(CreateEventViewModel.END_HOUR, end_hour_edit_text)
             }
             R.id.event_creation_logo ->{
                 val dialog = AlertDialog.Builder(context!!)
@@ -141,7 +141,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         }else if(firstDate.after(viewModel.endEvent.value)){
             Toast.makeText(context,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
         }else{
-            viewModel.updateDate(CreateEventViewModel.BEGINDATE,firstDate)
+            viewModel.updateDate(CreateEventViewModel.BEGIN_DATE,firstDate)
         }
     }
 
@@ -157,8 +157,8 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     }
 
     private fun initMutableLiveData(){
-        updateDateTextInputLayout(begin_date_edit_text,CreateEventViewModel.BEGINDATE)
-        updateDateTextInputLayout(end_day_edit_text,CreateEventViewModel.ENDDATE)
+        updateDateTextInputLayout(begin_date_edit_text,CreateEventViewModel.BEGIN_DATE)
+        updateDateTextInputLayout(end_day_edit_text,CreateEventViewModel.END_DATE)
     }
 
     /**
@@ -175,7 +175,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 if(!viewModel.isEndBeforeBegin(beginDate,endDate)){
                     Toast.makeText(activity,getString(R.string.end_date_before_begin_date),Toast.LENGTH_SHORT).show()
                 }else{
-                    updateDate(endDate,CreateEventViewModel.ENDDATE)
+                    updateDate(endDate,CreateEventViewModel.END_DATE)
                 }
     }
 
@@ -189,13 +189,13 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
 
     /**
      * Init single [DatePickerDialog] for a [TextInputEditText]
-     * @param eventDateType eventDataType for the [DatePickerDialog] ([CreateEventViewModel.BEGINDATE] or [CreateEventViewModel.ENDDATE])
+     * @param eventDateType eventDataType for the [DatePickerDialog] ([CreateEventViewModel.BEGIN_DATE] or [CreateEventViewModel.END_DATE])
      * @param editText [TextInputEditText] which will receive data
      */
     private fun initDatePicker(now: Calendar, eventDateType: String, editText: TextInputEditText) {
         val dpd = DatePickerDialog.newInstance(
             { _, yearDatePicker, monthDatePicker, dayDatePicker ->
-                if (eventDateType == CreateEventViewModel.BEGINDATE) {
+                if (eventDateType == CreateEventViewModel.BEGIN_DATE) {
                     setDateTextView(Date(yearDatePicker,monthDatePicker,dayDatePicker),Date(yearDatePicker,monthDatePicker,dayDatePicker))
                 } else {
                     val currentDate = Date()
@@ -230,7 +230,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
 
     /**
      * Init single date picker event for a [TextInputEditText]
-     * @param eventHourType type event for the time picker ([CreateEventViewModel.BEGINHOUR] or [CreateEventViewModel.ENDHOUR])
+     * @param eventHourType type event for the time picker ([CreateEventViewModel.BEGIN_HOUR] or [CreateEventViewModel.END_HOUR])
      * @param editText edit text which will receive data
      */
     private fun initTimePicker(eventHourType: String, editText: TextInputEditText) {
