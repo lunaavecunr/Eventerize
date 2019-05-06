@@ -57,4 +57,5 @@
         l\'application!
     </string>
     <string name="end_hour_before_start_hour">L\'heure de fin se trouve avant l\'heure de début!</string>
+    <string name="no_location_given">Aucun lieu n\'a été indiqué!</string>
 </resources>

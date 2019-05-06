@@ -98,6 +98,10 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
             displayErrorMessage(getString(R.string.no_title_event))
             return false
         }
+        if(event_location_edit_text.editableText.toString().isNullOrBlank()){
+            displayErrorMessage(getString(R.string.no_location_given))
+            return false
+        }
         if (startDate == null) {
             displayErrorMessage(getString(R.string.no_start_date))
             begin_date_text_input.boxStrokeColor = Color.RED
