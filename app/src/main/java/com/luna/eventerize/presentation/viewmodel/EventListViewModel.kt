@@ -18,6 +18,9 @@ class EventListViewModel: ViewModel() {
     var eventsRetrivial = MutableLiveData<ArrayList<Event>>()
     var eventsImageRetrivial = MutableLiveData<ArrayList<Event>>()
     var eventsMembersRetrivial = MutableLiveData<ArrayList<Event>>()
+    var eventsOwnersRetrivial = MutableLiveData<ArrayList<Event>>()
+    var eventsSortedByOwner = MutableLiveData<ArrayList<Event>>()
+    var eventsSortedByMembers = MutableLiveData<ArrayList<Event>>()
 
 
     var events =  ArrayList<Event>()
@@ -123,7 +126,80 @@ class EventListViewModel: ViewModel() {
         }
     }
 
+    fun getOwnersEvent() {
+        for (event in events){
+            repository.getRelation(event.parse.owner).continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                        Log.d("mlk", "err")
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                        Log.d("mlk", it.error.message.toString())
+                    }
+                    else -> {
+                        val owners = ArrayList<ParseUser>()
+                        for (user in it.result) {
+                            owners.add(user)
+                        }
+                        event.owner = owners
+
+                        eventsOwnersRetrivial.postValue(events)
+                    }
+                }
+            }
+        }
+    }
+
+    fun sortCurrentUserByOwner() {
+        val eventByOwner = ArrayList<Event>()
+        events.map {value ->
+            if(value.owner != null){
+                for (user in value.owner!!) {
+                    if(user.objectId == ParseUser.getCurrentUser().objectId) {
+                        eventByOwner.add(value)
+                    }
+                }
+
+            }
+
+        }
+
+        eventsSortedByOwner.postValue(eventByOwner)
+    }
+
+    fun sortCurrentUserByMembers() {
+        val eventByMembers = ArrayList<Event>()
+        events.map {value ->
+            if(value.members != null){
+                for (user in value.members!!) {
+                    if(user.objectId == ParseUser.getCurrentUser().objectId) {
+                        eventByMembers.add(value)
+                    }
+                }
+
+            }
+
+        }
+
+        eventsSortedByMembers.postValue(eventByMembers)
+    }
+
     fun getEventsRetrivial() : LiveData<ArrayList<Event>> = eventsRetrivial
     fun getEventsImageRetrivial() : LiveData<ArrayList<Event>> = eventsImageRetrivial
     fun getEventsMembersRetrivial() : LiveData<ArrayList<Event>> = eventsMembersRetrivial
+    fun getEventsOwnersRetrivial() : LiveData<ArrayList<Event>> = eventsOwnersRetrivial
+    fun getEventsSortByOwner() : LiveData<ArrayList<Event>> = eventsSortedByOwner
+    fun getEventsSortByMembers() : LiveData<ArrayList<Event>> = eventsSortedByMembers
 }

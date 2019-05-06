@@ -2,7 +2,6 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
+import com.parse.ParseUser
 import kotlinx.android.synthetic.main.fragment_event_list.*
 
 class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListener {
@@ -41,16 +41,24 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         fragment_event_list_fab.setOnClickListener(this)
 
         val updateEvent = Observer<ArrayList<Event>> {
-//            for (event in it) {
-//                Log.d("mlk", "Title: " + event.title)
-//                Log.d("mlk", "StartDate: " + event.startDate)
-//                Log.d("mlk", "EndDate: " + event.endDate)
-//                Log.d("mlk", "Location: " + event.location)
-//                Log.d("mlk", "Logo: " + event.logo!!.url)
-//            }
+            viewModel.getOwnersEvent()
+            viewModel.getMembersEvent()
+        }
 
+        val updateEventOwners = Observer<ArrayList<Event>> {
+            viewModel.sortCurrentUserByOwner()
+        }
+
+        val updateEventMembers = Observer<ArrayList<Event>> {
+            viewModel.sortCurrentUserByMembers()
+        }
+
+        val updateEventSortByOwner = Observer<ArrayList<Event>> {
             updateList(it)
-//            viewModel.getMembersEvent()
+        }
+
+        val updateEventSortByMembers = Observer<ArrayList<Event>> {
+            updateList(it)
         }
 /*
 
@@ -77,6 +85,10 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
 //        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
 //        viewModel.getEventsImageRetrivial().observe(this,updateEventImage)
+        viewModel.getEventsSortByOwner().observe(this, updateEventSortByOwner)
+        viewModel.getEventsSortByMembers().observe(this, updateEventSortByMembers)
+        viewModel.getEventsOwnersRetrivial().observe(this, updateEventOwners)
+        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
         viewModel.getEventsRetrivial().observe(this, updateEvent)
 
         viewModel.getEvent()

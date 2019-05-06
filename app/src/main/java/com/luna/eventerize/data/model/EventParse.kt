@@ -61,4 +61,13 @@ class EventParse : ParseObject() {
             return getParseFile("logo")
         }
 
+    var owner: ParseRelation<ParseUser>
+        set(value) {
+            put("owner", value!!)
+        }
+        get() {
+            return getRelation("owner")
+        }
+
+
 }

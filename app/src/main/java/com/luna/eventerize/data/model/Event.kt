@@ -15,6 +15,7 @@ class Event(eventParse: EventParse) {
     var members: ArrayList<ParseUser>? = null
     var images: ArrayList<Image>? = null
     var logo: ParseFile? = null
+    var owner: ArrayList<ParseUser>? = null
 
     init {
         this.title = eventParse.name
