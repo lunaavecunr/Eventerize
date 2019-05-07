@@ -17,7 +17,6 @@ import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import kotlinx.android.synthetic.main.fragment_event_list.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListener {
 
@@ -73,7 +72,7 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         when (v.id) {
             R.id.fragment_event_list_fab -> {
-
+                navigator.displayEventCreation()
             }
         }
 

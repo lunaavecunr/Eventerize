@@ -1,109 +1,89 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
 import android.graphics.Bitmap
-import android.os.Environment
+import android.graphics.BitmapFactory
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.luna.eventerize.data.model.EventDate
-import com.luna.eventerize.data.model.EventHour
+import com.luna.eventerize.EventerizeApp
+import com.luna.eventerize.R
+import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.EventerizeError
+import com.parse.ParseFile
+import java.io.ByteArrayOutputStream
 import java.util.*
-import java.io.File
-import java.io.FileOutputStream
 
 
 class CreateEventViewModel : ViewModel(){
+    var repository = EventerizeApp.getInstance().repository
+    var error = MutableLiveData<EventerizeError>()
+    var successUpload = MutableLiveData<Boolean>()
 
-    /**
-     * Return the [EventDate] [MutableLiveData]
-     */
-    /*fun getEventDate(eventType:String): MutableLiveData<Date> {
-        if(eventType == BEGIN_DATE){
-            return beginEvent
-        }else{
-            return endEvent
+    fun saveEvent(title:String, location:String, startDate: Date?, startHour:Date?, endDate:Date?, endHour:Date?, logo:Bitmap?){
+
+        if(title.isBlank() || location.isBlank() || startDate == null || startHour == null || endDate == null ||  endHour == null){
+            error.postValue(EventerizeError("Un champ n'a pas été rempli!","Erreur lors de la création de l'évènement"))
+            return
         }
-    }
 
-    fun saveBitmap(eventTitle:String, bitmap: Bitmap){
-        val file_path = Environment.getExternalStorageDirectory().absolutePath + "/PhysicsSketchpad"
-        val dir = File(file_path)
-        if (!dir.exists())
-            dir.mkdirs()
-        val file = File(dir, eventTitle)
-        val fOut = FileOutputStream(file)
-
-        bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut)
-        fOut.flush()
-        fOut.close()
-    }
-
-    /*fun isAllSet(title:String, location:String, beginDate:String, endDate:String, ){
-
-    }*/
-
-    fun updateAreDateSame(newValue:Boolean){
-        areDateSame.postValue(newValue)
-    }
-
-    fun isEndBeforeBegin(beginDate: Date, endDate: Date) : Boolean{
-        if(beginDate != endDate){
-            if(endDate.before(beginDate)){
-                return false
+        val event = Event()
+        event.title = title
+        event.location = location
+        event.startDate = formatDate(startDate,startHour)
+        event.endDate = formatDate(endDate,endHour)
+        if(logo != null) {
+            val stream = ByteArrayOutputStream()
+            logo.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+            val image = ParseFile(byteArray)
+            event.logo = image
+        }else{
+            val logo = ContextCompat.getDrawable(EventerizeApp.getInstance(), R.mipmap.eventerize)
+            val stream = ByteArrayOutputStream()
+            logo!!.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+            val image = ParseFile(byteArray)
+            event.logo = image
+        }
+        repository.saveEvent(event)
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    else -> {
+                       successUpload.postValue(true)
+                    }
+                }
             }
-        }
-        return true
     }
 
-    /**
-     * Format an [Integer] to have two digits
-     */
-    fun formatNumber(number:Int):String{
-        if(number<10){
-            return "0$number"
-        }else{
-            return "$number"
-        }
+    fun formatDate(date:Date, hour:Date):Date{
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val hourCalendar = Calendar.getInstance()
+        hourCalendar.time = hour
+        calendar.set(Calendar.HOUR_OF_DAY,hourCalendar.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.MINUTE,hourCalendar.get(Calendar.MINUTE))
+        return Date(calendar.timeInMillis)
     }
 
-    /**
-     * Post value of an [EventDate] [MutableLiveData]
-     */
-    fun updateDate(eventType: String, data:Date){
-        getEventDate(eventType).postValue(data)
-    }
+    fun getSuccess():LiveData<Boolean> = successUpload
 
-
-    /**
-     * Post value of an [EventDate] [MutableLiveData]
-     */
-    fun updateHour(eventType: String, data:EventHour){
-        getEventHour(eventType).postValue(data)
-    }
-
-
-    /**
-     * Return the [EventHour] [MutableLiveData]
-     */
-    fun getEventHour(eventType:String): MutableLiveData<EventHour> {
-        if(eventType == BEGIN_HOUR){
-            return beginEventHour
-        }else{
-            return endEventHour
-        }
-    }
-
-
-    /**
-     * Create an [EventHour] from three [Integer]
-     */
-    fun createTime(hour:Int = 0, minutes:Int = 0, seconds:Int = 0):EventHour{
-        return EventHour(hour,minutes,seconds)
-    }
-
-    companion object{
-        const val BEGIN_DATE = "BEGIN_DATE"
-        const val END_DATE = "END_DATE"
-        const val BEGIN_HOUR = "BEGIN_HOUR"
-        const val END_HOUR = "END_HOUR"
-    }*/
+    fun getError():LiveData<EventerizeError> = error
 }

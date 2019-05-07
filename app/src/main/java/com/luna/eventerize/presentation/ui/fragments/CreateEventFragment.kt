@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Observable
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
@@ -17,10 +18,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
+import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
@@ -37,7 +41,7 @@ const val REQUEST_TAKE_PHOTO = 100
 const val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
 const val PERMISSION_CAMERA = 102
 
-class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
+class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickListener {
     override val viewModelClass = CreateEventViewModel::class
     private lateinit var navigator: Navigator
     private var startDate: Date? = null
@@ -45,6 +49,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
     private var startHour: Date? = null
     private var endHour: Date? = null
     private var isFormCorrectlyFilled: Boolean = false
+    private var logo:Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +76,18 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
         val addImage = ContextCompat.getDrawable(context!!, R.drawable.ic_add_image)
         event_creation_logo.setImageDrawable(addImage)
 
+
+        val updateError = Observer<EventerizeError> {
+            showError(context!!,it.message)
+        }
+
+        val updateSuccessUpload = Observer<Boolean>{
+            navigator.displayEventList()
+        }
+
+        viewModel.getError().observe(this, updateError)
+        viewModel.getSuccess().observe(this, updateSuccessUpload)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -92,7 +109,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
         event_creation_logo.setOnClickListener(this)
     }
 
-    private fun checkIfFormIsCorrectlyFilled(): Boolean {
+    /*private fun checkIfFormIsCorrectlyFilled(): Boolean {
         if (event_creation_title_text.editableText.toString().isNullOrBlank()) {
             event_title_input_layout.boxStrokeColor = Color.RED
             displayErrorMessage(getString(R.string.no_title_event))
@@ -123,7 +140,7 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
             return false
         }
         return true
-    }
+    }*/
 
     private fun displayErrorMessage(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -289,20 +306,18 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
                 REQUEST_SELECT_IMAGE_IN_ALBUM -> {
                     val selectedImage = data!!.data
                     Picasso.get().load(selectedImage).centerCrop().resize(360,360).into(event_creation_logo)
+                    logo = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, selectedImage)
                 }
                 REQUEST_TAKE_PHOTO -> {
                     if (data != null && data.extras != null) {
                         Picasso.get().isLoggingEnabled = true
                         val imageBitmap = data.extras.get("data") as Bitmap
                         event_creation_logo.setImageBitmap(imageBitmap)
+                        logo = imageBitmap
                     }
                 }
             }
         }
-    }
-
-    private fun generateEvent(){
-        isFormCorrectlyFilled = checkIfFormIsCorrectlyFilled()
     }
 
     private fun checkPermissions(requestCode: String, requestPermission: Int) {
@@ -334,12 +349,12 @@ class CreateEventFragmentNe : BaseFragment<CreateEventViewModel>(), View.OnClick
                 initPopup()
             }
             R.id.validate_event -> {
-                generateEvent()
+                viewModel.saveEvent(event_title_input_layout.editText!!.text.toString(),event_location_layout.editText!!.text.toString(),startDate,startHour,endDate,endHour,logo)
             }
         }
     }
 
     companion object {
-        fun newInstance() = CreateEventFragmentNe()
+        fun newInstance() = CreateEventFragment()
     }
 }
