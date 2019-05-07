@@ -40,8 +40,4 @@ class ParseApiImpl : ParseApi {
         query.whereEqualTo("members", ParseUser.getCurrentUser())
         return query.findInBackground()
     }
-
-    override fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>> {
-        return relation.query.findInBackground()
-    }
 }

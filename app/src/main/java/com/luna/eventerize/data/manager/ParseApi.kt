@@ -11,5 +11,4 @@ interface ParseApi {
     fun getEvent(): Task<List<Event>>
     fun getEventByOwner(): Task<List<Event>>
     fun getEventByMembers(): Task<List<Event>>
-    fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>>
 }
