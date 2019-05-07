@@ -1,7 +1,5 @@
 package com.luna.eventerize.presentation.ui.fragments
 
-import android.graphics.BitmapFactory
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 import com.luna.eventerize.R
@@ -19,6 +16,8 @@ import com.luna.eventerize.presentation.ui.adapter.EventDetailsAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import kotlinx.android.synthetic.main.fragment_event_details.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,10 +52,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        event = Event(13,"Rue de la Fraternité","13/06/1983","16/06/1987","BRUNON",
-            ContextCompat.getDrawable(context!!,R.drawable.ic_calendar)!!,
-            arrayListOf(),"Marriage")
+        initEvent()
 
         //Toolbar
         navigator = Navigator(fragmentManager!!)
@@ -72,10 +68,34 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         initRecyclerView()
     }
 
+    private fun initEvent() {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DAY_OF_YEAR, 13)
+        calendar.set(Calendar.MONTH, 6)
+        calendar.set(Calendar.YEAR, 1983)
+        calendar.set(Calendar.HOUR_OF_DAY, 12)
+        calendar.set(Calendar.MINUTE, 30)
+        var beginDate = Date(calendar.timeInMillis)
+        calendar.set(Calendar.YEAR, 1987)
+        calendar.set(Calendar.DAY_OF_YEAR, 16)
+        var endDate = Date(calendar.timeInMillis)
+        event = Event(
+            13, "Rue de la Fraternité", beginDate, endDate, "BRUNON",
+            ContextCompat.getDrawable(context!!, R.drawable.ic_calendar)!!,
+            arrayListOf(), "Marriage"
+        )
+    }
+
+    private fun formatDate(input:Date):String{
+        val format = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRENCH)
+        var formattedDate = format.format(input)
+        return formattedDate
+    }
+
     private fun initInfos(){
         participant_number.text = "${event!!.participantNumber} ${if(event!!.participantNumber<2){getString(R.string.participant_label_single)}else{getString(R.string.participant_label_plural)}}"
         location_label.text = "${event!!.locationEvent}"
-        event_date_label.text = "Du ${event!!.beginEvent} au ${event!!.endingEvent}"
+        event_date_label_begin.text = "${getString(R.string.begin_label)} ${formatDate(event!!.beginEvent)} ${getString(R.string.end_label)} ${formatDate(event!!.endingEvent)}"
         supervisor_label.text = event!!.supervisor
         event_detail_event_logo.setImageDrawable(event!!.logo)
     }
