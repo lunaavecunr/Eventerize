@@ -1,16 +1,29 @@
 package com.luna.eventerize.data.model
 
+import com.parse.ParseClassName
 import com.parse.ParseFile
+import com.parse.ParseObject
 import com.parse.ParseUser
 
-class Image(imageParse: ImageParse) {
-    var file: ParseFile? = null
-    var user: ParseUser? = null
-    var string: String? = null
-
-    init {
-        this.file = imageParse.file
-        this.user = imageParse.user
-        this.string = imageParse.getString()
+@ParseClassName("Image")
+class Image: ParseObject() {
+    fun getString(): String?{
+        return getString("string")
     }
+
+    var file: ParseFile?
+        set(value) {
+            put("file", value!!)
+        }
+        get() {
+            return getParseFile("file")
+        }
+
+    var user: ParseUser?
+        set(value) {
+            put("user", value!!)
+        }
+        get() {
+            return getParseUser("user")
+        }
 }
