@@ -1,6 +1,8 @@
 package com.luna.eventerize
 
 import android.app.Application
+import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.Image
 import com.luna.eventerize.data.repository.EventerizeRepo
 import com.parse.Parse
 import com.parse.ParseInstallation
@@ -11,16 +13,22 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
+import com.parse.ParseObject
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
 
 
 class EventerizeApp: Application() {
 
     lateinit var repository: EventerizeRepo
+    lateinit var picasso: Picasso
 
     override fun onCreate() {
         super.onCreate()
         app = this
         repository = EventerizeRepo()
+        ParseObject.registerSubclass(Event::class.java)
+        ParseObject.registerSubclass(Image::class.java)
         Parse.initialize(
             Parse.Configuration.Builder(this)
                 .applicationId("11558475925")
@@ -30,6 +38,7 @@ class EventerizeApp: Application() {
                 .build()
         )
         ParseInstallation.getCurrentInstallation().saveInBackground()
+        picasso = Picasso.Builder(this).downloader(OkHttp3Downloader(getOkHttpClientBuilder().build())).build()
     }
 
     fun getOkHttpClientBuilder() : OkHttpClient.Builder
