@@ -1,27 +1,73 @@
 package com.luna.eventerize.data.model
 
-import com.parse.ParseFile
-import com.parse.ParseRelation
-import com.parse.ParseUser
+import com.parse.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class Event(eventParse: EventParse) {
-    var parse: EventParse = eventParse
-    var title: String? = null
-    var startDate: Date? = null
-    var endDate: Date? = null
-    var location: String? = null
-    var members: ArrayList<ParseUser>? = null
-    var images: ArrayList<Image>? = null
-    var logo: ParseFile? = null
-    var owner: ArrayList<ParseUser>? = null
+@ParseClassName("Event")
+class Event : ParseObject() {
+    var title: String?
+        set(value) {
+            put("title", value!!)
+        }
+        get() {
+            return getString("title")
+        }
 
-    init {
-        this.title = eventParse.name
-        this.startDate = eventParse.startDate
-        this.endDate = eventParse.endDate
-        this.location = eventParse.location
-        this.logo = eventParse.logo
-    }
+    var startDate: Date?
+        set(value) {
+            put("startDate", value!!)
+        }
+        get() {
+            return getDate("startDate")
+        }
+
+    var endDate: Date?
+        set(value) {
+            put("endDate", value!!)
+        }
+        get() {
+            return getDate("endDate")
+        }
+
+    var location: String?
+        set(value) {
+            put("location", value!!)
+        }
+        get() {
+            return getString("location")
+        }
+
+    var members: List<ParseUser>?
+        set(value) {
+            put("members", value!!)
+        }
+        get() {
+            return getList<ParseUser>("members")
+        }
+
+    var images: List<Image>?
+        set(value) {
+            put("images", value!!)
+        }
+        get() {
+            return getList<Image>("images")
+        }
+
+    var logo: ParseFile?
+        set(value) {
+            put("logo", value!!)
+        }
+        get() {
+            return getParseFile("logo")
+        }
+
+    var owner: ParseUser?
+        set(value) {
+            put("owner", value!!)
+        }
+        get() {
+            return getParseUser("owner")
+        }
+
+
 }

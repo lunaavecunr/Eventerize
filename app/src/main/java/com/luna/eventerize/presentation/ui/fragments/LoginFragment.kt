@@ -1,13 +1,11 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment

@@ -6,16 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
-import com.parse.ParseUser
 import kotlinx.android.synthetic.main.fragment_event_list.*
+import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListener {
 
@@ -32,6 +34,9 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
 
+        activity!!.title = getString(R.string.fragment_list_event_title)
+        (activity as AppCompatActivity).setSupportActionBar(fragment_event_list_toolbar)
+
         navigator = Navigator(fragmentManager!!)
 
         fragment_event_list_recycler_view.layoutManager = LinearLayoutManager(context)
@@ -40,58 +45,18 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         fragment_event_list_fab.setOnClickListener(this)
 
-        val updateEvent = Observer<ArrayList<Event>> {
-            viewModel.getOwnersEvent()
-            viewModel.getMembersEvent()
-        }
-
-        val updateEventOwners = Observer<ArrayList<Event>> {
-            viewModel.sortCurrentUserByOwner()
-        }
-
-        val updateEventMembers = Observer<ArrayList<Event>> {
-            viewModel.sortCurrentUserByMembers()
-        }
-
-        val updateEventSortByOwner = Observer<ArrayList<Event>> {
+        val updateEvent = Observer<List<Event>> {
             updateList(it)
         }
 
-        val updateEventSortByMembers = Observer<ArrayList<Event>> {
-            updateList(it)
-        }
-/*
-
-        val updateEventImage = Observer<ArrayList<Event>> {
-            for (event in it) {
-                for (image in event.images!!) {
-                    Log.d("mlk", "URL: "+image.file!!.url)
-                    Log.d("mlk", "ID user: "+image.user!!.objectId)
-                    Log.d("mlk", "string: "+image.string)
-                }
-            }
+        val updateError = Observer<EventerizeError> {
+            showError(it.message)
         }
 
-        val updateEventMembers = Observer<ArrayList<Event>> {
-            for (event in it) {
-                for(user in event.members!!){
-                    Log.d("mlk", "id User: "+user.objectId)
-                    Log.d("mlk", "username: "+user.username)
-                }
-            }
-            viewModel.getImageEvent()
-        }
-*/
+        viewModel.getEvent().observe(this,updateEvent)
+        viewModel.getError().observe(this,updateError)
 
-//        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
-//        viewModel.getEventsImageRetrivial().observe(this,updateEventImage)
-        viewModel.getEventsSortByOwner().observe(this, updateEventSortByOwner)
-        viewModel.getEventsSortByMembers().observe(this, updateEventSortByMembers)
-        viewModel.getEventsOwnersRetrivial().observe(this, updateEventOwners)
-        viewModel.getEventsMembersRetrivial().observe(this,updateEventMembers)
-        viewModel.getEventsRetrivial().observe(this, updateEvent)
-
-        viewModel.getEvent()
+        viewModel.retrievalAllEvent()
     }
 
     fun updateList(eventList: List<Event>) {

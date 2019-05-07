@@ -1,8 +1,8 @@
 package com.luna.eventerize
 
 import android.app.Application
-import com.luna.eventerize.data.model.EventParse
-import com.luna.eventerize.data.model.ImageParse
+import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.Image
 import com.luna.eventerize.data.repository.EventerizeRepo
 import com.parse.Parse
 import com.parse.ParseInstallation
@@ -27,8 +27,8 @@ class EventerizeApp: Application() {
         super.onCreate()
         app = this
         repository = EventerizeRepo()
-        ParseObject.registerSubclass(EventParse::class.java)
-        ParseObject.registerSubclass(ImageParse::class.java)
+        ParseObject.registerSubclass(Event::class.java)
+        ParseObject.registerSubclass(Image::class.java)
         Parse.initialize(
             Parse.Configuration.Builder(this)
                 .applicationId("11558475925")
