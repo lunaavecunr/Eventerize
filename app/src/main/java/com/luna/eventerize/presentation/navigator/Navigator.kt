@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentManager
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.ui.fragments.EventListFragment
 import com.luna.eventerize.presentation.ui.fragments.LoginFragment
+import com.luna.eventerize.presentation.ui.fragments.MembersListFragment
 import com.luna.eventerize.presentation.ui.fragments.SignUpFragment
 
 class Navigator(fragmentManager: FragmentManager) {
@@ -21,4 +22,9 @@ class Navigator(fragmentManager: FragmentManager) {
     fun displaySignUp() {
         fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, SignUpFragment.newInstance()).addToBackStack(null).commit()
     }
+
+    fun displayMembersList() {
+        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, MembersListFragment.newInstance()).commit()
+    }
+
 }

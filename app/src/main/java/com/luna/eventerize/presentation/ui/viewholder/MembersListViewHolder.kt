@@ -14,8 +14,7 @@ class MembersListViewHolder(v: View): RecyclerView.ViewHolder(v)  {
 
     fun bindSet(user: ParseUser){
 
-        userName.text = user.username
-        userImage.visibility = View.VISIBLE
+        userName.text = user.fetchIfNeeded().username
     }
 
 }

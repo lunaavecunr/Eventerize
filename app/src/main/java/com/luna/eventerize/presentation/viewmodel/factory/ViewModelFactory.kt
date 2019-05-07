@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import com.luna.eventerize.presentation.viewmodel.LoginViewModel
+import com.luna.eventerize.presentation.viewmodel.MembersListViewModel
 import com.luna.eventerize.presentation.viewmodel.SignUpViewModel
 
 class ViewModelFactory: ViewModelProvider.Factory  {
@@ -16,6 +17,9 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         }
         if (modelClass.isAssignableFrom(SignUpViewModel::class.java)) {
             return SignUpViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(MembersListViewModel::class.java)) {
+            return MembersListViewModel() as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

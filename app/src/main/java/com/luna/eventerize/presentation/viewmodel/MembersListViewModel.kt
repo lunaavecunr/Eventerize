@@ -34,7 +34,7 @@ class MembersListViewModel: ViewModel() {
                         )
                     }
                     else -> {
-                        eventRetrivial.postValue(Event(it.result))
+                        eventRetrivial.postValue(it.result)
                     }
                 }
             }

@@ -32,7 +32,7 @@ class MembersListAdapter: RecyclerView.Adapter<MembersListViewHolder>() {
 
     fun updateUserList(membersList: List<ParseUser>){
         this.membersList.clear()
-        addEventList(membersList)
+        addUserList(membersList)
     }
 
 }

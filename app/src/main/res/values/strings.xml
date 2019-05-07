@@ -28,6 +28,7 @@
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
     <string name="fragment_list_event_title">Liste des événements</string>
+    <string name="fragment_list_members_title">Liste des membres</string>
 
 
 </resources>
