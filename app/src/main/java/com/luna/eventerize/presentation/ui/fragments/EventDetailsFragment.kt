@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
@@ -99,7 +100,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
         event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
         event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
-        event_details_recycler_view.layoutManager = GridLayoutManager(context,3)
+        event_details_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
         event_details_recycler_view.adapter = EventDetailsAdapter(event!!.galleryList)
     }
 

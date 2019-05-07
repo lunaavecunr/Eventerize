@@ -16,7 +16,7 @@ class EventDetailsAdapter(val galleryList:ArrayList<String>) : RecyclerView.Adap
     override fun getItemCount() = galleryList.size
 
     override fun onBindViewHolder(holder: EventDetailsRessourceViewHolder, position: Int) {
-        Picasso.get().load(galleryList[position]).resize(360,360).into(holder.photo)
+        Picasso.get().load(galleryList[position]).resize(100,100).into(holder.photo)
     }
 }
 
