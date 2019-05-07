@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.EventerizeError
+import com.luna.eventerize.data.model.*
 import com.parse.ParseUser
+
+
 
 class LoginViewModel: ViewModel() {
     var repository = EventerizeApp.getInstance().repository
@@ -36,4 +38,6 @@ class LoginViewModel: ViewModel() {
 
     fun getError() : LiveData<EventerizeError> = error
     fun getUser() : LiveData<ParseUser> = user
+
 }
+
