@@ -29,5 +29,5 @@ class EventerizeRepo {
     fun getEventByMembers(): Task<List<Event>> {
         return parseManager.getEventByMembers()
     }
-    
+
 }

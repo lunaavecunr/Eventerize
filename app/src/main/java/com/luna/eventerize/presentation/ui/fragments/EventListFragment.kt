@@ -73,8 +73,6 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         when (v.id) {
             R.id.fragment_event_list_fab -> {
-                navigator.createList()
-                activity?.title = "Création de liste"
 
             }
         }
