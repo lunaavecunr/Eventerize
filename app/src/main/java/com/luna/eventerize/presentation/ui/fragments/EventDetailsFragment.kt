@@ -18,7 +18,6 @@ import com.luna.eventerize.presentation.ui.adapter.EventDetailsAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import kotlinx.android.synthetic.main.fragment_event_details.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,9 +84,23 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     }
 
     private fun initRecyclerView(){
-        event!!.galleryList.add(BitmapFactory.decodeResource(resources,R.drawable.ic_calendar))
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
+        event!!.galleryList.add("http://noudjou.free.fr/images/galeries/baleines/souffle/event.jpg")
         event_details_recycler_view.layoutManager = GridLayoutManager(context,3)
-        event_details_recycler_view.adapter = EventDetailsAdapter(event!!.galleryList,context!!)
+        event_details_recycler_view.adapter = EventDetailsAdapter(event!!.galleryList)
     }
 
     companion object{
