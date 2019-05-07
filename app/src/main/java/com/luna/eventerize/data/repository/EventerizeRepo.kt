@@ -22,6 +22,10 @@ class EventerizeRepo {
         return parseManager.getEvent()
     }
 
+    fun getEventById(id: String): Task<EventParse> {
+        return parseManager.getEventById(id)
+    }
+
     fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>> {
         return parseManager.getRelation(relation)
     }

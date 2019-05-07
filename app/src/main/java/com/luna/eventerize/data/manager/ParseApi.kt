@@ -9,5 +9,6 @@ interface ParseApi {
     fun login(username: String, password: String): Task<ParseUser>
     fun signup(user: ParseUser): Task<Void>
     fun getEvent(): Task<List<EventParse>>
+    fun getEventById(id: String): Task<EventParse>
     fun <T: ParseObject> getRelation(relation: ParseRelation<T>): Task<List<T>>
 }
