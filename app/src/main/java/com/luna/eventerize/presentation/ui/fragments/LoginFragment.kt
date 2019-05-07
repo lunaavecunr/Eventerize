@@ -66,9 +66,9 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
            R.id.share_Button -> {
                val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
                sharingIntent.type = "*/*"
-               val shareBodyText = "https://google.com"
-               sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Viens à mon event")
-               sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBodyText)
+               //val shareBodyText = "https://google.com"
+               sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Je t'invites à mon event !")
+               //sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBodyText)
                //val qrCodeBitmap : Bitmap = null
                val bytes = ByteArrayOutputStream()
                //qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
@@ -80,7 +80,6 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
                } catch (e: IOException) {
                    e.printStackTrace()
                }
-
                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/qrcode.jpg"))
                startActivityForResult(Intent.createChooser(sharingIntent, "Sharing Options"), SHARE_QR_CODE)
 
