@@ -2,11 +2,10 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Observable
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -30,6 +29,9 @@ import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -318,6 +320,27 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 }
             }
         }
+    }
+
+    fun createFile(bitmap: Bitmap):ByteArray?{
+        try {
+            val filePath = File(context!!.cacheDir, "image")
+            filePath.mkdirs()
+            val stream = FileOutputStream("${filePath.absolutePath}/logo.png")
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.close()
+            return sharingImage()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    private fun sharingImage():ByteArray{
+        val imagePath = File(context!!.cacheDir, "image")
+        val newFile = File(imagePath,"logo.png")
+        val byteArray = newFile.readBytes()
+        return byteArray
     }
 
     private fun checkPermissions(requestCode: String, requestPermission: Int) {

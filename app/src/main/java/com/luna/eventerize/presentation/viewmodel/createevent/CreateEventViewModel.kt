@@ -1,7 +1,7 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
+import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
@@ -16,30 +16,43 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 
 
-class CreateEventViewModel : ViewModel(){
+class CreateEventViewModel : ViewModel() {
     var repository = EventerizeApp.getInstance().repository
     var error = MutableLiveData<EventerizeError>()
     var successUpload = MutableLiveData<Boolean>()
 
-    fun saveEvent(title:String, location:String, startDate: Date?, startHour:Date?, endDate:Date?, endHour:Date?, logo:Bitmap?){
+    fun saveEvent(
+        title: String,
+        location: String,
+        startDate: Date?,
+        startHour: Date?,
+        endDate: Date?,
+        endHour: Date?,
+        logo: Bitmap?
+    ) {
 
-        if(title.isBlank() || location.isBlank() || startDate == null || startHour == null || endDate == null ||  endHour == null){
-            error.postValue(EventerizeError("Un champ n'a pas été rempli!","Erreur lors de la création de l'évènement"))
+        if (title.isBlank() || location.isBlank() || startDate == null || startHour == null || endDate == null || endHour == null) {
+            error.postValue(
+                EventerizeError(
+                    "Un champ n'a pas été rempli!",
+                    "Erreur lors de la création de l'évènement"
+                )
+            )
             return
         }
 
         val event = Event()
         event.title = title
         event.location = location
-        event.startDate = formatDate(startDate,startHour)
-        event.endDate = formatDate(endDate,endHour)
-        if(logo != null) {
+        event.startDate = formatDate(startDate, startHour)
+        event.endDate = formatDate(endDate, endHour)
+        if (logo != null) {
             val stream = ByteArrayOutputStream()
             logo.compress(Bitmap.CompressFormat.PNG, 100, stream)
             val byteArray = stream.toByteArray()
             val image = ParseFile(byteArray)
             event.logo = image
-        }else{
+        } else {
             val logo = ContextCompat.getDrawable(EventerizeApp.getInstance(), R.mipmap.eventerize)
             val stream = ByteArrayOutputStream()
             logo!!.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -67,23 +80,23 @@ class CreateEventViewModel : ViewModel(){
                         )
                     }
                     else -> {
-                       successUpload.postValue(true)
+                        successUpload.postValue(true)
                     }
                 }
             }
     }
 
-    fun formatDate(date:Date, hour:Date):Date{
+    fun formatDate(date: Date, hour: Date): Date {
         val calendar = Calendar.getInstance()
         calendar.time = date
         val hourCalendar = Calendar.getInstance()
         hourCalendar.time = hour
-        calendar.set(Calendar.HOUR_OF_DAY,hourCalendar.get(Calendar.HOUR_OF_DAY))
-        calendar.set(Calendar.MINUTE,hourCalendar.get(Calendar.MINUTE))
+        calendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.MINUTE, hourCalendar.get(Calendar.MINUTE))
         return Date(calendar.timeInMillis)
     }
 
-    fun getSuccess():LiveData<Boolean> = successUpload
+    fun getSuccess(): LiveData<Boolean> = successUpload
 
-    fun getError():LiveData<EventerizeError> = error
+    fun getError(): LiveData<EventerizeError> = error
 }
