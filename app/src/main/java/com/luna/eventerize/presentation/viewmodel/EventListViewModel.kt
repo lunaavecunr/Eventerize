@@ -45,6 +45,66 @@ class EventListViewModel: ViewModel() {
                 }
             }
     }
+    fun retrievalEventByOrga () {
+        repository.getEventByOwner()
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    else -> {
+                        val listEventWrapper = ArrayList<EventWrapper>()
+                        it.result.map { event ->
+                            listEventWrapper.add(EventWrapper(event))
+                        }
+                        events.postValue(listEventWrapper)
+                    }
+                }
+            }
+    }
+    fun retrievalEventByMember () {
+        repository.getEventByMembers()
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    else -> {
+                        val listEventWrapper = ArrayList<EventWrapper>()
+                        it.result.map { event ->
+                            listEventWrapper.add(EventWrapper(event))
+                        }
+                        events.postValue(listEventWrapper)
+                    }
+                }
+            }
+    }
 
     fun getEvent(): LiveData<List<EventWrapper>> = events
     fun getError(): LiveData<EventerizeError> = error

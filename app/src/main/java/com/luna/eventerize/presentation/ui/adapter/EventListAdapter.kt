@@ -6,6 +6,7 @@ import com.luna.eventerize.R
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.viewholder.EventListViewHolder
 import com.luna.eventerize.presentation.utils.inflate
+import com.parse.ParseUser
 
 class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>() {
 
