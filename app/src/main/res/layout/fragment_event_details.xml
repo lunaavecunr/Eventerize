@@ -68,9 +68,9 @@
                     <TextView
                             android:text=""
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:id="@+id/event_date_label_begin"
+                            android:id="@+id/event_date_label"
                             app:layout_constraintStart_toEndOf="@+id/imageView6"
                             android:layout_marginStart="8dp"
                             app:layout_constraintBottom_toBottomOf="@+id/imageView6"
@@ -181,7 +181,7 @@
                             android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            android:id="@+id/event_details_recycler_view"/>
+                            android:id="@+id/event_details_picture_gallery_recycler_view"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

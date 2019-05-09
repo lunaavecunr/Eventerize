@@ -68,6 +68,4 @@ class Event : ParseObject() {
         get() {
             return getParseUser("owner")
         }
-
-
 }
