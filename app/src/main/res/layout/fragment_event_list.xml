@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:orientation="vertical"
+             xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
@@ -9,31 +9,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:theme="?attr/actionBarTheme"
-                android:minHeight="?attr/actionBarSize" android:id="@+id/fragment_event_list_toolbar"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
         <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="0dp" android:id="@+id/fragment_event_list_recycler_view"
                 app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_event_list_toolbar"/>
-        <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/fragment_event_list_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/fab_add"/>
+                app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
