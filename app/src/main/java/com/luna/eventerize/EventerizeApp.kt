@@ -47,7 +47,7 @@ class EventerizeApp: Application() {
         val certificateFactory = CertificateFactory.getInstance("X.509")
 
         // Load self-signed certificate (*.crt file)
-        val inputStream =  applicationContext.resources.openRawResource(R.raw.bigoudinc)
+        val inputStream =  applicationContext.resources.openRawResource(R.raw.cert)
         val certificate = certificateFactory.generateCertificate(inputStream)
         inputStream.close()
 
