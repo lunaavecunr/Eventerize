@@ -1,6 +1,5 @@
 package com.luna.eventerize.presentation.ui.fragments
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
@@ -31,7 +31,6 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
 
     override val viewModelClass = LoginViewModel::class
     lateinit var navigator: Navigator
-    private val SHARE_QR_CODE = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -68,10 +67,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
            }
            R.id.share_Button -> {
                val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
-               sharingIntent.type = "*/*"
-               //val shareBodyText = "https://google.com"
+               sharingIntent.type = "image/jpeg"
                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Je t'invites à mon event !")
-               //sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBodyText)
                val qrCodeBitmap : Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.eventerize)
                val bytes = ByteArrayOutputStream()
                qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
@@ -85,36 +82,25 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
                    e.printStackTrace()
                }
                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + Environment.getExternalStorageDirectory().path + "/qrcode.jpg"))
-               startActivityForResult(Intent.createChooser(sharingIntent, "Sharing Options"), SHARE_QR_CODE)
+               try {
+                   startActivity(
+                       Intent.createChooser(
+                           sharingIntent,
+                           "Partager avec"
+                       )
+                   )
+
+               } catch (ex: android.content.ActivityNotFoundException) {
+                   AlertDialog.Builder(context!!)
+                       .setMessage("Share failed")
+                       .setPositiveButton("OK",
+                           { dialog, whichButton -> }).create().show()
+               }
+
 
            }
 
        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == SHARE_QR_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                Toast.makeText(context, "COUCOU",Toast.LENGTH_SHORT).show()
-                try {
-                    val f = File("file://" + Environment.getExternalStorageDirectory().path + "/qrcode.jpg")
-                    var deleted = f.delete()
-                    Toast.makeText(context, "try ok",Toast.LENGTH_SHORT).show()
-                    if(deleted){
-                        Toast.makeText(context, "deleted",Toast.LENGTH_SHORT).show()
-                    }
-
-                } catch (e: IOException){
-                    Toast.makeText(context, e.localizedMessage,Toast.LENGTH_SHORT).show()
-                    e.printStackTrace()
-                }
-
-            } else {
-                Toast.makeText(context, "ERROR",Toast.LENGTH_SHORT).show()
-            }
-        }
-
     }
 
 
