@@ -16,7 +16,7 @@ class EventDetailViewHolder(view: View) : RecyclerView.ViewHolder(view){
     var isOwnPicture = false
 
     fun bindSet(image: Image){
-        EventerizeApp.getInstance().picasso.load(image.file!!.url).into(photo)
+        Picasso.get().load(image.file!!.url).into(photo)
         if(!isOwnPicture){
             isUserPicture.visibility = View.INVISIBLE
         }
