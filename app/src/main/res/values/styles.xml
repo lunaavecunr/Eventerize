@@ -10,6 +10,9 @@
     <style name="Button">
         <item name="android:background">@drawable/button_background</item>
     </style>
+    <style name="DisabledButton">
+        <item name="android:background">@drawable/disabled_button_background</item>
+    </style>
 
     <style name="StyledEditTextTheme">
         <item name="android:imeOptions">actionNext</item>

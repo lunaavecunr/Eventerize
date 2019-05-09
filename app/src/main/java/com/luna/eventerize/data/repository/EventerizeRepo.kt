@@ -30,4 +30,7 @@ class EventerizeRepo {
         return parseManager.getEventByMembers()
     }
 
+    fun saveEvent(event: Event): Task<Void>{
+        return parseManager.saveEvent(event)
+    }
 }

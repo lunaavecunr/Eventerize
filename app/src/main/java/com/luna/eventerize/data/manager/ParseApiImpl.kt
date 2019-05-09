@@ -45,4 +45,8 @@ class ParseApiImpl : ParseApi {
         query.whereEqualTo("members", ParseUser.getCurrentUser())
         return query.findInBackground()
     }
+
+    override fun saveEvent(event:Event): Task<Void> {
+        return event.saveInBackground()
+    }
 }
