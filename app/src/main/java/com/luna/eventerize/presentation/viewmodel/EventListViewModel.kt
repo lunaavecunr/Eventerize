@@ -16,7 +16,7 @@ class EventListViewModel: ViewModel() {
     var events = MutableLiveData<List<EventWrapper>>()
 
     fun retrievalAllEvent () {
-        repository.getEventByMembers()
+        repository.getEvent()
             .continueWith {
                 when {
                     it.isCancelled -> {
@@ -40,6 +40,7 @@ class EventListViewModel: ViewModel() {
                         it.result.map { event ->
                             listEventWrapper.add(EventWrapper(event))
                         }
+                        events.postValue(listEventWrapper)
                     }
                 }
             }

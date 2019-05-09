@@ -21,14 +21,14 @@ class EventListViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
         eventTitle.text = eventWrapper.event.title
         eventMapText.text = eventWrapper.event.location
-        eventCalendarText.text = eventWrapper.startDateToFormat("le dd/MM/yyyy à HH:mm")
+        eventCalendarText.text = eventWrapper.startDateToFormat("dd/MM/yyyy HH:mm")
         eventCrown.visibility = View.INVISIBLE
 
         if (eventWrapper.event.logo != null) {
             EventerizeApp.getInstance().picasso.load(eventWrapper.event.logo!!.url).into(eventImage)
         }
 
-        if(eventWrapper.event.owner == ParseUser.getCurrentUser()) {
+        if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
             eventCrown.visibility = View.VISIBLE
         }
     }
