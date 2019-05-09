@@ -5,13 +5,14 @@ import com.luna.eventerize.R
 import com.luna.eventerize.presentation.ui.fragments.EventListFragment
 import com.luna.eventerize.presentation.ui.fragments.LoginFragment
 import com.luna.eventerize.presentation.ui.fragments.SignUpFragment
+import com.luna.eventerize.presentation.ui.fragments.TabsListFragment
 
 class Navigator(fragmentManager: FragmentManager) {
 
     private val fragmentManager: FragmentManager = fragmentManager
 
     fun displayEventList(){
-        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, EventListFragment.newInstance()).commit()
+        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, TabsListFragment.newInstance()).commit()
     }
 
     fun displayLogin() {

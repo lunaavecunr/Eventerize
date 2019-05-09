@@ -3,13 +3,14 @@ package com.luna.eventerize.presentation.ui.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.viewholder.EventListViewHolder
 import com.luna.eventerize.presentation.utils.inflate
+import com.parse.ParseUser
 
 class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>() {
 
-    private val eventList: MutableList<Event> = mutableListOf()
+    private val eventList: MutableList<EventWrapper> = mutableListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventListViewHolder {
@@ -25,12 +26,12 @@ class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>() {
         holder.bindSet(userSet)
     }
 
-    fun addEventList(eventList : List<Event>){
+    fun addEventList(eventList : List<EventWrapper>){
         this.eventList.addAll(eventList)
         notifyDataSetChanged()
     }
 
-    fun updateEventList(eventList: List<Event>){
+    fun updateEventList(eventList: List<EventWrapper>){
         this.eventList.clear()
         addEventList(eventList)
     }
