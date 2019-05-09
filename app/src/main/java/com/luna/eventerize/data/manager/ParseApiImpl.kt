@@ -2,9 +2,7 @@ package com.luna.eventerize.data.manager
 
 import bolts.Task
 import com.luna.eventerize.data.model.Event
-import com.parse.ParseObject
 import com.parse.ParseQuery
-import com.parse.ParseRelation
 import com.parse.ParseUser
 
 class ParseApiImpl : ParseApi {
@@ -20,9 +18,16 @@ class ParseApiImpl : ParseApi {
 
     override fun getEvent(): Task<List<Event>> {
         var query: ParseQuery<Event> = ParseQuery.getQuery("Event")
-        query.include("members")
-        query.include("images")
-        return query.findInBackground()
+        query.whereEqualTo("members", ParseUser.getCurrentUser())
+        var query2: ParseQuery<Event> = ParseQuery.getQuery("Event")
+        query2.whereEqualTo("owner", ParseUser.getCurrentUser())
+        var listQueries = ArrayList<ParseQuery<Event>>()
+        listQueries.add(query)
+        listQueries.add(query2)
+        var finalQuery = ParseQuery.or(listQueries)
+        finalQuery.include("members")
+        finalQuery.include("images")
+        return finalQuery.findInBackground()
     }
 
     override fun getEventByOwner(): Task<List<Event>> {
