@@ -15,7 +15,7 @@ class EventListViewModel: ViewModel() {
     var events = MutableLiveData<List<Event>>()
 
     fun retrievalAllEvent () {
-        repository.getEventByMembers()
+        repository.getEventByOwner()
             .continueWith {
                 when {
                     it.isCancelled -> {

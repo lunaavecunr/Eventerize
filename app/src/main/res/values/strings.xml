@@ -59,4 +59,8 @@
     </string>
     <string name="end_hour_before_start_hour">L\'heure de fin se trouve avant l\'heure de début!</string>
     <string name="no_location_given">Aucun lieu n\'a été indiqué!</string>
+    <string name="field_not_entered">Un champ n\'a pas été rempli!</string>
+    <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
+    <string name="event_creation_failed">La création a échouée</string>
+    <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
 </resources>

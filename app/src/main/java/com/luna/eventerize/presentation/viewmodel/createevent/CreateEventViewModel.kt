@@ -1,7 +1,6 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
 import com.parse.ParseFile
+import com.parse.ParseUser
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -32,8 +32,8 @@ class CreateEventViewModel : ViewModel() {
         if (title.isBlank() || location.isBlank() || startDate == null || startHour == null || endDate == null || endHour == null) {
             error.postValue(
                 EventerizeError(
-                    "Un champ n'a pas été rempli!",
-                    "Erreur lors de la création de l'évènement"
+                    EventerizeApp.getInstance().getString(R.string.field_not_entered),
+                    EventerizeApp.getInstance().getString(R.string.error_while_creating_event)
                 )
             )
             return
@@ -44,6 +44,7 @@ class CreateEventViewModel : ViewModel() {
         event.location = location
         event.startDate = formatDate(startDate, startHour)
         event.endDate = formatDate(endDate, endHour)
+        event.owner = ParseUser.getCurrentUser()
         if (logo != null) {
             event.logo = ParseFile(generateByteArray(logo))
         }
@@ -53,8 +54,8 @@ class CreateEventViewModel : ViewModel() {
                     it.isCancelled -> {
                         error.postValue(
                             EventerizeError(
-                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
-                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                                EventerizeApp.getInstance().getString(R.string.event_creation_failed),
+                                EventerizeApp.getInstance().getString(R.string.error_while_creating_event)
                             )
                         )
                     }
@@ -62,7 +63,7 @@ class CreateEventViewModel : ViewModel() {
                         error.postValue(
                             EventerizeError(
                                 it.error.message.toString(),
-                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                                EventerizeApp.getInstance().getString(R.string.error_while_creating_event)
                             )
                         )
                     }
@@ -86,7 +87,7 @@ class CreateEventViewModel : ViewModel() {
 
     private fun generateByteArray(bitmap: Bitmap):ByteArray?{
         val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
         return bos.toByteArray()
     }
 

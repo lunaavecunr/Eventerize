@@ -2,7 +2,6 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -29,9 +28,6 @@ import com.squareup.picasso.Picasso
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,14 +46,12 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
     private var endDate: Date? = null
     private var startHour: Date? = null
     private var endHour: Date? = null
-    private var isFormCorrectlyFilled: Boolean = false
     private var logo:Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_event, container, false)
     }
 
@@ -66,6 +60,8 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
 
         //SetListeners
         initListeners()
+
+        event_creation_progress_bar.visibility = View.INVISIBLE
 
         //Toolbar
         navigator = Navigator(fragmentManager!!)
@@ -78,9 +74,13 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         val addImage = ContextCompat.getDrawable(context!!, R.drawable.ic_add_image)
         event_creation_logo.setImageDrawable(addImage)
 
-
+        //Error managment
         val updateError = Observer<EventerizeError> {
             showError(context!!,it.message)
+            validate_event.isEnabled = true
+            event_creation_progress_bar.visibility = View.INVISIBLE
+            validate_event.text = getString(R.string.generate_event)
+            validate_event.setBackgroundResource(R.drawable.button_background)
         }
 
         val updateSuccessUpload = Observer<Boolean>{
@@ -109,43 +109,6 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         manage_invitations.setOnClickListener(this)
         validate_event.setOnClickListener(this)
         event_creation_logo.setOnClickListener(this)
-    }
-
-    /*private fun checkIfFormIsCorrectlyFilled(): Boolean {
-        if (event_creation_title_text.editableText.toString().isNullOrBlank()) {
-            event_title_input_layout.boxStrokeColor = Color.RED
-            displayErrorMessage(getString(R.string.no_title_event))
-            return false
-        }
-        if(event_location_edit_text.editableText.toString().isNullOrBlank()){
-            displayErrorMessage(getString(R.string.no_location_given))
-            return false
-        }
-        if (startDate == null) {
-            displayErrorMessage(getString(R.string.no_start_date))
-            begin_date_text_input.boxStrokeColor = Color.RED
-            return false
-        }
-        if (startHour == null) {
-            displayErrorMessage(getString(R.string.no_start_hour))
-            begin_hour_text_input.boxStrokeColor = Color.RED
-            return false
-        }
-        if (endDate == null) {
-            displayErrorMessage(getString(R.string.no_end_date))
-            end_date_edit_text.boxStrokeColor = Color.RED
-            return false
-        }
-        if (endHour == null) {
-            displayErrorMessage(getString(R.string.no_end_hour))
-            end_time_edit_text.boxStrokeColor = Color.RED
-            return false
-        }
-        return true
-    }*/
-
-    private fun displayErrorMessage(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun initDatePicker(editText: TextInputEditText, editTextType: String) {
@@ -308,14 +271,18 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 REQUEST_SELECT_IMAGE_IN_ALBUM -> {
                     val selectedImage = data!!.data
                     Picasso.get().load(selectedImage).centerCrop().resize(360,360).into(event_creation_logo)
-                    logo = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, selectedImage)
+                    logo = Bitmap.createScaledBitmap(
+                        MediaStore.Images.Media.getBitmap(activity!!.contentResolver, selectedImage),
+                        512,
+                        384,
+                        false
+                    )
                 }
                 REQUEST_TAKE_PHOTO -> {
                     if (data != null && data.extras != null) {
                         Picasso.get().isLoggingEnabled = true
-                        val imageBitmap = data.extras.get("data") as Bitmap
-                        event_creation_logo.setImageBitmap(imageBitmap)
-                        logo = imageBitmap
+                        logo = data.extras.get("data") as Bitmap
+                        event_creation_logo.setImageBitmap(logo)
                     }
                 }
             }
@@ -351,6 +318,10 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 initPopup()
             }
             R.id.validate_event -> {
+                validate_event.isEnabled = false
+                event_creation_progress_bar.visibility = View.VISIBLE
+                validate_event.text = getString(R.string.event_creation_ongoing_label)
+                validate_event.setBackgroundResource(R.drawable.disabled_button_background)
                 viewModel.saveEvent(event_title_input_layout.editText!!.text.toString(),event_location_layout.editText!!.text.toString(),startDate,startHour,endDate,endHour,logo)
             }
         }
