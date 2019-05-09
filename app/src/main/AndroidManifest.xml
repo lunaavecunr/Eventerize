@@ -7,25 +7,20 @@
     <application
             android:name=".EventerizeApp"
             android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/eventerize"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:roundIcon="@mipmap/eventerize"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".presentation.ui.activity.AuthActivity">
-            <tools:validation testUrl="https://bigoud.games/eventerizeapp"/>
-            <tools:validation testUrl="https://bigoud.games/eventerizeapp"/>
-            <tools:validation testUrl="https://bigoud.games/eventerizeapp"/>
-            <tools:validation testUrl="https://bigoud.games/eventerizeapp"/>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
                 <data
                         android:host="bigoud.games"
                         android:scheme="https" android:pathPrefix="/eventerizeapp"/>
