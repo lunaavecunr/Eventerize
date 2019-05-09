@@ -36,9 +36,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         }
 
         val updateUser = Observer<ParseUser> {
-            TODO()
+            navigator.displayEventList()
         }
-
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)
 
@@ -48,14 +47,13 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
        when(v.id) {
            R.id.fragment_login_loginButton -> {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
-           }
-           R.id.fragment_login_createAccountTV -> {
-               navigator.displayEventDetails()
-           }
+            }
+            R.id.fragment_login_createAccountTV -> {
+                navigator.displaySignUp()
+            }
 
        }
     }
-
 
 
 }

@@ -27,6 +27,7 @@
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
+    <string name="fragment_list_event_title">Liste des événements</string>
 
     <!--EVENT DETAILS-->
     <string name="participant_label_single">participant</string>
