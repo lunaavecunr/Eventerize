@@ -43,8 +43,6 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         fragment_event_list_recycler_view.adapter = adapter
 
-        fragment_event_list_fab.setOnClickListener(this)
-
         val updateEvent = Observer<List<EventWrapper>> {
             updateList(it)
         }
@@ -82,9 +80,6 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
     override fun onClick(v: View) {
 
         when (v.id) {
-            R.id.fragment_event_list_fab -> {
-
-            }
         }
 
     }
