@@ -44,22 +44,56 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         fragment_login_createAccountTV.setOnClickListener(this)
         share_Button.setOnClickListener(this)
 
-        val updateError = Observer<EventerizeError>{
+        val updateError = Observer<EventerizeError> {
             showError(activity!!, it.message)
         }
 
         val updateUser = Observer<ParseUser> {
-            TODO()
-        }
 
+            navigator.displayEventList()
+        }
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)
+
+//        val bitMatrix: BitMatrix
+//        try {
+//            bitMatrix = MultiFormatWriter().encode(
+//                "CeciEstUnTest",
+//                BarcodeFormat.QR_CODE,
+//                500, 500, null
+//            )
+//
+//        } catch (illegalArgumentException: IllegalArgumentException) {
+//            TODO()
+//        }
+//
+//        val bitMatrixWidth = bitMatrix.width
+//
+//        val bitMatrixHeight = bitMatrix.height
+//
+//        val pixels = IntArray(bitMatrixWidth * bitMatrixHeight)
+//
+//        for (y in 0 until bitMatrixHeight) {
+//            val offset = y * bitMatrixWidth
+//
+//            for (x in 0 until bitMatrixWidth) {
+//
+//                pixels[offset + x] = if (bitMatrix.get(x, y))
+//                    resources.getColor(R.color.black)
+//                else
+//                    resources.getColor(R.color.white)
+//            }
+//        }
+//        val bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444)
+//
+//        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight)
+//        qrcode.setImageBitmap(bitmap)
 
     }
 
     override fun onClick(v: View) {
-       when(v.id) {
-           R.id.fragment_login_loginButton -> {
+        when (v.id) {
+            R.id.fragment_login_loginButton -> {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
            }
            R.id.fragment_login_createAccountTV -> {

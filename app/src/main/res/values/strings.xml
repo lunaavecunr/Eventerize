@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">Eventerize</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- ADDING EVENTS -->
+    <string name="event_title_hint">Titre de l\'évènement</string>
+    <string name="event_location_hint">Lieu de l\'évènement</string>
+    <string name="beginning_event_date_label">Date de début de l\'évènement</string>
+    <string name="begin_date_event">Date de début</string>
+    <string name="begin_hour_event">Heure de début</string>
+    <string name="end_date_event_label">Date de fin</string>
+    <string name="end_hour_event_label">Heure de fin</string>
+    <string name="generate_invitations">Générer les invitations</string>
+    <string name="creating_event">Création d\'évènement</string>
+
     <!-- LOGIN -->
     <string name="login_button">Se connecter</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
@@ -27,9 +40,27 @@
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
-    
+    <string name="end_date_before_begin_date">La date de fin se trouve avant la date de début!</string>
+    <string name="generate_event">Générer un évènement</string>
+    <string name="logo_choice">Choix du logo</string>
+    <string name="logo_choice_message">Veuillez choisir une option pour ce logo</string>
+    <string name="camera_chosen">Appareil photo</string>
+    <string name="gallery_chosen">Gallerie de photos</string>
+    <string name="no_title_event">Aucun titre n\'a été entré!</string>
+    <string name="no_start_date">Aucune date de début n\'a été choisie!</string>
+    <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
+    <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
+    <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
+    <string name="fragment_list_event_title">Liste des événements</string>
 
-
-
-
+    <string name="newEventDefaultValue">Nouvel évènement</string>
+    <string name="permissions_not_granted">Vous devez autoriser ces permissions pour pouvoir continuer à utiliser
+        l\'application!
+    </string>
+    <string name="end_hour_before_start_hour">L\'heure de fin se trouve avant l\'heure de début!</string>
+    <string name="no_location_given">Aucun lieu n\'a été indiqué!</string>
+    <string name="field_not_entered">Un champ n\'a pas été rempli!</string>
+    <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
+    <string name="event_creation_failed">La création a échouée</string>
+    <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
 </resources>
