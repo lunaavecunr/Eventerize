@@ -77,6 +77,7 @@ class EventListViewModel: ViewModel() {
     }
     fun retrievalEventByMember () {
         repository.getEventByMembers()
+        repository.getEventByOwner()
             .continueWith {
                 when {
                     it.isCancelled -> {

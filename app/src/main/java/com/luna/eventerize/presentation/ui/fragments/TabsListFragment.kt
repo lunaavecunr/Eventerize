@@ -48,8 +48,10 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
         fragment_tabs_list_viewpager.adapter = adapter
         fragment_tabs_list_tabs.setupWithViewPager(fragment_tabs_list_viewpager)
 
-        fragment_event_list_fab_menu.setOnClickListener(this)
+        fragment_event_list_fab_create_event.setOnClickListener(this)
         fragment_event_list_fab_qr_code.setOnClickListener(this)
+
+        navigator = Navigator(fragmentManager!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,7 +69,7 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
                 startQRScanner(options)
             }
             R.id.fragment_event_list_fab_create_event -> {
-
+                navigator.displayEventCreation()
             }
         }
 

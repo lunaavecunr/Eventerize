@@ -22,6 +22,7 @@ class SignUpFragment : BaseFragment<SignUpViewModel>(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
 
+
         activity!!.title = getString(R.string.signup_title)
         fragment_signup_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
         setHasOptionsMenu(true)

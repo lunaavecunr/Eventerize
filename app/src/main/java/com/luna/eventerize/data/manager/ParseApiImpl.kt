@@ -53,4 +53,8 @@ class ParseApiImpl : ParseApi {
         return query.getInBackground(id)
     }
 
+
+    override fun saveEvent(event:Event): Task<Void> {
+        return event.saveInBackground()
+    }
 }
