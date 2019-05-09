@@ -7,12 +7,13 @@ import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 
 class EventListViewModel: ViewModel() {
 
     var repository = EventerizeApp.getInstance().repository
     var error = MutableLiveData<EventerizeError>()
-    var events = MutableLiveData<List<Event>>()
+    var events = MutableLiveData<List<EventWrapper>>()
 
     fun retrievalAllEvent () {
         repository.getEventByMembers()
@@ -35,12 +36,15 @@ class EventListViewModel: ViewModel() {
                         )
                     }
                     else -> {
-                        events.postValue(it.result)
+                        val listEventWrapper = ArrayList<EventWrapper>()
+                        it.result.map { event ->
+                            listEventWrapper.add(EventWrapper(event))
+                        }
                     }
                 }
             }
     }
 
-    fun getEvent(): LiveData<List<Event>> = events
+    fun getEvent(): LiveData<List<EventWrapper>> = events
     fun getError(): LiveData<EventerizeError> = error
 }

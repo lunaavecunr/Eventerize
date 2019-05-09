@@ -14,6 +14,7 @@ import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import kotlinx.android.synthetic.main.fragment_event_list.*
@@ -45,7 +46,7 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
 
         fragment_event_list_fab.setOnClickListener(this)
 
-        val updateEvent = Observer<List<Event>> {
+        val updateEvent = Observer<List<EventWrapper>> {
             updateList(it)
         }
 
@@ -59,7 +60,7 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         viewModel.retrievalAllEvent()
     }
 
-    fun updateList(eventList: List<Event>) {
+    fun updateList(eventList: List<EventWrapper>) {
         adapter.updateEventList(eventList)
     }
 
