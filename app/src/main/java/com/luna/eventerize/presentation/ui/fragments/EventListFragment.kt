@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luna.eventerize.R
@@ -14,12 +13,13 @@ import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import kotlinx.android.synthetic.main.fragment_event_list.*
 
 private const val INTENT_TAB_EXTRA = "INTENT_TAB_EXTRA"
 
-class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListener {
+class EventListFragment : BaseFragment<EventListViewModel>() {
 
     private lateinit var adapter: EventListAdapter
     private lateinit var navigator: Navigator
@@ -45,7 +45,7 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         }
 
         val updateError = Observer<EventerizeError> {
-            showError(it.message)
+            showError(context!!, it.message)
         }
 
         viewModel.getEvent().observe(this,updateEvent)
@@ -68,22 +68,13 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         adapter.updateEventList(eventList)
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_list, container, false)
 
     }
 
-    override fun onClick(v: View) {
 
-        when (v.id) {
-        }
 
-    }
-
-    fun showError(message: String) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
 
     companion object {
         fun newInstance(identifier: String = ""): EventListFragment {
