@@ -322,27 +322,6 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         }
     }
 
-    fun createFile(bitmap: Bitmap):ByteArray?{
-        try {
-            val filePath = File(context!!.cacheDir, "image")
-            filePath.mkdirs()
-            val stream = FileOutputStream("${filePath.absolutePath}/logo.png")
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            stream.close()
-            return sharingImage()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }
-
-    private fun sharingImage():ByteArray{
-        val imagePath = File(context!!.cacheDir, "image")
-        val newFile = File(imagePath,"logo.png")
-        val byteArray = newFile.readBytes()
-        return byteArray
-    }
-
     private fun checkPermissions(requestCode: String, requestPermission: Int) {
         if(ContextCompat.checkSelfPermission(activity as Activity, requestCode)
         != PackageManager.PERMISSION_GRANTED){

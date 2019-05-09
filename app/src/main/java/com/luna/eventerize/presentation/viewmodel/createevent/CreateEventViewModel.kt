@@ -1,9 +1,7 @@
 package com.luna.eventerize.presentation.viewmodel.createevent
 
-import android.content.Context
 import android.graphics.Bitmap
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -47,18 +45,7 @@ class CreateEventViewModel : ViewModel() {
         event.startDate = formatDate(startDate, startHour)
         event.endDate = formatDate(endDate, endHour)
         if (logo != null) {
-            val stream = ByteArrayOutputStream()
-            logo.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            val byteArray = stream.toByteArray()
-            val image = ParseFile(byteArray)
-            event.logo = image
-        } else {
-            val logo = ContextCompat.getDrawable(EventerizeApp.getInstance(), R.mipmap.eventerize)
-            val stream = ByteArrayOutputStream()
-            logo!!.toBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream)
-            val byteArray = stream.toByteArray()
-            val image = ParseFile(byteArray)
-            event.logo = image
+            event.logo = ParseFile(generateByteArray(logo))
         }
         repository.saveEvent(event)
             .continueWith {
@@ -86,7 +73,7 @@ class CreateEventViewModel : ViewModel() {
             }
     }
 
-    fun formatDate(date: Date, hour: Date): Date {
+    private fun formatDate(date: Date, hour: Date): Date {
         val calendar = Calendar.getInstance()
         calendar.time = date
         val hourCalendar = Calendar.getInstance()
@@ -94,6 +81,13 @@ class CreateEventViewModel : ViewModel() {
         calendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY))
         calendar.set(Calendar.MINUTE, hourCalendar.get(Calendar.MINUTE))
         return Date(calendar.timeInMillis)
+    }
+
+
+    private fun generateByteArray(bitmap: Bitmap):ByteArray?{
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+        return bos.toByteArray()
     }
 
     fun getSuccess(): LiveData<Boolean> = successUpload
