@@ -7,13 +7,16 @@ import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
+import com.luna.eventerize.data.model.Image
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
+import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 
 class EventDetailViewModel: ViewModel() {
     val repository = EventerizeApp.getInstance().repository
     val error = MutableLiveData<EventerizeError>()
     val event = MutableLiveData<EventWrapper>()
-
+    val gallery = MutableLiveData<List<ImageWrapper>>()
+    val eventWrapper:EventWrapper? = null
 
     fun getEventById(id:String){
         repository.getEventById(id)
@@ -41,6 +44,21 @@ class EventDetailViewModel: ViewModel() {
                 }
             }
     }
+
+    fun retrievalGallery(){
+        val galleryWrapper = ArrayList<ImageWrapper>()
+        if(eventWrapper!!.event.images != null){
+            eventWrapper!!.event.images!!.map {
+                galleryWrapper.add(ImageWrapper(it))
+            }
+            gallery.postValue(galleryWrapper)
+        }
+        else{
+            gallery.postValue(galleryWrapper)
+        }
+    }
+
+    fun getGallery(): LiveData<List<ImageWrapper>> = gallery
 
     fun getEvent():LiveData<EventWrapper> = event
 }
