@@ -4,12 +4,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
+import com.squareup.picasso.Picasso
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.parse.ParseUser
 
-class EventListViewHolder(v: View): RecyclerView.ViewHolder(v) {
+class EventListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
     private val eventTitle: TextView = itemView.findViewById(R.id.adapter_event_list_title)
     private val eventMapText: TextView = itemView.findViewById(R.id.adapter_event_list_map_text)
@@ -25,7 +25,7 @@ class EventListViewHolder(v: View): RecyclerView.ViewHolder(v) {
         eventCrown.visibility = View.INVISIBLE
 
         if (eventWrapper.event.logo != null) {
-            EventerizeApp.getInstance().picasso.load(eventWrapper.event.logo!!.url).into(eventImage)
+            Picasso.get().load(eventWrapper.event.logo!!.url).into(eventImage)
         }
 
         if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
