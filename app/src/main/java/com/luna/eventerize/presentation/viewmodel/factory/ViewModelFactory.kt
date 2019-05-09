@@ -6,6 +6,7 @@ import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.luna.eventerize.presentation.viewmodel.LoginViewModel
 import com.luna.eventerize.presentation.viewmodel.SignUpViewModel
+import com.luna.eventerize.presentation.viewmodel.TabsListViewModel
 
 class ViewModelFactory: ViewModelProvider.Factory  {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -17,6 +18,9 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         }
         if (modelClass.isAssignableFrom(SignUpViewModel::class.java)) {
             return SignUpViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(TabsListViewModel::class.java)) {
+            return TabsListViewModel() as T
         }
        if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
             return CreateEventViewModel() as T
