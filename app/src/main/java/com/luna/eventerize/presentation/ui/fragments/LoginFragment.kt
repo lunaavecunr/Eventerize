@@ -28,8 +28,8 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         activity!!.title = getString(R.string.login_title)
         navigator = Navigator(fragmentManager!!)
-        if (ParseUser.getCurrentUser() != null) {
-            navigator.displayTabsList()
+        if (ParseUser.getCurrentSessionToken() != null) {
+            viewModel.sessionTokenValid(ParseUser.getCurrentSessionToken())
         }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)
@@ -44,40 +44,6 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         }
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)
-
-//        val bitMatrix: BitMatrix
-//        try {
-//            bitMatrix = MultiFormatWriter().encode(
-//                "CeciEstUnTest",
-//                BarcodeFormat.QR_CODE,
-//                500, 500, null
-//            )
-//
-//        } catch (illegalArgumentException: IllegalArgumentException) {
-//            TODO()
-//        }
-//
-//        val bitMatrixWidth = bitMatrix.width
-//
-//        val bitMatrixHeight = bitMatrix.height
-//
-//        val pixels = IntArray(bitMatrixWidth * bitMatrixHeight)
-//
-//        for (y in 0 until bitMatrixHeight) {
-//            val offset = y * bitMatrixWidth
-//
-//            for (x in 0 until bitMatrixWidth) {
-//
-//                pixels[offset + x] = if (bitMatrix.get(x, y))
-//                    resources.getColor(R.color.black)
-//                else
-//                    resources.getColor(R.color.white)
-//            }
-//        }
-//        val bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444)
-//
-//        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight)
-//        qrcode.setImageBitmap(bitmap)
 
     }
 
