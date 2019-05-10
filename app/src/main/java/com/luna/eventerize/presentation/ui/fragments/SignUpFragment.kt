@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
@@ -23,6 +24,7 @@ class SignUpFragment : BaseFragment<SignUpViewModel>(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
         navigator = Navigator(fragmentManager!!)
+
 
         activity!!.title = getString(R.string.signup_title)
         fragment_signup_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
