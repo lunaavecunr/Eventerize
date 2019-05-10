@@ -34,4 +34,8 @@ class EventerizeRepo {
     fun getEventById(id:String): Task<Event>{
         return parseManager.getEventById(id)
     }
+
+    fun sessionTokenValid(sessionToken: String): Task<ParseUser> {
+        return parseManager.sessionTokenValid(sessionToken)
+    }
 }

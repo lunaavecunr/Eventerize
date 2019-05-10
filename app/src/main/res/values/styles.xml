@@ -48,8 +48,5 @@
         <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
     </style>
-    <style name="ToolbarColoredBackArrow" parent="AppTheme">
-    <item name="android:textColorSecondary">@color/white</item>
-</style>
 
 </resources>

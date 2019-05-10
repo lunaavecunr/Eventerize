@@ -82,4 +82,8 @@
     <string name="photo_destroy_operation">Destruction de la photo</string>
     <string name="photo_destroy_operation_text">Souhaitez-vous détruire cette photo?\nAttention, c\'est définitif!
     </string>
+    <string name="error_while_searching_image_to_destroy">La photo n\'existe pas!</string>
+    <string name="error">Erreur</string>
+    <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
+    <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
 </resources>

@@ -2,13 +2,10 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -92,8 +89,8 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         viewModel.getGallery().observe(this,updateGallery)
     }
 
-    private fun displayImage(it: ImageWrapper) {
-        navigator.displayPhoto(it.image.file!!.url, it.image.objectId, eventId!!)
+    private fun displayImage(imageWrapper: ImageWrapper) {
+        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventId!!)
     }
 
     private fun showEvent(eventWrapper: EventWrapper){
