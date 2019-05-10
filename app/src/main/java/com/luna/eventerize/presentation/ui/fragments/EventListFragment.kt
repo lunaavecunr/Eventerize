@@ -2,7 +2,6 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,10 +31,6 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         adapter = EventListAdapter()
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
@@ -45,6 +40,8 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         fragment_event_list_recycler_view.layoutManager = LinearLayoutManager(context)
 
         fragment_event_list_recycler_view.adapter = adapter
+
+        adapter.setOnEventClick { onEventClick(it) }
 
         val updateEvent = Observer<List<EventWrapper>> {
             updateList(it)
@@ -72,6 +69,10 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
 
     fun updateList(eventList: List<EventWrapper>) {
         adapter.updateEventList(eventList)
+    }
+
+    private fun onEventClick(eventWrapper: EventWrapper){
+        navigator.displayEventDetails(eventWrapper.event.objectId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
