@@ -56,9 +56,9 @@
     <string name="begin_label">Du</string>
     <string name="end_label">Au</string>
     <string name="no_members">Pas de participants</string>
-    <string name="event_detail_no_image_in_gallery">Pas de photos dans la gallerie!</string>
-    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la gallerie! Vous pouvez en ajouter
-        une par le boutton dans la barre de l\'application!
+    <string name="event_detail_no_image_in_gallery">Pas de photos dans la galerie!</string>
+    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la galerie! Vous pouvez en ajouter
+        une par le bouton dans la barre de l\'application!
     </string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -75,4 +75,5 @@
     <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
     <string name="event_creation_failed">La création a échouée</string>
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+    <string name="fragment_event_details_show_members">Voir les participants</string>
 </resources>
