@@ -2,10 +2,7 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -28,11 +25,18 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     override val viewModelClass = EventDetailViewModel::class
     private lateinit var navigator: Navigator
     private lateinit var adapter: GalleryAdapter
+    private lateinit var eventWrap: EventWrapper
 
     override fun onClick(v: View?) {
+<<<<<<< HEAD
         when(v!!.id) {
             R.id.fragment_event_details_show_members -> {
                 
+=======
+        when (v!!.id) {
+            R.id.participant_number -> {
+
+>>>>>>> develop
             }
         }
     }
@@ -41,13 +45,23 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         return inflater.inflate(R.layout.fragment_event_details, container, false)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater!!.inflate(R.menu.menu_event_details, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            activity?.onBackPressed()
-            true
-        } else {
-            super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                return true
+            }
+            R.id.menu_event_details_share -> {
+                navigator.displayShare(eventWrap.event.objectId)
+                return true
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onAttach(context: Context) {
@@ -66,46 +80,53 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
 
-        event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
+        event_details_picture_gallery_recycler_view.layoutManager =
+            StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
 
-        val updateEvent = Observer<EventWrapper>{
+        val updateEvent = Observer<EventWrapper> {
+            eventWrap = it
             showEvent(it)
         }
         val updateGallery = Observer<List<ImageWrapper>> {
             adapter.updateImageList(it)
-            if(it.isNullOrEmpty()){
+            if (it.isNullOrEmpty()) {
                 event_detail_no_image_in_gallery.visibility = View.VISIBLE
-            }else{
+            } else {
                 event_detail_no_image_in_gallery.visibility = View.INVISIBLE
             }
         }
 
-        viewModel.getEvent().observe(this,updateEvent)
-        viewModel.getGallery().observe(this,updateGallery)
+        viewModel.getEvent().observe(this, updateEvent)
+        viewModel.getGallery().observe(this, updateGallery)
     }
 
-    private fun showEvent(eventWrapper: EventWrapper){
+    private fun showEvent(eventWrapper: EventWrapper) {
         participant_number.text = eventWrapper.numberOfMembers()
         location_label.text = eventWrapper.event.location
         event_date_label.text = eventWrapper.dateCoverLabel()
         supervisor_label.text = eventWrapper.event.owner!!.username
 
-        if(eventWrapper.event.logo != null){
+        if (eventWrapper.event.logo != null) {
             Picasso.get().load(eventWrapper.event.logo!!.url).into(event_detail_event_logo)
-        }else{
+        } else {
             Picasso.get().load(R.mipmap.eventerize).into(event_detail_event_logo)
         }
-        event_detail_no_image_in_gallery_logo.setImageDrawable(ContextCompat.getDrawable(context!!,R.mipmap.eventerize))
+        event_detail_no_image_in_gallery_logo.setImageDrawable(
+            ContextCompat.getDrawable(
+                context!!,
+                R.mipmap.eventerize
+            )
+        )
 
         activity!!.title = eventWrapper.event.title
 
         //OnClickListener
         participant_number.setOnClickListener(this)
 
-        val imageWrapperList:MutableList<ImageWrapper> = mutableListOf()
+        val imageWrapperList: MutableList<ImageWrapper> = mutableListOf()
 
-        if(eventWrapper.event.images != null) {
+        if (eventWrapper.event.images != null) {
             eventWrapper.event.images!!.map {
                 imageWrapperList.add(ImageWrapper(it))
             }

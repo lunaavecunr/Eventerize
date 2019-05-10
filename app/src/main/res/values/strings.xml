@@ -75,5 +75,9 @@
     <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
     <string name="event_creation_failed">La création a échouée</string>
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+<<<<<<< HEAD
     <string name="fragment_event_details_show_members">Voir les participants</string>
+=======
+    <string name="qr_code_title">Partage</string>
+>>>>>>> develop
 </resources>
