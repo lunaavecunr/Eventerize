@@ -4,8 +4,6 @@ import bolts.Task
 import com.luna.eventerize.data.manager.ParseApi
 import com.luna.eventerize.data.manager.ParseApiImpl
 import com.luna.eventerize.data.model.Event
-import com.parse.ParseObject
-import com.parse.ParseRelation
 import com.parse.ParseUser
 
 class EventerizeRepo {
@@ -32,5 +30,8 @@ class EventerizeRepo {
 
     fun saveEvent(event: Event): Task<Void>{
         return parseManager.saveEvent(event)
+    }
+    fun getEventById(id:String): Task<Event>{
+        return parseManager.getEventById(id)
     }
 }

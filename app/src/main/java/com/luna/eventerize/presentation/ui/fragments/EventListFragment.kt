@@ -2,6 +2,7 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,27 +31,9 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         adapter = EventListAdapter()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        super.onActivityCreated(savedInstanceState)
-
-        navigator = Navigator(fragmentManager!!)
-
-        fragment_event_list_recycler_view.layoutManager = LinearLayoutManager(context)
-
-        fragment_event_list_recycler_view.adapter = adapter
-
-        val updateEvent = Observer<List<EventWrapper>> {
-            updateList(it)
-        }
-
-        val updateError = Observer<EventerizeError> {
-            showError(context!!, it.message)
-        }
-
-        viewModel.getEvent().observe(this,updateEvent)
-        viewModel.getError().observe(this,updateError)
-
+    override fun onResume() {
+        super.onResume()
+        
         when (arguments?.getString(INTENT_TAB_EXTRA)) {
             "all" -> {
                 viewModel.retrievalAllEvent()
@@ -64,17 +47,44 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         }
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        super.onActivityCreated(savedInstanceState)
+
+        navigator = Navigator(fragmentManager!!)
+
+        fragment_event_list_recycler_view.layoutManager = LinearLayoutManager(context)
+
+        fragment_event_list_recycler_view.adapter = adapter
+
+        adapter.setOnEventClick { onEventClick(it) }
+
+        val updateEvent = Observer<List<EventWrapper>> {
+            updateList(it)
+        }
+
+        val updateError = Observer<EventerizeError> {
+            showError(context!!, it.message)
+        }
+
+        viewModel.getEvent().observe(this,updateEvent)
+        viewModel.getError().observe(this,updateError)
+
+    }
+
     fun updateList(eventList: List<EventWrapper>) {
         adapter.updateEventList(eventList)
+    }
+
+    private fun onEventClick(eventWrapper: EventWrapper){
+        navigator.displayEventDetails(eventWrapper.event.objectId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_list, container, false)
 
     }
-
-
-
 
     companion object {
         fun newInstance(identifier: String = ""): EventListFragment {

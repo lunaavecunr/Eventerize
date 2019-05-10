@@ -34,12 +34,11 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)
 
-        val updateError = Observer<EventerizeError> {
+        val updateError = Observer<EventerizeError>{
             showError(activity!!, it.message)
         }
 
         val updateUser = Observer<ParseUser> {
-
             navigator.displayEventList()
         }
         viewModel.getError().observe(this, updateError)
@@ -82,16 +81,15 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        when (v.id) {
-            R.id.fragment_login_loginButton -> {
+       when(v.id) {
+           R.id.fragment_login_loginButton -> {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
-
             }
             R.id.fragment_login_createAccountTV -> {
                 navigator.displaySignUp()
             }
 
-        }
+       }
     }
 
 
