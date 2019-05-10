@@ -50,8 +50,8 @@ class LoginViewModel : ViewModel() {
             }
     }
 
-    fun hideLogin(sessionToken: String) {
-        repository.hideLogin(sessionToken)
+    fun sessionTokenValid(sessionToken: String) {
+        repository.sessionTokenValid(sessionToken)
             .continueWith {
                 if (it.isCompleted) {
                     user.postValue(it.result)

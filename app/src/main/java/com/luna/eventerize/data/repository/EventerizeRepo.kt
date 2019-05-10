@@ -35,7 +35,7 @@ class EventerizeRepo {
         return parseManager.getEventById(id)
     }
 
-    fun hideLogin(sessionToken: String): Task<ParseUser> {
-        return parseManager.hideLogin(sessionToken)
+    fun sessionTokenValid(sessionToken: String): Task<ParseUser> {
+        return parseManager.sessionTokenValid(sessionToken)
     }
 }

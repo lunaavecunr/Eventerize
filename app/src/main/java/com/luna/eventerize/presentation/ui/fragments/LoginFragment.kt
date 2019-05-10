@@ -11,7 +11,6 @@ import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.LoginViewModel
-import com.parse.ParseInstallation
 import com.parse.ParseUser
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -30,7 +29,7 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         activity!!.title = getString(R.string.login_title)
         navigator = Navigator(fragmentManager!!)
         if (ParseUser.getCurrentSessionToken() != null) {
-            viewModel.hideLogin(ParseUser.getCurrentSessionToken())
+            viewModel.sessionTokenValid(ParseUser.getCurrentSessionToken())
         }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)

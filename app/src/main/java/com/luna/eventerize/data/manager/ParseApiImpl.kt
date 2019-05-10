@@ -11,7 +11,7 @@ class ParseApiImpl : ParseApi {
         return ParseUser.logInInBackground(username, password)
     }
 
-    override fun hideLogin(sessionToken: String): Task<ParseUser> {
+    override fun sessionTokenValid(sessionToken: String): Task<ParseUser> {
         return ParseUser.becomeInBackground(sessionToken)
     }
 
