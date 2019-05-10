@@ -84,18 +84,27 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         location_label.text = eventWrapper.event.location
         event_date_label.text = eventWrapper.dateCoverLabel()
         supervisor_label.text = eventWrapper.event.owner!!.username
+
         if(eventWrapper.event.logo != null){
             Picasso.get().load(eventWrapper.event.logo!!.url).into(event_detail_event_logo)
         }else{
             Picasso.get().load(R.mipmap.eventerize).into(event_detail_event_logo)
         }
+
         activity!!.title = eventWrapper.event.title
 
         //OnClickListener
         participant_number.setOnClickListener(this)
 
-        //Recycler View
-        viewModel.getGallery()
+        val imageWrapperList:MutableList<ImageWrapper> = mutableListOf()
+
+        if(eventWrapper.event.images != null) {
+            eventWrapper.event.images!!.map {
+                imageWrapperList.add(ImageWrapper(it))
+            }
+        }
+
+        viewModel.updateImageGallery(imageWrapperList)
 
     }
 

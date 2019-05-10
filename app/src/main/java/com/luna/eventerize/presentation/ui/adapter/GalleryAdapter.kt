@@ -13,7 +13,7 @@ class GalleryAdapter : RecyclerView.Adapter<GalleryViewHolder>() {
     private  var onImageClickListener: ((ImageWrapper)->Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
-        val inflatedView = parent.inflate(R.layout.adapter_event_list, false)
+        val inflatedView = parent.inflate(R.layout.adapter_gallery, false)
         return GalleryViewHolder(inflatedView)
     }
 

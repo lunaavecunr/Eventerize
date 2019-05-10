@@ -45,6 +45,10 @@ class EventDetailViewModel: ViewModel() {
             }
     }
 
+    fun updateImageGallery(eventWrapper: List<ImageWrapper>){
+        gallery.postValue(eventWrapper)
+    }
+
     fun retrievalGallery(){
         val galleryWrapper = ArrayList<ImageWrapper>()
         if(eventWrapper!!.event.images != null){
