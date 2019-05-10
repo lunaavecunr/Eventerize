@@ -66,7 +66,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
 
-        event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.HORIZONTAL)
+        event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
 
         val updateEvent = Observer<EventWrapper>{
