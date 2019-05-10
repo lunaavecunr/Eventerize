@@ -28,6 +28,9 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         activity!!.title = getString(R.string.login_title)
         navigator = Navigator(fragmentManager!!)
+        if (ParseUser.getCurrentUser() != null) {
+            navigator.displayEventList()
+        }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)
 
