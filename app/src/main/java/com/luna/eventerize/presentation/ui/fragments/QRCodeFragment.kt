@@ -15,6 +15,7 @@ import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.QRCodeViewModel
 import kotlinx.android.synthetic.main.fragment_qr_code.*
 import android.graphics.Matrix
+import android.view.MenuItem
 
 
 private const val INTENT_QR_ID_EXTRA = "INTENT_QR_ID_EXTRA"
@@ -26,6 +27,16 @@ class QRCodeFragment: BaseFragment<QRCodeViewModel>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_qr_code, container, false)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
