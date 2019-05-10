@@ -37,7 +37,7 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
 
         val updateUser = Observer<ParseUser> {
 
-            navigator.displayEventList()
+            navigator.displayTabsList()
         }
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)

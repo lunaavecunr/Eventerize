@@ -1,7 +1,6 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,26 +16,18 @@ import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOption
 import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsRequest
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
-import com.luna.eventerize.presentation.ui.adapter.TabsListAdapter
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.TabsListViewModel
 import kotlinx.android.synthetic.main.fragment_tabs_list.*
+import com.google.android.material.tabs.TabLayout
+import com.luna.eventerize.data.model.EventListKey
 
 
 class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener {
-    private lateinit var adapter: TabsListAdapter
+    private var lastTabs: EventListKey? = null
     private lateinit var navigator: Navigator
     override val viewModelClass = TabsListViewModel::class
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        adapter = TabsListAdapter(fragmentManager!!)
-        adapter.addFragment(EventListFragment.newInstance("all"), "Tous")
-        adapter.addFragment(EventListFragment.newInstance("orga"), "Organisateur")
-        adapter.addFragment(EventListFragment.newInstance("member"), "Membre")
-
-
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,13 +36,47 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
         activity!!.title = getString(R.string.fragment_list_event_title)
         (activity as AppCompatActivity).setSupportActionBar(fragment_tabs_list_toolbar)
 
-        fragment_tabs_list_viewpager.adapter = adapter
-        fragment_tabs_list_tabs.setupWithViewPager(fragment_tabs_list_viewpager)
-
         fragment_event_list_fab_create_event.setOnClickListener(this)
         fragment_event_list_fab_qr_code.setOnClickListener(this)
 
         navigator = Navigator(fragmentManager!!)
+
+        if (lastTabs != null){
+            Log.e("TAG", lastTabs.toString())
+            if(fragment_tabs_list_tabs.getTabAt(lastTabs!!.key) != null) {
+                fragment_tabs_list_tabs.getTabAt(lastTabs!!.key)!!.select()
+                navigator.displayEventWithBackStack(lastTabs!!.key)
+            }
+        } else {
+            navigator.displayEventWithBackStack(0)
+        }
+
+        fragment_tabs_list_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> {
+                        lastTabs = EventListKey.ALL
+                        navigator.displayEventWithBackStack(0)
+                    }
+                    1 -> {
+                        lastTabs = EventListKey.ORGANIZER
+                        navigator.displayEventWithBackStack(1)
+
+                    }
+                    2 -> {
+                        lastTabs = EventListKey.MEMBER
+                        navigator.displayEventWithBackStack(2)
+
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+
+        })
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,18 +119,21 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
         // denied. Handle it your way.
         AlertDialog.Builder(context!!)
             .setTitle("Permission refusée")
-            .setMessage("This is the custom permissions permanently denied dialog. " +
-                    "Please open app settings to open app settings for allowing permissions, " +
-                    "or cancel to end the permission flow.")
+            .setMessage(
+                "This is the custom permissions permanently denied dialog. " +
+                        "Please open app settings to open app settings for allowing permissions, " +
+                        "or cancel to end the permission flow."
+            )
             .setPositiveButton("App Settings") { dialog, which -> req.openAppSettings() }
             .setNegativeButton("Cancel") { dialog, which -> req.cancel() }
             .setCancelable(false)
             .show()
     }
 
-    fun startQRScanner(options: QuickPermissionsOptions) = runWithPermissions(Manifest.permission.CAMERA, options = options) {
-        IntentIntegrator(activity).initiateScan()
-    }
+    fun startQRScanner(options: QuickPermissionsOptions) =
+        runWithPermissions(Manifest.permission.CAMERA, options = options) {
+            IntentIntegrator(activity).initiateScan()
+        }
 
     companion object {
         fun newInstance(): TabsListFragment = TabsListFragment()
