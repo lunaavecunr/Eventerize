@@ -2,13 +2,13 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luna.eventerize.R
+import com.luna.eventerize.data.model.EventListKey
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
@@ -30,23 +30,6 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         super.onAttach(context)
         adapter = EventListAdapter()
     }
-
-    override fun onResume() {
-        super.onResume()
-        
-        when (arguments?.getString(INTENT_TAB_EXTRA)) {
-            "all" -> {
-                viewModel.retrievalAllEvent()
-            }
-            "orga" -> {
-                viewModel.retrievalEventByOrga()
-            }
-            "member" -> {
-                viewModel.retrievalEventByMember()
-            }
-        }
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,6 +54,17 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         viewModel.getEvent().observe(this,updateEvent)
         viewModel.getError().observe(this,updateError)
 
+        when (arguments?.getInt(INTENT_TAB_EXTRA)) {
+            EventListKey.ALL.key -> {
+                viewModel.retrievalAllEvent()
+            }
+            EventListKey.ORGANIZER.key -> {
+                viewModel.retrievalEventByOrga()
+            }
+            EventListKey.MEMBER.key -> {
+                viewModel.retrievalEventByMember()
+            }
+        }
     }
 
     fun updateList(eventList: List<EventWrapper>) {
@@ -87,10 +81,10 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
     }
 
     companion object {
-        fun newInstance(identifier: String = ""): EventListFragment {
+        fun newInstance(identifier: Int = 0): EventListFragment {
             val fragment = EventListFragment()
             val args = Bundle()
-            args.putString(INTENT_TAB_EXTRA, identifier)
+            args.putInt(INTENT_TAB_EXTRA, identifier)
             fragment.arguments = args
             return fragment
         }

@@ -29,17 +29,18 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         activity!!.title = getString(R.string.login_title)
         navigator = Navigator(fragmentManager!!)
         if (ParseUser.getCurrentUser() != null) {
-            navigator.displayEventList()
+            navigator.displayTabsList()
         }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)
 
-        val updateError = Observer<EventerizeError>{
+        val updateError = Observer<EventerizeError> {
             showError(activity!!, it.message)
         }
 
         val updateUser = Observer<ParseUser> {
-            navigator.displayEventList()
+
+            navigator.displayTabsList()
         }
         viewModel.getError().observe(this, updateError)
         viewModel.getUser().observe(this, updateUser)
@@ -81,15 +82,16 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-       when(v.id) {
-           R.id.fragment_login_loginButton -> {
+        when (v.id) {
+            R.id.fragment_login_loginButton -> {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+
             }
             R.id.fragment_login_createAccountTV -> {
                 navigator.displaySignUp()
             }
 
-       }
+        }
     }
 
 
