@@ -26,7 +26,7 @@ class EventListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         eventCrown.visibility = View.INVISIBLE
 
         if (eventWrapper.event.logo != null) {
-            Picasso.get().load(eventWrapper.event.logo!!.url).into(eventImage)
+            Picasso.get().load(eventWrapper.event.logo!!.url).resize(150, 150).into(eventImage)
         }
 
         if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
