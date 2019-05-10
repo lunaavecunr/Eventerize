@@ -11,5 +11,7 @@ interface ParseApi {
     fun getEvent(): Task<List<Event>>
     fun getEventByOwner(): Task<List<Event>>
     fun getEventByMembers(): Task<List<Event>>
+    fun getEventById(id:String): Task<Event>
     fun saveEvent(event:Event): Task<Void>
+    fun sessionTokenValid(sessionToken: String): Task<ParseUser>
 }

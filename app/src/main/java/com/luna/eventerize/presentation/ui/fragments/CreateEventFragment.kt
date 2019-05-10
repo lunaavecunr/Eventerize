@@ -96,7 +96,7 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
         }
 
         val updateSuccessUpload = Observer<Boolean>{
-            navigator.displayEventList()
+            navigator.displayTabsList()
         }
 
         viewModel.getError().observe(this, updateError)
