@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
@@ -73,6 +74,11 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         }
         val updateGallery = Observer<List<ImageWrapper>> {
             adapter.updateImageList(it)
+            if(it.isNullOrEmpty()){
+                event_detail_no_image_in_gallery.visibility = View.VISIBLE
+            }else{
+                event_detail_no_image_in_gallery.visibility = View.INVISIBLE
+            }
         }
 
         viewModel.getEvent().observe(this,updateEvent)
@@ -90,6 +96,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         }else{
             Picasso.get().load(R.mipmap.eventerize).into(event_detail_event_logo)
         }
+        event_detail_no_image_in_gallery_logo.setImageDrawable(ContextCompat.getDrawable(context!!,R.mipmap.eventerize))
 
         activity!!.title = eventWrapper.event.title
 

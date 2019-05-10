@@ -59,10 +59,10 @@
     <string name="event_detail_no_image_in_gallery">Pas de photos dans la gallerie!</string>
     <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la gallerie! Vous pouvez en ajouter
         une par le boutton dans la barre de l\'application!
+    </string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main">MainActivity</string>
-    </string>
 
 
     <string name="newEventDefaultValue">Nouvel évènement</string>
