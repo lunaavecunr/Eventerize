@@ -77,4 +77,9 @@
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
     <string name="photo_details_delete">Supprimer la photo</string>
     <string name="photo_detail_fragment_menu_photo_infos">Informations sur la photo</string>
+    <string name="yes_destroy_it">Oui je veux la détruire</string>
+    <string name="i_prefer_not_to">Tout compte fait non</string>
+    <string name="photo_destroy_operation">Destruction de la photo</string>
+    <string name="photo_destroy_operation_text">Souhaitez-vous détruire cette photo?\nAttention, c\'est définitif!
+    </string>
 </resources>

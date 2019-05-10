@@ -2,6 +2,7 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -30,6 +31,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     override val viewModelClass = EventDetailViewModel::class
     private lateinit var navigator: Navigator
     private lateinit var adapter: GalleryAdapter
+    private var eventId:String? = null
 
     override fun onClick(v: View?) {
         when(v!!.id) {
@@ -70,14 +72,11 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
-        adapter.setOnImageClick { navigator.displayPhoto() }
+        adapter.setOnImageClick { displayImage(it) }
 
         val updateEvent = Observer<EventWrapper>{
             showEvent(it)
-        }
-
-        val selectImageFromGallery = Observer<ImageWrapper> {
-            navigator.displayPhoto(it)
+            eventId = it.event.objectId
         }
 
         val updateGallery = Observer<List<ImageWrapper>> {
@@ -91,7 +90,10 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         viewModel.getEvent().observe(this,updateEvent)
         viewModel.getGallery().observe(this,updateGallery)
-        viewModel.getSelectedPictureInGallery().observe(this, selectImageFromGallery)
+    }
+
+    private fun displayImage(it: ImageWrapper) {
+        navigator.displayPhoto(it.image.file!!.url, it.image.objectId, eventId!!)
     }
 
     private fun showEvent(eventWrapper: EventWrapper){

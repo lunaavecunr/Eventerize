@@ -1,24 +1,26 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
+import android.view.*
+import android.widget.PopupMenu
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
-import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
-import kotlinx.android.synthetic.main.fragment_event_details.*
+import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.viewmodel.PhotoDetailViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_photo_detail.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
+private const val PHOTO_URL = "PHOTO_URL"
+private const val PHOTO_ID = "PHOTO_ID"
+private const val PHOTO_ID_INT = "PHOTO_ID_INT"
+private const val EVENT_ID = "EVENT_ID"
 
 /**
  * A simple [Fragment] subclass.
@@ -29,16 +31,22 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  *
  */
-class PhotoDetailFragment : Fragment() {
+class PhotoDetailFragment : BaseFragment<PhotoDetailViewModel>(){
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
+    private var photoUrl: String? = null
+    private var photoId: String? = null
+    private var eventId: String? = null
+    private var photoIdInt: Int? = null
     private var navigator: Navigator? = null
-    private var imageWrapper:ImageWrapper?= null
+    override val viewModelClass = PhotoDetailViewModel::class
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
+            photoUrl = it.getString(PHOTO_URL)
+            photoId = it.getString(PHOTO_ID)
+            photoIdInt = it.getInt(PHOTO_ID_INT)
+            eventId = it.getString(EVENT_ID)
         }
     }
 
@@ -52,10 +60,35 @@ class PhotoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         navigator = Navigator(fragmentManager!!)
-        fragment_photo_detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        fragment_photo_detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
         setHasOptionsMenu(true)
-        (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(fragment_photo_detail_toolbar)
+
+        Picasso.get().load(photoUrl).into(fragment_photo_detail_photo_view)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater!!.inflate(R.menu.photo_details_fragment_options_menu,menu)
+    }
+
+    private fun deletePicture(){
+        val dialog = AlertDialog.Builder(context!!)
+            .setTitle(getString(R.string.photo_destroy_operation))
+            .setMessage(getString(R.string.photo_destroy_operation_text))
+            .setNeutralButton(
+                getString(R.string.yes_destroy_it)
+            ) { _, _ ->
+                viewModel.destroyPicture(photoId!!,photoIdInt!!)
+            }
+            .setNeutralButton(
+                getString(R.string.i_prefer_not_to)
+            ) { _, _ ->
+            }
+        dialog.create()
+        dialog.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -63,11 +96,11 @@ class PhotoDetailFragment : Fragment() {
             android.R.id.home->{
                 activity?.onBackPressed()
                 true
-            }
-            R.id.photo_details_menu_infos->{
+            }R.id.photo_details_menu_infos->{
+
                 true
-            }
-            R.id.photo_detail_menu_delete_photo->{
+            }R.id.photo_detail_menu_delete_photo->{
+                deletePicture()
                 true
             }
             else->{
@@ -81,12 +114,21 @@ class PhotoDetailFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
+         * @param PHOTO_URL Parameter 1.
          * @param param2 Parameter 2.
          * @return A new instance of fragment PhotoDetailFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() = PhotoDetailFragment()
+        fun newInstance(photoUrl: String = "",photoObjectId:String = "", eventObjectId:String = "", photoIdInt:Int = -1): PhotoDetailFragment {
+            val fragment = PhotoDetailFragment()
+            val args = Bundle()
+            args.putString(PHOTO_URL, photoUrl)
+            args.putString(PHOTO_ID, photoObjectId)
+            args.putString(PHOTO_ID_INT, photoObjectId)
+            args.putString(EVENT_ID, eventObjectId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
