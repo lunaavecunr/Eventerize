@@ -2,10 +2,16 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,8 +21,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
@@ -25,9 +35,11 @@ import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -318,11 +330,98 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 initPopup()
             }
             R.id.validate_event -> {
-                validate_event.isEnabled = false
+                /*validate_event.isEnabled = false
                 event_creation_progress_bar.visibility = View.VISIBLE
                 validate_event.text = getString(R.string.event_creation_ongoing_label)
                 validate_event.setBackgroundResource(R.drawable.disabled_button_background)
-                viewModel.saveEvent(event_title_input_layout.editText!!.text.toString(),event_location_layout.editText!!.text.toString(),startDate,startHour,endDate,endHour,logo)
+                viewModel.saveEvent(event_title_input_layout.editText!!.text.toString(),event_location_layout.editText!!.text.toString(),startDate,startHour,endDate,endHour,logo)*/
+
+
+                val url = "https://bigoud.games/eventerize/files/11558475925/5bdba112314c9ed811b76301c93d69c2_test.jpg"
+                val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+                    //Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+
+                Toast.makeText(context, dirPath, Toast.LENGTH_SHORT).show()
+
+
+                val fileName = "theo.jpg"
+
+
+
+                var builder = NotificationCompat.Builder(activity!!, "notif")
+                    .setContentTitle("Eventerize")
+                    .setContentText("Image download")
+                    .setSmallIcon(R.mipmap.eventerize)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+
+                with(NotificationManagerCompat.from(context!!)) {
+                    notify(0, builder.build())
+                }
+
+
+
+
+
+
+
+
+
+
+                val downloadId = PRDownloader.download(url, "$dirPath/Eventerize",fileName)
+                    .build()
+                    .setOnStartOrResumeListener {
+                        onStart()
+                    }
+                    .setOnPauseListener {
+                        onPause()
+                    }
+                    .setOnCancelListener {
+
+                    }
+                    .setOnProgressListener {progress ->
+                        val PROGRESS_MAX = progress.totalBytes.toInt()
+
+                        NotificationManagerCompat.from(context!!).apply {
+                            // Issue the initial notification with zero progress
+                            builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
+                            notify(0, builder.build())
+                        }
+                        //progressBar.setProgress(progress.currentBytes as Int, true)
+                    }
+                    .start(object : OnDownloadListener {
+                        override fun onError(error: com.downloader.Error?) {
+                            Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Download error connect : " + error!!.isConnectionError, Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onDownloadComplete() {
+                            NotificationManagerCompat.from(context!!).apply {
+                                builder.setContentText("Download complete")
+                                    .setProgress(0, 0, false)
+                                notify(0, builder.build())
+                            }
+
+
+                            Toast.makeText(context, "Download completed", Toast.LENGTH_SHORT).show()
+                            val fileCreated = File("$dirPath/Eventerize/$fileName")
+
+
+                            var arr = arrayOf(fileCreated.absolutePath)
+
+                            var arr2 = arrayOf("images/*")
+                            MediaScannerConnection.scanFile(context,arr, arr2) { s: String, uri: Uri ->
+
+                            }
+
+
+                        }
+                    })
+
+                //Picasso.get().load(url).into(getTarget("test"))
+                /*val bm = Picasso.get().load(url).get()
+                MediaStore.Images.Media.insertImage(activity!!.contentResolver, bm, fileName, "theo devant un soutif")*/
+
+
             }
         }
     }

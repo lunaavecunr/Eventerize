@@ -1,6 +1,7 @@
 package com.luna.eventerize
 
 import android.app.Application
+import com.downloader.PRDownloader
 import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.Image
 import com.luna.eventerize.data.repository.EventerizeRepo
@@ -27,6 +28,7 @@ class EventerizeApp: Application() {
                 .build()
         )
         ParseInstallation.getCurrentInstallation().saveInBackground()
+        PRDownloader.initialize(applicationContext)
     }
 
 
