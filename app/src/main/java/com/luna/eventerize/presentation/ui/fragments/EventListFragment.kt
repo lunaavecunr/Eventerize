@@ -33,8 +33,7 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
 
     override fun onResume() {
         super.onResume()
-
-        Log.d("mlk","Get")
+        
         when (arguments?.getString(INTENT_TAB_EXTRA)) {
             "all" -> {
                 viewModel.retrievalAllEvent()
