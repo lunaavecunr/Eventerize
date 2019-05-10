@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -68,10 +70,16 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
+        adapter.setOnImageClick { navigator.displayPhoto() }
 
         val updateEvent = Observer<EventWrapper>{
             showEvent(it)
         }
+
+        val selectImageFromGallery = Observer<ImageWrapper> {
+            navigator.displayPhoto(it)
+        }
+
         val updateGallery = Observer<List<ImageWrapper>> {
             adapter.updateImageList(it)
             if(it.isNullOrEmpty()){
@@ -83,6 +91,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         viewModel.getEvent().observe(this,updateEvent)
         viewModel.getGallery().observe(this,updateGallery)
+        viewModel.getSelectedPictureInGallery().observe(this, selectImageFromGallery)
     }
 
     private fun showEvent(eventWrapper: EventWrapper){

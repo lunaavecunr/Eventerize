@@ -2,7 +2,6 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +32,6 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
 
     override fun onResume() {
         super.onResume()
-        
         when (arguments?.getString(INTENT_TAB_EXTRA)) {
             "all" -> {
                 viewModel.retrievalAllEvent()

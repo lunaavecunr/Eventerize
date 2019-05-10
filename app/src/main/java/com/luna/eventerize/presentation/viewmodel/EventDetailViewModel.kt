@@ -16,6 +16,7 @@ class EventDetailViewModel: ViewModel() {
     val error = MutableLiveData<EventerizeError>()
     val event = MutableLiveData<EventWrapper>()
     val gallery = MutableLiveData<List<ImageWrapper>>()
+    val selectedPictureInGallery = MutableLiveData<ImageWrapper>()
     val eventWrapper:EventWrapper? = null
 
     fun getEventById(id:String){
@@ -49,6 +50,10 @@ class EventDetailViewModel: ViewModel() {
         gallery.postValue(eventWrapper)
     }
 
+    fun selectImageInGallery(imageWrapper: ImageWrapper){
+        selectedPictureInGallery.postValue(imageWrapper)
+    }
+
     fun retrievalGallery(){
         val galleryWrapper = ArrayList<ImageWrapper>()
         if(eventWrapper!!.event.images != null){
@@ -65,4 +70,6 @@ class EventDetailViewModel: ViewModel() {
     fun getGallery(): LiveData<List<ImageWrapper>> = gallery
 
     fun getEvent():LiveData<EventWrapper> = event
+
+    fun getSelectedPictureInGallery():LiveData<ImageWrapper> = selectedPictureInGallery
 }

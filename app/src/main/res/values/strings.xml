@@ -75,4 +75,6 @@
     <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
     <string name="event_creation_failed">La création a échouée</string>
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+    <string name="photo_details_delete">Supprimer la photo</string>
+    <string name="photo_detail_fragment_menu_photo_infos">Informations sur la photo</string>
 </resources>
