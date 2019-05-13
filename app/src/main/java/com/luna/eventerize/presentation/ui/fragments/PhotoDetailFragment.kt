@@ -67,7 +67,7 @@ class PhotoDetailFragment : BaseFragment<PhotoDetailViewModel>(){
         Picasso.get().load(photoUrl).into(fragment_photo_detail_photo_view)
 
         viewModel.getSuccess.observe(this, Observer {
-            viewModel.destroyPicture(eventId!!)
+            viewModel.destroyPicture(eventId!!,photoId!!)
         })
     }
 

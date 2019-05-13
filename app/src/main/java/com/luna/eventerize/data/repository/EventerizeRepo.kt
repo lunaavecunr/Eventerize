@@ -10,8 +10,12 @@ class EventerizeRepo {
     private var parseManager: ParseApi = ParseApiImpl()
     fun login(username: String, password: String) : Task<ParseUser> {
         return parseManager.login(username, password)
-
     }
+
+    fun destroyImage(imageId:String){
+        parseManager.deleteImage(imageId)
+    }
+
     fun signup(user: ParseUser) : Task<Void> {
        return parseManager.signup(user)
     }

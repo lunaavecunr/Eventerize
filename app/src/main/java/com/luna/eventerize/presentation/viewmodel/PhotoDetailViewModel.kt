@@ -48,7 +48,7 @@ class PhotoDetailViewModel: ViewModel(){
         }
     }
 
-    fun destroyPicture(eventId:String){
+    fun destroyPicture(eventId:String, photoId: String){
         repository.getEventById(eventId).continueWith { event ->
             val list = event.result.images!!.toMutableList()
             list.removeAt(numericalPhotoId)
@@ -69,7 +69,7 @@ class PhotoDetailViewModel: ViewModel(){
                         )
                     )
                 } else {
-
+                    repository.destroyImage(photoId)
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.luna.eventerize.data.manager
 
 import bolts.Task
 import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.Image
 import com.parse.ParseObject
 import com.parse.ParseRelation
 import com.parse.ParseUser
@@ -14,4 +15,5 @@ interface ParseApi {
     fun getEventById(id:String): Task<Event>
     fun saveEvent(event:Event): Task<Void>
     fun sessionTokenValid(sessionToken: String): Task<ParseUser>
+    fun deleteImage(imageId:String): Task<Image>
 }
