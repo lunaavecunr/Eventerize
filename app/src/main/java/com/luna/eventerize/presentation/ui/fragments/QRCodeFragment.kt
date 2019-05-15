@@ -1,5 +1,6 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -15,13 +16,58 @@ import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.QRCodeViewModel
 import kotlinx.android.synthetic.main.fragment_qr_code.*
 import android.graphics.Matrix
+import android.net.Uri
+import android.os.Environment
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 private const val INTENT_QR_ID_EXTRA = "INTENT_QR_ID_EXTRA"
 private const val BASE_URL = "https://bigoud.games/eventerizeapp/"
 
-class QRCodeFragment: BaseFragment<QRCodeViewModel>() {
+class QRCodeFragment: BaseFragment<QRCodeViewModel>(), View.OnClickListener {
+    lateinit var qrBitmap: Bitmap
+
+    override fun onClick(v: View?) {
+        when (v!!.id){
+            R.id.fragment_qr_code_button_share -> {
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.type = "image/jpeg"
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Je t'invites à mon event !")
+                val bytes = ByteArrayOutputStream()
+                qrBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                val f = File(Environment.getExternalStorageDirectory(), File.separator + "qrcode.jpg")
+                try {
+                    f.createNewFile()
+                    val fo = FileOutputStream(f)
+                    fo.write(bytes.toByteArray())
+                } catch (e: IOException) {
+                    Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + Environment.getExternalStorageDirectory().path + "/qrcode.jpg"))
+                try {
+                    startActivity(
+                        Intent.createChooser(
+                            sharingIntent,
+                            "Partager avec"
+                        )
+                    )
+
+                } catch (ex: android.content.ActivityNotFoundException) {
+                    AlertDialog.Builder(context!!)
+                        .setMessage("Share failed")
+                        .setPositiveButton("OK",
+                            { dialog, whichButton -> }).create().show()
+                }
+            }
+        }
+    }
 
     override val viewModelClass = QRCodeViewModel::class
 
@@ -42,6 +88,8 @@ class QRCodeFragment: BaseFragment<QRCodeViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
+
+        fragment_qr_code_button_share.setOnClickListener(this)
 
         activity!!.title = getString(R.string.qr_code_title)
         fragment_qr_code_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
@@ -78,11 +126,11 @@ class QRCodeFragment: BaseFragment<QRCodeViewModel>() {
                     resources.getColor(R.color.white)
             }
         }
-        var bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444)
+        qrBitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444)
 
-        bitmap.setPixels(pixels, 0, 200, 0, 0, bitMatrixWidth, bitMatrixHeight)
-        bitmap = getResizedBitmap(bitmap, 1000, 1000)
-        fragment_qr_code_image.setImageBitmap(bitmap)
+        qrBitmap.setPixels(pixels, 0, 200, 0, 0, bitMatrixWidth, bitMatrixHeight)
+        qrBitmap = getResizedBitmap(qrBitmap, 1000, 1000)
+        fragment_qr_code_image.setImageBitmap(qrBitmap)
     }
 
     fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {

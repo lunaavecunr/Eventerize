@@ -45,7 +45,6 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)
-        share_Button.setOnClickListener(this)
 
         val updateError = Observer<EventerizeError> {
             showError(activity!!, it.message)
@@ -67,40 +66,6 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
            }
            R.id.fragment_login_createAccountTV -> {
                navigator.displaySignUp()
-           }
-           R.id.share_Button -> {
-               val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
-               sharingIntent.type = "image/jpeg"
-               sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Je t'invites à mon event !")
-               val qrCodeBitmap : Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.eventerize)
-               val bytes = ByteArrayOutputStream()
-               qrCodeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-               val f = File(Environment.getExternalStorageDirectory(),separator + "qrcode.jpg")
-               try {
-                   f.createNewFile()
-                   val fo = FileOutputStream(f)
-                   fo.write(bytes.toByteArray())
-               } catch (e: IOException) {
-                   Toast.makeText(context, e.localizedMessage,Toast.LENGTH_SHORT).show()
-                   e.printStackTrace()
-               }
-               sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + Environment.getExternalStorageDirectory().path + "/qrcode.jpg"))
-               try {
-                   startActivity(
-                       Intent.createChooser(
-                           sharingIntent,
-                           "Partager avec"
-                       )
-                   )
-
-               } catch (ex: android.content.ActivityNotFoundException) {
-                   AlertDialog.Builder(context!!)
-                       .setMessage("Share failed")
-                       .setPositiveButton("OK",
-                           { dialog, whichButton -> }).create().show()
-               }
-
-
            }
 
        }
