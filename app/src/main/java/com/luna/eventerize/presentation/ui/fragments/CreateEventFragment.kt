@@ -335,10 +335,6 @@ class CreateEventFragment : BaseFragment<CreateEventViewModel>(), View.OnClickLi
                 validate_event.text = getString(R.string.event_creation_ongoing_label)
                 validate_event.setBackgroundResource(R.drawable.disabled_button_background)
                 viewModel.saveEvent(event_title_input_layout.editText!!.text.toString(),event_location_layout.editText!!.text.toString(),startDate,startHour,endDate,endHour,logo)
-
-
-
-
             }
         }
     }

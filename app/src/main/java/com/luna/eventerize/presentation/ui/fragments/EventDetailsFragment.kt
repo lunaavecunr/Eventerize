@@ -110,7 +110,6 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                         builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
                         notify(0, builder.build())
                     }
-                    //progressBar.setProgress(progress.currentBytes as Int, true)
                 }
                 .start(object : OnDownloadListener {
                     override fun onError(error: Error?) {
