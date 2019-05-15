@@ -58,70 +58,79 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
 
 
+
                         for(image in galleryWrapper) {
                             val url = image.image.file!!.url
                             val fileName = image.image.file!!.url.split("/").last()
+                            val file = File("$dirPath/Eventerize/$eventName/$fileName")
 
-                            
+                            if(file.exists()){
 
-                            var builder = NotificationCompat.Builder(activity!!, "notif")
-                                .setContentTitle("Eventerize")
-                                .setContentText("Image download name : $fileName")
-                                .setSmallIcon(R.mipmap.eventerize)
-                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                            } else {
+                                var builder = NotificationCompat.Builder(activity!!, "notif")
+                                    .setContentTitle("Eventerize")
+                                    .setContentText("Image download name : $fileName")
+                                    .setSmallIcon(R.mipmap.eventerize)
+                                    .setPriority(NotificationCompat.PRIORITY_MAX)
 
-                            with(NotificationManagerCompat.from(context!!)) {
-                                notify(0, builder.build())
-                            }
-
-                            val downloadId = PRDownloader.download(url, "$dirPath/Eventerize/$eventName",fileName)
-                                .build()
-                                .setOnStartOrResumeListener {
-                                    onStart()
+                                with(NotificationManagerCompat.from(context!!)) {
+                                    notify(0, builder.build())
                                 }
-                                .setOnPauseListener {
-                                    onPause()
-                                }
-                                .setOnCancelListener {
 
-                                }
-                                .setOnProgressListener {progress ->
-                                    val PROGRESS_MAX = progress.totalBytes.toInt()
-
-                                    NotificationManagerCompat.from(context!!).apply {
-                                        // Issue the initial notification with zero progress
-                                        builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
-                                        notify(0, builder.build())
+                                val downloadId = PRDownloader.download(url, "$dirPath/Eventerize/$eventName",fileName)
+                                    .build()
+                                    .setOnStartOrResumeListener {
+                                        onStart()
                                     }
-                                    //progressBar.setProgress(progress.currentBytes as Int, true)
-                                }
-                                .start(object : OnDownloadListener {
-                                    override fun onError(error: com.downloader.Error?) {
-                                        Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT).show()
-                                        Toast.makeText(context, "Download error connect : " + error!!.isConnectionError, Toast.LENGTH_SHORT).show()
+                                    .setOnPauseListener {
+                                        onPause()
                                     }
+                                    .setOnCancelListener {
 
-                                    override fun onDownloadComplete() {
+                                    }
+                                    .setOnProgressListener {progress ->
+                                        val PROGRESS_MAX = progress.totalBytes.toInt()
+
                                         NotificationManagerCompat.from(context!!).apply {
-                                            builder.setContentText("Download complete")
-                                                .setProgress(0, 0, false)
+                                            // Issue the initial notification with zero progress
+                                            builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
                                             notify(0, builder.build())
                                         }
-
-
-                                        Toast.makeText(context, "Download completed for name : $fileName", Toast.LENGTH_SHORT).show()
-                                        val fileCreated = File("$dirPath/Eventerize/$eventName/$fileName")
-
-
-                                        var arr = arrayOf(fileCreated.absolutePath)
-
-                                        var arr2 = arrayOf("images/*")
-                                        MediaScannerConnection.scanFile(context,arr, arr2) { s: String, uri: Uri ->
-
+                                        //progressBar.setProgress(progress.currentBytes as Int, true)
+                                    }
+                                    .start(object : OnDownloadListener {
+                                        override fun onError(error: com.downloader.Error?) {
+                                            Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Download error connect : " + error!!.isConnectionError, Toast.LENGTH_SHORT).show()
                                         }
 
-                                    }
-                                })
+                                        override fun onDownloadComplete() {
+                                            NotificationManagerCompat.from(context!!).apply {
+                                                builder.setContentText("Download complete")
+                                                    .setProgress(0, 0, false)
+                                                notify(0, builder.build())
+                                            }
+
+
+                                            Toast.makeText(context, "Download completed for name : $fileName", Toast.LENGTH_SHORT).show()
+                                            val fileCreated = File("$dirPath/Eventerize/$eventName/$fileName")
+
+
+                                            var arr = arrayOf(fileCreated.absolutePath)
+
+                                            var arr2 = arrayOf("images/*")
+                                            MediaScannerConnection.scanFile(context,arr, arr2) { s: String, uri: Uri ->
+
+                                            }
+
+                                        }
+                                    })
+                            }
+                            
+
+
+
+
                         }
 
                         dialog.dismiss()
