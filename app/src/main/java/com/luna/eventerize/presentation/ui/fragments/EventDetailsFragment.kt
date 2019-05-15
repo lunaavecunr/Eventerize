@@ -4,15 +4,11 @@ import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
-
 import android.os.Environment
-import android.view.LayoutInflater
-import android.view.MenuItem
+import android.view.*
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -21,7 +17,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
-
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
@@ -32,7 +27,6 @@ import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
 import java.io.File
-import java.util.*
 
 
 private const val INTENT_DETAILS_ID_EXTRA = "INTENT_DETAILS_ID_EXTRA"
@@ -163,7 +157,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                 return true
             }
             R.id.menu_event_details_share -> {
-                navigator.displayShare(eventWrap.event.objectId)
+                navigator.displayShare(eventWrapper.event.objectId)
                 return true
             }
         }
@@ -192,7 +186,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
 
         val updateEvent = Observer<EventWrapper> {
-            eventWrap = it
+            eventWrapper = it
             showEvent(it)
         }
         val updateGallery = Observer<List<ImageWrapper>> {
