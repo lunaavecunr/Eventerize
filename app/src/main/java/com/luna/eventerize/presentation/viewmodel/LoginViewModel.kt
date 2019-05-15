@@ -53,7 +53,7 @@ class LoginViewModel : ViewModel() {
     fun sessionTokenValid(sessionToken: String) {
         repository.sessionTokenValid(sessionToken)
             .continueWith {
-                if (it.isCompleted) {
+                if (!it.isCancelled && !it.isFaulted) {
                     user.postValue(it.result)
                 }
             }
