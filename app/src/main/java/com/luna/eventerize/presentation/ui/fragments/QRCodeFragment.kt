@@ -32,9 +32,10 @@ private const val BASE_URL = "https://bigoud.games/eventerizeapp/"
 
 class QRCodeFragment: BaseFragment<QRCodeViewModel>(), View.OnClickListener {
     lateinit var qrBitmap: Bitmap
+    override val viewModelClass = QRCodeViewModel::class
 
-    override fun onClick(v: View?) {
-        when (v!!.id){
+    override fun onClick(v: View) {
+        when (v.id){
             R.id.fragment_qr_code_button_share -> {
                 val sharingIntent = Intent(Intent.ACTION_SEND)
                 sharingIntent.type = "image/jpeg"
@@ -68,8 +69,6 @@ class QRCodeFragment: BaseFragment<QRCodeViewModel>(), View.OnClickListener {
             }
         }
     }
-
-    override val viewModelClass = QRCodeViewModel::class
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_qr_code, container, false)
