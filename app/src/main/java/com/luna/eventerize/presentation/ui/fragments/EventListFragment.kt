@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luna.eventerize.R
+import com.luna.eventerize.data.model.EventListKey
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
@@ -40,6 +41,8 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
 
         fragment_event_list_recycler_view.adapter = adapter
 
+        adapter.setOnEventClick { onEventClick(it) }
+
         val updateEvent = Observer<List<EventWrapper>> {
             updateList(it)
         }
@@ -51,14 +54,14 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         viewModel.getEvent().observe(this,updateEvent)
         viewModel.getError().observe(this,updateError)
 
-        when (arguments?.getString(INTENT_TAB_EXTRA)) {
-            "all" -> {
+        when (arguments?.getInt(INTENT_TAB_EXTRA)) {
+            EventListKey.ALL.key -> {
                 viewModel.retrievalAllEvent()
             }
-            "orga" -> {
+            EventListKey.ORGANIZER.key -> {
                 viewModel.retrievalEventByOrga()
             }
-            "member" -> {
+            EventListKey.MEMBER.key -> {
                 viewModel.retrievalEventByMember()
             }
         }
@@ -68,19 +71,20 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
         adapter.updateEventList(eventList)
     }
 
+    private fun onEventClick(eventWrapper: EventWrapper){
+        navigator.displayEventDetails(eventWrapper.event.objectId)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_list, container, false)
 
     }
 
-
-
-
     companion object {
-        fun newInstance(identifier: String = ""): EventListFragment {
+        fun newInstance(identifier: Int = 0): EventListFragment {
             val fragment = EventListFragment()
             val args = Bundle()
-            args.putString(INTENT_TAB_EXTRA, identifier)
+            args.putInt(INTENT_TAB_EXTRA, identifier)
             fragment.arguments = args
             return fragment
         }

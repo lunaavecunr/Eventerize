@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment

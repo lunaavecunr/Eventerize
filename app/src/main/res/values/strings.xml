@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">Eventerize</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-
     <!-- ADDING EVENTS -->
     <string name="event_title_hint">Titre de l\'évènement</string>
     <string name="event_location_hint">Lieu de l\'évènement</string>
@@ -30,7 +28,6 @@
     <string name="sign_in_title">Inscription</string>
     <string name="username">Pseudonyme</string>
 
-
     <!-- ERROR MESSAGES -->
     <string name="login_error_title">Erreur de connexion</string>
     <string name="login_connection_failed">La connexion a échoué</string>
@@ -53,6 +50,21 @@
     <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
     <string name="fragment_list_event_title">Liste des événements</string>
 
+    <!--EVENT DETAILS-->
+    <string name="participant_label_single">participant</string>
+    <string name="participant_label_plural">participants</string>
+    <string name="begin_label">Du</string>
+    <string name="end_label">Au</string>
+    <string name="no_members">Pas de participants</string>
+    <string name="event_detail_no_image_in_gallery">Pas de photos dans la gallerie!</string>
+    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la gallerie! Vous pouvez en ajouter
+        une par le boutton dans la barre de l\'application!
+    </string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+
+
     <string name="newEventDefaultValue">Nouvel évènement</string>
     <string name="permissions_not_granted">Vous devez autoriser ces permissions pour pouvoir continuer à utiliser
         l\'application!
@@ -63,4 +75,5 @@
     <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
     <string name="event_creation_failed">La création a échouée</string>
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+    <string name="qr_code_title">Partage</string>
 </resources>

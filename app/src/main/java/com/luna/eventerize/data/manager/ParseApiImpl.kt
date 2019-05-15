@@ -7,9 +7,12 @@ import com.parse.ParseUser
 
 class ParseApiImpl : ParseApi {
 
-
     override fun login(username: String, password: String): Task<ParseUser> {
         return ParseUser.logInInBackground(username, password)
+    }
+
+    override fun sessionTokenValid(sessionToken: String): Task<ParseUser> {
+        return ParseUser.becomeInBackground(sessionToken)
     }
 
     override fun signup(user: ParseUser): Task<Void> {
@@ -45,6 +48,15 @@ class ParseApiImpl : ParseApi {
         query.whereEqualTo("members", ParseUser.getCurrentUser())
         return query.findInBackground()
     }
+
+    override fun getEventById(id: String): Task<Event> {
+        val query: ParseQuery<Event> = ParseQuery.getQuery("Event")
+        query.include("members")
+        query.include("images")
+        query.include("owner")
+        return query.getInBackground(id)
+    }
+
 
     override fun saveEvent(event:Event): Task<Void> {
         return event.saveInBackground()

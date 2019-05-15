@@ -2,11 +2,8 @@ package com.luna.eventerize.presentation.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.luna.eventerize.presentation.viewmodel.EventListViewModel
+import com.luna.eventerize.presentation.viewmodel.*
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
-import com.luna.eventerize.presentation.viewmodel.LoginViewModel
-import com.luna.eventerize.presentation.viewmodel.SignUpViewModel
-import com.luna.eventerize.presentation.viewmodel.TabsListViewModel
 
 class ViewModelFactory: ViewModelProvider.Factory  {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -24,6 +21,12 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         }
        if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
             return CreateEventViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(EventDetailViewModel::class.java)) {
+            return EventDetailViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(QRCodeViewModel::class.java)) {
+            return QRCodeViewModel() as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
