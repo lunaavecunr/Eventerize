@@ -2,10 +2,16 @@ package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,8 +21,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.google.android.material.textfield.TextInputEditText
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
@@ -25,9 +35,11 @@ import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_create_event.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
