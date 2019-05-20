@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_qr_code.*
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.os.StrictMode
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -42,6 +43,7 @@ class QRCodeFragment: BaseFragment<QRCodeViewModel>(), View.OnClickListener {
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Je t'invites à mon event !")
                 val bytes = ByteArrayOutputStream()
                 qrBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+                StrictMode.setVmPolicy(StrictMode.VmPolicy.LAX);
                 val f = File(Environment.getExternalStorageDirectory(), File.separator + "qrcode.jpg")
                 try {
                     f.createNewFile()
