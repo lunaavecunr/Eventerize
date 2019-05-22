@@ -1,9 +1,16 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.EventerizeError
@@ -13,6 +20,11 @@ import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.LoginViewModel
 import com.parse.ParseUser
 import kotlinx.android.synthetic.main.fragment_login.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.File.separator
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
@@ -51,13 +63,12 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         when (v.id) {
             R.id.fragment_login_loginButton -> {
                 viewModel.login(fragment_login_emailField.text.toString(), fragment_login_passwordField.text.toString())
+           }
+           R.id.fragment_login_createAccountTV -> {
+               navigator.displaySignUp()
+           }
 
-            }
-            R.id.fragment_login_createAccountTV -> {
-                navigator.displaySignUp()
-            }
-
-        }
+       }
     }
 
 
