@@ -39,18 +39,18 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     private lateinit var galleryWrapper : List<ImageWrapper>
     private lateinit var eventWrapper : EventWrapper
     override fun onClick(v: View?) {
-<<<<<<< HEAD
+
         when(v!!.id) {
             R.id.fragment_event_details_show_members -> {
-                
-=======
-        when (v!!.id) {
+
+            }
+
             R.id.participant_number -> {
 
->>>>>>> develop
             }
+
             R.id.fragment_event_details_download_images -> {
-                val alertDialogBuilder = AlertDialog.Builder(context!!)
+                AlertDialog.Builder(context!!)
                     .setTitle(getString(R.string.download_all_images_title))
                     .setMessage(getString(R.string.download_all_images_message))
                     .setPositiveButton(getString(R.string.yes)) { dialog, which ->

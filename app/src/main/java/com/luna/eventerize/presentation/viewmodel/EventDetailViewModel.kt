@@ -52,7 +52,7 @@ class EventDetailViewModel: ViewModel() {
     fun retrievalGallery(){
         val galleryWrapper = ArrayList<ImageWrapper>()
         if(eventWrapper!!.event.images != null){
-            eventWrapper!!.event.images!!.map {
+            eventWrapper.event.images?.map {
                 galleryWrapper.add(ImageWrapper(it))
             }
             gallery.postValue(galleryWrapper)
