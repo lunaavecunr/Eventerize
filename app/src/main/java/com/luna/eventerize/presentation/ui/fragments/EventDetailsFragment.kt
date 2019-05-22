@@ -214,11 +214,8 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         event_date_label.text = eventWrapper.dateCoverLabel()
         supervisor_label.text = eventWrapper.event.owner!!.username
 
-        if (eventWrapper.event.logo != null) {
-            Picasso.get().load(eventWrapper.event.logo!!.url).into(event_detail_event_logo)
-        } else {
-            Picasso.get().load(R.mipmap.eventerize).into(event_detail_event_logo)
-        }
+        Picasso.get().load(eventWrapper.event.logo?.url).placeholder(R.mipmap.eventerize).into(event_detail_event_logo)
+
         event_detail_no_image_in_gallery_logo.setImageDrawable(
             ContextCompat.getDrawable(
                 context!!,
