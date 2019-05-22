@@ -26,7 +26,7 @@ class EventListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         eventCalendarText.text = eventWrapper.startDateToFormat("dd/MM/yyyy HH:mm")
         eventCrown.visibility = View.INVISIBLE
 
-        Picasso.get().load(eventWrapper.event.logo?.url).placeholder(R.mipmap.eventerize).resize(100, 100).centerCrop().transform(CircleTransform()).into(eventImage)
+        Picasso.get().load(eventWrapper.event.logo?.url).placeholder(R.mipmap.eventerize).resize(150, 150).centerCrop().transform(CircleTransform()).into(eventImage)
 
         if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
             eventCrown.visibility = View.VISIBLE
