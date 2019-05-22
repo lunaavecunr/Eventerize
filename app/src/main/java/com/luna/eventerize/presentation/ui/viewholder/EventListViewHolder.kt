@@ -27,6 +27,8 @@ class EventListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
         if (eventWrapper.event.logo != null) {
             Picasso.get().load(eventWrapper.event.logo!!.url).into(eventImage)
+        } else {
+            Picasso.get().load("null").into(eventImage)
         }
 
         if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
