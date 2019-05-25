@@ -1,15 +1,18 @@
 package com.luna.eventerize.presentation.ui.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.viewholder.EventListViewHolder
 import com.luna.eventerize.presentation.utils.inflate
+import com.parse.ParseUser
 
-class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>() {
+class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>(){
 
-    private val eventList: MutableList<Event> = mutableListOf()
+    private val eventList: MutableList<EventWrapper> = mutableListOf()
+    private  var onEventClickListener: ((EventWrapper)->Unit)? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventListViewHolder {
@@ -21,18 +24,21 @@ class EventListAdapter: RecyclerView.Adapter<EventListViewHolder>() {
 
     override fun onBindViewHolder(holder: EventListViewHolder, position: Int) {
         val userSet = eventList[position]
-
-        holder.bindSet(userSet)
+        holder.bindSet(userSet,onEventClickListener)
     }
 
-    fun addEventList(eventList : List<Event>){
+    fun addEventList(eventList : List<EventWrapper>){
         this.eventList.addAll(eventList)
         notifyDataSetChanged()
     }
 
-    fun updateEventList(eventList: List<Event>){
+    fun updateEventList(eventList: List<EventWrapper>){
         this.eventList.clear()
         addEventList(eventList)
+    }
+
+    fun setOnEventClick(onEventClick: (EventWrapper)->Unit){
+        onEventClickListener = onEventClick
     }
 
 }

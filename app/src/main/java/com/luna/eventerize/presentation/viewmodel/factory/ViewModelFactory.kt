@@ -2,10 +2,8 @@ package com.luna.eventerize.presentation.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.luna.eventerize.presentation.viewmodel.EventListViewModel
-import com.luna.eventerize.presentation.viewmodel.LoginViewModel
-import com.luna.eventerize.presentation.viewmodel.MembersListViewModel
-import com.luna.eventerize.presentation.viewmodel.SignUpViewModel
+import com.luna.eventerize.presentation.viewmodel.*
+import com.luna.eventerize.presentation.viewmodel.createevent.CreateEventViewModel
 
 class ViewModelFactory: ViewModelProvider.Factory  {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -17,6 +15,21 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         }
         if (modelClass.isAssignableFrom(SignUpViewModel::class.java)) {
             return SignUpViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(TabsListViewModel::class.java)) {
+            return TabsListViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
+            return CreateEventViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(EventDetailViewModel::class.java)) {
+            return EventDetailViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(PhotoDetailViewModel::class.java)) {
+            return PhotoDetailViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(QRCodeViewModel::class.java)) {
+            return QRCodeViewModel() as T
         }
         if (modelClass.isAssignableFrom(MembersListViewModel::class.java)) {
             return MembersListViewModel() as T

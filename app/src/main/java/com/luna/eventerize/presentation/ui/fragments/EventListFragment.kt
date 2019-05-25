@@ -5,21 +5,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.Event
+import com.luna.eventerize.data.model.EventListKey
 import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.EventListAdapter
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.showError
 import com.luna.eventerize.presentation.viewmodel.EventListViewModel
 import kotlinx.android.synthetic.main.fragment_event_list.*
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 
-class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListener {
+private const val INTENT_TAB_EXTRA = "INTENT_TAB_EXTRA"
+
+class EventListFragment : BaseFragment<EventListViewModel>() {
 
     private lateinit var adapter: EventListAdapter
     private lateinit var navigator: Navigator
@@ -34,56 +35,58 @@ class EventListFragment : BaseFragment<EventListViewModel>(), View.OnClickListen
         super.onViewCreated(view, savedInstanceState)
         super.onActivityCreated(savedInstanceState)
 
-        activity!!.title = getString(R.string.fragment_list_event_title)
-        (activity as AppCompatActivity).setSupportActionBar(fragment_event_list_toolbar)
-
         navigator = Navigator(fragmentManager!!)
 
         fragment_event_list_recycler_view.layoutManager = LinearLayoutManager(context)
 
         fragment_event_list_recycler_view.adapter = adapter
 
-        fragment_event_list_fab.setOnClickListener(this)
+        adapter.setOnEventClick { onEventClick(it) }
 
-        val updateEvent = Observer<List<Event>> {
+        val updateEvent = Observer<List<EventWrapper>> {
             updateList(it)
         }
 
         val updateError = Observer<EventerizeError> {
-            showError(it.message)
+            showError(context!!, it.message)
         }
 
         viewModel.getEvent().observe(this,updateEvent)
         viewModel.getError().observe(this,updateError)
 
-        viewModel.retrievalAllEvent()
+        when (arguments?.getInt(INTENT_TAB_EXTRA)) {
+            EventListKey.ALL.key -> {
+                viewModel.retrievalAllEvent()
+            }
+            EventListKey.ORGANIZER.key -> {
+                viewModel.retrievalEventByOrga()
+            }
+            EventListKey.MEMBER.key -> {
+                viewModel.retrievalEventByMember()
+            }
+        }
     }
 
-    fun updateList(eventList: List<Event>) {
+    fun updateList(eventList: List<EventWrapper>) {
         adapter.updateEventList(eventList)
     }
 
+    private fun onEventClick(eventWrapper: EventWrapper){
+        navigator.displayEventDetails(eventWrapper.event.objectId)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_list, container, false)
 
     }
 
-    override fun onClick(v: View) {
-
-        when (v.id) {
-            R.id.fragment_event_list_fab -> {
-                navigator.displayMembersList()
-            }
-        }
-
-    }
-
-    fun showError(message: String) {
-        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
-    }
-
     companion object {
-        fun newInstance(): EventListFragment =  EventListFragment()
+        fun newInstance(identifier: Int = 0): EventListFragment {
+            val fragment = EventListFragment()
+            val args = Bundle()
+            args.putInt(INTENT_TAB_EXTRA, identifier)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

@@ -20,6 +20,4 @@ abstract class BaseFragment<T : ViewModel>: Fragment() {
         viewModel = ViewModelProviders.of(this,viewModelFactory).get(viewModelClass.java)
     }
 
-
-
 }

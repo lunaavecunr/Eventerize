@@ -1,6 +1,17 @@
 <resources>
     <string name="app_name">Eventerize</string>
 
+    <!-- ADDING EVENTS -->
+    <string name="event_title_hint">Titre de l\'évènement</string>
+    <string name="event_location_hint">Lieu de l\'évènement</string>
+    <string name="beginning_event_date_label">Date de début de l\'évènement</string>
+    <string name="begin_date_event">Date de début</string>
+    <string name="begin_hour_event">Heure de début</string>
+    <string name="end_date_event_label">Date de fin</string>
+    <string name="end_hour_event_label">Heure de fin</string>
+    <string name="generate_invitations">Générer les invitations</string>
+    <string name="creating_event">Création d\'évènement</string>
+
     <!-- LOGIN -->
     <string name="login_button">Se connecter</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
@@ -17,7 +28,6 @@
     <string name="sign_in_title">Inscription</string>
     <string name="username">Pseudonyme</string>
 
-
     <!-- ERROR MESSAGES -->
     <string name="login_error_title">Erreur de connexion</string>
     <string name="login_connection_failed">La connexion a échoué</string>
@@ -27,8 +37,61 @@
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
     <string name="signup_error_save">La sauvegarde a échouée</string>
+    <string name="end_date_before_begin_date">La date de fin se trouve avant la date de début!</string>
+    <string name="generate_event">Générer un évènement</string>
+    <string name="logo_choice">Choix du logo</string>
+    <string name="logo_choice_message">Veuillez choisir une option pour ce logo</string>
+    <string name="camera_chosen">Appareil photo</string>
+    <string name="gallery_chosen">Gallerie de photos</string>
+    <string name="no_title_event">Aucun titre n\'a été entré!</string>
+    <string name="no_start_date">Aucune date de début n\'a été choisie!</string>
+    <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
+    <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
+    <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
     <string name="fragment_list_event_title">Liste des événements</string>
     <string name="fragment_list_members_title">Liste des membres</string>
 
+    <!--EVENT DETAILS-->
+    <string name="participant_label_single">participant</string>
+    <string name="participant_label_plural">participants</string>
+    <string name="begin_label">Du</string>
+    <string name="end_label">Au</string>
+    <string name="no_members">Pas de participants</string>
+    <string name="event_detail_no_image_in_gallery">Pas de photos dans la galerie!</string>
+    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la galerie! Vous pouvez en ajouter
+        une par le bouton dans la barre de l\'application!
+    </string>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+
+
+    <string name="newEventDefaultValue">Nouvel évènement</string>
+    <string name="permissions_not_granted">Vous devez autoriser ces permissions pour pouvoir continuer à utiliser
+        l\'application!
+    </string>
+    <string name="end_hour_before_start_hour">L\'heure de fin se trouve avant l\'heure de début!</string>
+    <string name="no_location_given">Aucun lieu n\'a été indiqué!</string>
+    <string name="field_not_entered">Un champ n\'a pas été rempli!</string>
+    <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
+    <string name="event_creation_failed">La création a échouée</string>
+    <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+    <string name="photo_details_delete">Supprimer la photo</string>
+    <string name="photo_detail_fragment_menu_photo_infos">Informations sur la photo</string>
+    <string name="yes_destroy_it">Oui je veux la détruire</string>
+    <string name="i_prefer_not_to">Tout compte fait non</string>
+    <string name="photo_destroy_operation">Destruction de la photo</string>
+    <string name="photo_destroy_operation_text">Souhaitez-vous détruire cette photo?\nAttention, c\'est définitif!
+    </string>
+    <string name="error_while_searching_image_to_destroy">La photo n\'existe pas!</string>
+    <string name="error">Erreur</string>
+    <string name="destroying_image_error">Erreur lors de la suppresion de l\'image</string>
+    <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
+    <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
+    <string name="fragment_event_details_show_members">Voir les participants</string>
+    <string name="download_all_images_message">Voulez-vous télécharger toutes les images de cet événement ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="download_all_images_title">Téléchargement des images</string>
+    <string name="qr_code_title">Partage</string>
 </resources>

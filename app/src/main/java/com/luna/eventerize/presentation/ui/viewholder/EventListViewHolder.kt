@@ -4,24 +4,40 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
-import com.luna.eventerize.data.model.Event
+import com.squareup.picasso.Picasso
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
+import com.luna.eventerize.presentation.ui.picasso.CircleTransform
+import com.parse.ParseUser
 
-class EventListViewHolder(v: View): RecyclerView.ViewHolder(v) {
+class EventListViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 
     private val eventTitle: TextView = itemView.findViewById(R.id.adapter_event_list_title)
     private val eventMapText: TextView = itemView.findViewById(R.id.adapter_event_list_map_text)
     private val eventCalendarText: TextView = itemView.findViewById(R.id.adapter_event_list_calendar_text)
     private val eventImage: ImageView = itemView.findViewById(R.id.adapter_event_list_image)
+    private val eventCrown: ImageView = itemView.findViewById(R.id.adapter_event_list_crown)
 
-    fun bindSet(event: Event){
 
-        eventTitle.text = event.title
-        eventMapText.text = event.location
-        eventCalendarText.text = event.startDate.toString()
-        if (event.logo != null)
-            EventerizeApp.getInstance().picasso.load(event.logo!!.url).into(eventImage)
+    fun bindSet(eventWrapper: EventWrapper, onEventClick: ((EventWrapper)->Unit)?){
+
+        eventTitle.text = eventWrapper.event.title
+        eventMapText.text = eventWrapper.event.location
+        eventCalendarText.text = eventWrapper.startDateToFormat("dd/MM/yyyy HH:mm")
+        eventCrown.visibility = View.INVISIBLE
+
+        Picasso.get().load(eventWrapper.event.logo?.url).placeholder(R.mipmap.eventerize).resize(150, 150).centerCrop().transform(CircleTransform()).into(eventImage)
+
+        if(eventWrapper.event.owner!!.objectId == ParseUser.getCurrentUser().objectId) {
+            eventCrown.visibility = View.VISIBLE
+        }
+
+        itemView.setOnClickListener{
+            onEventClick?.let {
+                it(eventWrapper)
+            }
+        }
+
     }
 
 }
