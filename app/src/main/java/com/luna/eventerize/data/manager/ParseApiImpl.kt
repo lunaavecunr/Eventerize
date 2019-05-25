@@ -1,14 +1,12 @@
 package com.luna.eventerize.data.manager
 
-import android.util.Log
 import bolts.Task
-import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.data.model.Event
-import com.luna.eventerize.data.model.Image
-import com.luna.eventerize.presentation.utils.showError
-import com.parse.*
+import com.parse.ParseQuery
+import com.parse.ParseUser
 
 class ParseApiImpl : ParseApi {
+
     override fun login(username: String, password: String): Task<ParseUser> {
         return ParseUser.logInInBackground(username, password)
     }

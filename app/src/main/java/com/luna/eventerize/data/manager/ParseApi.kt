@@ -2,10 +2,8 @@ package com.luna.eventerize.data.manager
 
 import bolts.Task
 import com.luna.eventerize.data.model.Event
-import com.luna.eventerize.data.model.Image
-import com.parse.ParseObject
-import com.parse.ParseRelation
 import com.parse.ParseUser
+
 interface ParseApi {
     fun login(username: String, password: String): Task<ParseUser>
     fun signup(user: ParseUser): Task<Void>
