@@ -38,6 +38,10 @@ class Navigator(fragmentManager: FragmentManager) {
         fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, EventDetailsFragment.newInstance(id)).addToBackStack(null).commit()
     }
 
+    fun displayPhoto(imageURL:String, photoId:String, eventId:String) {
+        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, PhotoDetailFragment.newInstance(imageURL,photoId,eventId)).addToBackStack(null).commit()
+    }
+
     fun displayShare(id: String) {
         fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, QRCodeFragment.newInstance(id)).addToBackStack(null).commit()
     }

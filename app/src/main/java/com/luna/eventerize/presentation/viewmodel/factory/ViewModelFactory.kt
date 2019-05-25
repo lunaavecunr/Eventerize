@@ -19,11 +19,14 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         if (modelClass.isAssignableFrom(TabsListViewModel::class.java)) {
             return TabsListViewModel() as T
         }
-       if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(CreateEventViewModel::class.java)) {
             return CreateEventViewModel() as T
         }
         if (modelClass.isAssignableFrom(EventDetailViewModel::class.java)) {
             return EventDetailViewModel() as T
+        }
+        if (modelClass.isAssignableFrom(PhotoDetailViewModel::class.java)) {
+            return PhotoDetailViewModel() as T
         }
         if (modelClass.isAssignableFrom(QRCodeViewModel::class.java)) {
             return QRCodeViewModel() as T

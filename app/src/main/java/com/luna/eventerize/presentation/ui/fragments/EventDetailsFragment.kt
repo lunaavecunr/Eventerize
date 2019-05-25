@@ -194,12 +194,14 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         event_details_picture_gallery_recycler_view.layoutManager =
             StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
+        adapter.setOnImageClick { displayImage(it) }
 
 
         val updateEvent = Observer<EventWrapper> {
             eventWrapper = it
             showEvent(it)
         }
+
         val updateGallery = Observer<List<ImageWrapper>> {
             galleryWrapper = it
             adapter.updateImageList(it)
@@ -212,6 +214,10 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
         viewModel.getEvent().observe(this, updateEvent)
         viewModel.getGallery().observe(this, updateGallery)
+    }
+
+    private fun displayImage(imageWrapper: ImageWrapper) {
+        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId)
     }
 
     private fun showEvent(eventWrapper: EventWrapper) {

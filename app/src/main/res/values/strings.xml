@@ -75,6 +75,18 @@
     <string name="error_while_creating_event">Erreur lors de la création de l\évènement</string>
     <string name="event_creation_failed">La création a échouée</string>
     <string name="event_creation_ongoing_label">Création de l\'évènement en cours</string>
+    <string name="photo_details_delete">Supprimer la photo</string>
+    <string name="photo_detail_fragment_menu_photo_infos">Informations sur la photo</string>
+    <string name="yes_destroy_it">Oui je veux la détruire</string>
+    <string name="i_prefer_not_to">Tout compte fait non</string>
+    <string name="photo_destroy_operation">Destruction de la photo</string>
+    <string name="photo_destroy_operation_text">Souhaitez-vous détruire cette photo?\nAttention, c\'est définitif!
+    </string>
+    <string name="error_while_searching_image_to_destroy">La photo n\'existe pas!</string>
+    <string name="error">Erreur</string>
+    <string name="destroying_image_error">Erreur lors de la suppresion de l\'image</string>
+    <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
+    <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
     <string name="fragment_event_details_show_members">Voir les participants</string>
     <string name="download_all_images_message">Voulez-vous télécharger toutes les images de cet événement ?</string>
     <string name="yes">Oui</string>
