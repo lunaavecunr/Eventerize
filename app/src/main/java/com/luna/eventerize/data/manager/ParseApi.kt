@@ -15,5 +15,4 @@ interface ParseApi {
     fun getEventById(id:String): Task<Event>
     fun saveEvent(event:Event): Task<Void>
     fun sessionTokenValid(sessionToken: String): Task<ParseUser>
-    fun deleteImage(imageId:String): Task<Image>
 }

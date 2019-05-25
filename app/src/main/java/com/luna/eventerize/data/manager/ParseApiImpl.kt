@@ -9,18 +9,6 @@ import com.luna.eventerize.presentation.utils.showError
 import com.parse.*
 
 class ParseApiImpl : ParseApi {
-    override fun deleteImage(imageId:String): Task<Image> {
-        var query:ParseQuery<Image> = ParseQuery.getQuery("Image")
-        query.whereEqualTo("objectid",imageId)
-        query.findInBackground { objects, e ->
-            if(e == null && objects != null){
-                objects[0].deleteInBackground()
-            }
-        }
-        Log.d("mlk","returnedData")
-        return query.getInBackground(imageId)
-    }
-
     override fun login(username: String, password: String): Task<ParseUser> {
         return ParseUser.logInInBackground(username, password)
     }
