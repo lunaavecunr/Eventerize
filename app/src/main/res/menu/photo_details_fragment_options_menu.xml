@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item android:title="@string/photo_detail_fragment_menu_photo_infos" android:id="@+id/photo_details_menu_infos"/>-->
+    <item android:title="@string/photo_details_delete" android:id="@+id/photo_detail_menu_delete_photo"/>
+</menu>
