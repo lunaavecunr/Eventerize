@@ -28,6 +28,9 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         if (modelClass.isAssignableFrom(PhotoDetailViewModel::class.java)) {
             return PhotoDetailViewModel() as T
         }
+        if (modelClass.isAssignableFrom(QRCodeViewModel::class.java)) {
+            return QRCodeViewModel() as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

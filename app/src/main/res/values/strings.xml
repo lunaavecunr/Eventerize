@@ -87,4 +87,9 @@
     <string name="destroying_image_error">Erreur lors de la suppresion de l\'image</string>
     <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
     <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
+    <string name="download_all_images_message">Voulez-vous télécharger toutes les images de cet événement ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="download_all_images_title">Téléchargement des images</string>
+    <string name="qr_code_title">Partage</string>
 </resources>

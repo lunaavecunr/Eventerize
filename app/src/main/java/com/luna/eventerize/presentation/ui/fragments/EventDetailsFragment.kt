@@ -1,16 +1,23 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
+import android.os.Environment
+import android.view.*
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-
+import com.downloader.Error
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
@@ -20,6 +27,7 @@ import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
+import java.io.File
 
 
 private const val INTENT_DETAILS_ID_EXTRA = "INTENT_DETAILS_ID_EXTRA"
@@ -28,13 +36,113 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     override val viewModelClass = EventDetailViewModel::class
     private lateinit var navigator: Navigator
     private lateinit var adapter: GalleryAdapter
-    private var eventId:String? = null
-
+    private lateinit var galleryWrapper : List<ImageWrapper>
+    private lateinit var eventWrapper : EventWrapper
     override fun onClick(v: View?) {
-        when(v!!.id) {
+        when (v!!.id) {
             R.id.participant_number -> {
 
             }
+            R.id.fragment_event_details_download_images -> {
+                val alertDialogBuilder = AlertDialog.Builder(context!!)
+                    .setTitle(getString(R.string.download_all_images_title))
+                    .setMessage(getString(R.string.download_all_images_message))
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+
+                        val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+                        val eventName = eventWrapper.event.title
+
+                        for(image in galleryWrapper) {
+                            downloadImage(image, dirPath, eventName)
+                        }
+
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which ->
+                        dialog.dismiss()
+
+
+                    }
+                    .create()
+                    .show()
+            }
+        }
+    }
+
+    private fun downloadImage(
+        image: ImageWrapper,
+        dirPath: String?,
+        eventName: String?
+    ) {
+        val url = image.image.file!!.url
+        val fileName = image.image.file!!.url.split("/").last()
+        val file = File("$dirPath/Eventerize/$eventName/$fileName")
+
+        if (file.exists()) {
+
+        } else {
+            var builder = NotificationCompat.Builder(activity!!, "notif")
+                .setContentTitle("Eventerize")
+                .setContentText("Image download name : $fileName")
+                .setSmallIcon(R.mipmap.eventerize)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+
+            with(NotificationManagerCompat.from(context!!)) {
+                notify(0, builder.build())
+            }
+
+            val downloadId = PRDownloader.download(url, "$dirPath/Eventerize/$eventName", fileName)
+                .build()
+                .setOnStartOrResumeListener {
+                    onStart()
+                }
+                .setOnPauseListener {
+                    onPause()
+                }
+                .setOnCancelListener {
+
+                }
+                .setOnProgressListener { progress ->
+                    val PROGRESS_MAX = progress.totalBytes.toInt()
+
+                    NotificationManagerCompat.from(context!!).apply {
+                        // Issue the initial notification with zero progress
+                        builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
+                        notify(0, builder.build())
+                    }
+                }
+                .start(object : OnDownloadListener {
+                    override fun onError(error: Error?) {
+                        Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT)
+                            .show()
+                        Toast.makeText(
+                            context,
+                            "Download error connect : " + error!!.isConnectionError,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onDownloadComplete() {
+                        NotificationManagerCompat.from(context!!).apply {
+                            builder.setContentText("Download complete")
+                                .setProgress(0, 0, false)
+                            notify(0, builder.build())
+                        }
+
+
+                        Toast.makeText(context, "Download completed for name : $fileName", Toast.LENGTH_SHORT).show()
+                        val fileCreated = File("$dirPath/Eventerize/$eventName/$fileName")
+
+
+                        var arr = arrayOf(fileCreated.absolutePath)
+
+                        var arr2 = arrayOf("images/*")
+                        MediaScannerConnection.scanFile(context, arr, arr2) { s: String, uri: Uri ->
+
+                        }
+
+                    }
+                })
         }
     }
 
@@ -42,13 +150,23 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         return inflater.inflate(R.layout.fragment_event_details, container, false)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater!!.inflate(R.menu.menu_event_details, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
-            activity?.onBackPressed()
-            true
-        } else {
-            super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                return true
+            }
+            R.id.menu_event_details_share -> {
+                navigator.displayShare(eventWrapper.event.objectId)
+                return true
+            }
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onAttach(context: Context) {
@@ -67,53 +185,59 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
 
-        event_details_picture_gallery_recycler_view.layoutManager = StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL)
+        event_details_picture_gallery_recycler_view.layoutManager =
+            StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         event_details_picture_gallery_recycler_view.adapter = adapter
         adapter.setOnImageClick { displayImage(it) }
 
-        val updateEvent = Observer<EventWrapper>{
+
+        val updateEvent = Observer<EventWrapper> {
+            eventWrapper = it
             showEvent(it)
-            eventId = it.event.objectId
         }
 
         val updateGallery = Observer<List<ImageWrapper>> {
+            galleryWrapper = it
             adapter.updateImageList(it)
-            if(it.isNullOrEmpty()){
+            if (it.isNullOrEmpty()) {
                 event_detail_no_image_in_gallery.visibility = View.VISIBLE
-            }else{
+            } else {
                 event_detail_no_image_in_gallery.visibility = View.INVISIBLE
             }
         }
 
-        viewModel.getEvent().observe(this,updateEvent)
-        viewModel.getGallery().observe(this,updateGallery)
+        viewModel.getEvent().observe(this, updateEvent)
+        viewModel.getGallery().observe(this, updateGallery)
     }
 
     private fun displayImage(imageWrapper: ImageWrapper) {
-        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventId!!)
+        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId)
     }
 
-    private fun showEvent(eventWrapper: EventWrapper){
+    private fun showEvent(eventWrapper: EventWrapper) {
         participant_number.text = eventWrapper.numberOfMembers()
         location_label.text = eventWrapper.event.location
         event_date_label.text = eventWrapper.dateCoverLabel()
         supervisor_label.text = eventWrapper.event.owner!!.username
 
-        if(eventWrapper.event.logo != null){
-            Picasso.get().load(eventWrapper.event.logo!!.url).into(event_detail_event_logo)
-        }else{
-            Picasso.get().load(R.mipmap.eventerize).into(event_detail_event_logo)
-        }
-        event_detail_no_image_in_gallery_logo.setImageDrawable(ContextCompat.getDrawable(context!!,R.mipmap.eventerize))
+        Picasso.get().load(eventWrapper.event.logo?.url).placeholder(R.mipmap.eventerize).into(event_detail_event_logo)
+
+        event_detail_no_image_in_gallery_logo.setImageDrawable(
+            ContextCompat.getDrawable(
+                context!!,
+                R.mipmap.eventerize
+            )
+        )
 
         activity!!.title = eventWrapper.event.title
 
         //OnClickListener
         participant_number.setOnClickListener(this)
+        fragment_event_details_download_images.setOnClickListener(this)
 
-        val imageWrapperList:MutableList<ImageWrapper> = mutableListOf()
+        val imageWrapperList: MutableList<ImageWrapper> = mutableListOf()
 
-        if(eventWrapper.event.images != null) {
+        if (eventWrapper.event.images != null) {
             eventWrapper.event.images!!.map {
                 imageWrapperList.add(ImageWrapper(it))
             }
