@@ -1,5 +1,6 @@
 package com.luna.eventerize.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.luna.eventerize.EventerizeApp
@@ -8,72 +9,68 @@ import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.data.repository.EventerizeRepo
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 
-class PhotoDetailViewModel: ViewModel(){
+class PhotoDetailViewModel : ViewModel() {
     private var repository = EventerizeRepo()
-    private var successGettingImage = MutableLiveData<Boolean>()
     private var successDeletingOperation = MutableLiveData<Boolean>()
-    private var numericalPhotoId:Int = 0
     var error = MutableLiveData<EventerizeError>()
 
 
-    fun selectPicture(eventId:String, photoId: String){
-        repository.getEventById(eventId).continueWith { singleEvent ->
+    fun destroyPicture(eventId: String, photoId: String) {
+        repository.getEventById(eventId).continueWith { response ->
             when {
-                singleEvent.isCancelled -> {
+                response.isCancelled -> {
                     error.postValue(
                         EventerizeError(
-                            EventerizeApp.getInstance().getString(R.string.cancelled_searching_image_to_destroy),
-                            EventerizeApp.getInstance().getString(R.string.error)
+                            EventerizeApp.getInstance().getString(R.string.error_while_destroying_image),
+                            EventerizeApp.getInstance().getString(R.string.destroying_image_error)
                         )
                     )
                 }
-                singleEvent.isFaulted -> {
+                response.isFaulted -> {
                     error.postValue(
                         EventerizeError(
-                            EventerizeApp.getInstance().getString(R.string.error_while_searching_image_to_destroy),
-                            EventerizeApp.getInstance().getString(R.string.error)
+                            response.error.message.toString(),
+                            EventerizeApp.getInstance().getString(R.string.destroying_image_error)
                         )
                     )
                 }
-                else->{
-                    singleEvent.result.images!!.mapIndexed { index, singlePhoto ->
-                        if (singlePhoto.objectId == photoId) {
-                            numericalPhotoId = index
-                            successGettingImage.postValue(true)
+                else -> {
+                    var event = response.result
+                    val list = event.images!!.toMutableList()
+                    val index = list.indexOfFirst { it.objectId == photoId }
+                    if (index != -1) {
+                        list.removeAt(index)
+                    }
+                    event.images = list
+                    repository.saveEvent(event).continueWith {
+                        when {
+                            it.isCancelled -> {
+                                error.postValue(
+                                    EventerizeError(
+                                        EventerizeApp.getInstance().getString(R.string.error_while_destroying_image),
+                                        EventerizeApp.getInstance().getString(R.string.destroying_image_error)
+                                    )
+                                )
+                            }
+                            it.isFaulted -> {
+                                error.postValue(
+                                    EventerizeError(
+                                        it.error.message.toString(),
+                                        EventerizeApp.getInstance().getString(R.string.destroying_image_error)
+                                    )
+                                )
+                            }
+                            else -> {
+                                successDeletingOperation.postValue(true)
+                            }
                         }
                     }
-                    singleEvent.result
                 }
             }
         }
     }
 
-    fun destroyPicture(eventId:String, photoId: String){
-        repository.getEventById(eventId).continueWith { event ->
-            val list = event.result.images!!.toMutableList()
-            list.removeAt(numericalPhotoId)
-            event.result.images = list
-            repository.saveEvent(event.result).continueWith { returnDelete ->
-                if (returnDelete.isFaulted) {
-                    error.postValue(
-                        EventerizeError(
-                            EventerizeApp.getInstance().getString(R.string.error_while_destroying_image),
-                            EventerizeApp.getInstance().getString(R.string.error)
-                        )
-                    )
-                } else if (returnDelete.isCancelled) {
-                    error.postValue(
-                        EventerizeError(
-                            EventerizeApp.getInstance().getString(R.string.error_while_destroying_image),
-                            EventerizeApp.getInstance().getString(R.string.error)
-                        )
-                    )
-                } else {
-                    repository.destroyImage(photoId)
-                }
-            }
-        }
-    }
+    fun getSuccessDeletingOperation(): LiveData<Boolean> = successDeletingOperation
 
-    var getSuccess:MutableLiveData<Boolean> = successGettingImage
+    fun getError(): LiveData<EventerizeError> = error
 }

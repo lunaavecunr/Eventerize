@@ -84,6 +84,7 @@
     </string>
     <string name="error_while_searching_image_to_destroy">La photo n\'existe pas!</string>
     <string name="error">Erreur</string>
+    <string name="destroying_image_error">Erreur lors de la suppresion de l\'image</string>
     <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
     <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
 </resources>
