@@ -19,20 +19,19 @@
                     android:text="Username"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" android:id="@+id/adapter_member_list_name"
-                    app:layout_constraintEnd_toStartOf="@+id/adapter_member_list_orga_image"
-                    android:layout_marginEnd="8dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
                     app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
                     app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
-                    android:textSize="18sp"/>
-            <ImageView
+                    android:textSize="18sp" android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toStartOf="@+id/adapter_member_list_btnsuppr"/>
+            <Button
+                    android:text="Supprimer"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_crown"
-                    android:id="@+id/adapter_member_list_orga_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toEndOf="@+id/adapter_member_list_name"
-                    android:layout_marginStart="8dp" android:layout_marginBottom="8dp" android:layout_marginTop="8dp"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/adapter_member_list_btnsuppr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="8dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

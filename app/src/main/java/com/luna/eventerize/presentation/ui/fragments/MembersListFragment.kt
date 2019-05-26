@@ -28,6 +28,7 @@ class MembersListFragment : BaseFragment<MembersListViewModel>() {
 
     private lateinit var adapter: MembersListAdapter
     private lateinit var navigator: Navigator
+    private lateinit var event: Event
     override val viewModelClass = MembersListViewModel::class
 
     override fun onAttach(context: Context) {
@@ -50,11 +51,14 @@ class MembersListFragment : BaseFragment<MembersListViewModel>() {
 
         fragment_list_member_recyclerView.adapter = adapter
 
+        adapter.setOnUserClick { onUserClick(it) }
+
         val updateEvent = Observer<Event> {
-            var list: MutableList<ParseUser> = mutableListOf()
+            this.event = it
+            val list: MutableList<ParseUser> = mutableListOf()
             if(it.members != null) {
                 list.addAll(it.members!!)
-                updateList(list)
+                updateList(list, it.owner!!)
             }
         }
 
@@ -73,10 +77,18 @@ class MembersListFragment : BaseFragment<MembersListViewModel>() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun updateList(userList: List<ParseUser>) {
-        adapter.updateUserList(userList)
+    fun updateList(userList: List<ParseUser>, owner: ParseUser) {
+        adapter.updateUserList(userList, owner)
     }
 
+    private fun onUserClick(user: ParseUser){
+        val list: MutableList<ParseUser> = mutableListOf()
+        list.addAll(this.event.members!!)
+        list.remove(user)
+        this.event.members = list
+        viewModel.removeUser(this.event)
+        updateList(list, this.event.owner!!)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list_members, container, false)

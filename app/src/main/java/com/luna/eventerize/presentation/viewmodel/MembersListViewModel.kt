@@ -7,6 +7,7 @@ import com.luna.eventerize.EventerizeApp
 import com.luna.eventerize.R
 import com.luna.eventerize.data.model.Event
 import com.luna.eventerize.data.model.EventerizeError
+import com.parse.ParseUser
 
 class MembersListViewModel: ViewModel() {
     var repository = EventerizeApp.getInstance().repository
@@ -38,6 +39,10 @@ class MembersListViewModel: ViewModel() {
                     }
                 }
             }
+    }
+
+    fun removeUser(event: Event) {
+        repository.saveEvent(event)
     }
 
     fun getEventsRetrivial() : LiveData<Event> = eventRetrivial
