@@ -92,4 +92,5 @@
     <string name="no">Non</string>
     <string name="download_all_images_title">Téléchargement des images</string>
     <string name="qr_code_title">Partage</string>
+    <string name="download_this_image">Télécharger l\'image</string>
 </resources>
