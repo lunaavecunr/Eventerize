@@ -1,33 +1,25 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.content.Context
-import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.downloader.Error
-import com.downloader.OnDownloadListener
-import com.downloader.PRDownloader
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.ImageDownloader
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
-import java.io.File
 
 
 private const val INTENT_DETAILS_ID_EXTRA = "INTENT_DETAILS_ID_EXTRA"
@@ -53,7 +45,9 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                         val eventName = eventWrapper.event.title
 
                         for(image in galleryWrapper) {
-                            downloadImage(image, dirPath, eventName)
+                            val imageUrl = image.image.file!!.url
+                            val fileName = image.image.file!!.name
+                            ImageDownloader().downloadImage(imageUrl, fileName, dirPath, eventName, context!!)
                         }
 
                         dialog.dismiss()
@@ -66,83 +60,6 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                     .create()
                     .show()
             }
-        }
-    }
-
-    private fun downloadImage(
-        image: ImageWrapper,
-        dirPath: String?,
-        eventName: String?
-    ) {
-        val url = image.image.file!!.url
-        val fileName = image.image.file!!.url.split("/").last()
-        val file = File("$dirPath/Eventerize/$eventName/$fileName")
-
-        if (file.exists()) {
-
-        } else {
-            var builder = NotificationCompat.Builder(activity!!, "notif")
-                .setContentTitle("Eventerize")
-                .setContentText("Image download name : $fileName")
-                .setSmallIcon(R.mipmap.eventerize)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-
-            with(NotificationManagerCompat.from(context!!)) {
-                notify(0, builder.build())
-            }
-
-            val downloadId = PRDownloader.download(url, "$dirPath/Eventerize/$eventName", fileName)
-                .build()
-                .setOnStartOrResumeListener {
-                    onStart()
-                }
-                .setOnPauseListener {
-                    onPause()
-                }
-                .setOnCancelListener {
-
-                }
-                .setOnProgressListener { progress ->
-                    val PROGRESS_MAX = progress.totalBytes.toInt()
-
-                    NotificationManagerCompat.from(context!!).apply {
-                        // Issue the initial notification with zero progress
-                        builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
-                        notify(0, builder.build())
-                    }
-                }
-                .start(object : OnDownloadListener {
-                    override fun onError(error: Error?) {
-                        Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT)
-                            .show()
-                        Toast.makeText(
-                            context,
-                            "Download error connect : " + error!!.isConnectionError,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    override fun onDownloadComplete() {
-                        NotificationManagerCompat.from(context!!).apply {
-                            builder.setContentText("Download complete")
-                                .setProgress(0, 0, false)
-                            notify(0, builder.build())
-                        }
-
-
-                        Toast.makeText(context, "Download completed for name : $fileName", Toast.LENGTH_SHORT).show()
-                        val fileCreated = File("$dirPath/Eventerize/$eventName/$fileName")
-
-
-                        var arr = arrayOf(fileCreated.absolutePath)
-
-                        var arr2 = arrayOf("images/*")
-                        MediaScannerConnection.scanFile(context, arr, arr2) { s: String, uri: Uri ->
-
-                        }
-
-                    }
-                })
         }
     }
 
@@ -211,7 +128,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     }
 
     private fun displayImage(imageWrapper: ImageWrapper) {
-        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId)
+        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId, eventWrapper.event.title!!, imageWrapper.image.file!!.name)
     }
 
     private fun showEvent(eventWrapper: EventWrapper) {
