@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.zxing.integration.android.IntentIntegrator
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
@@ -107,7 +108,7 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
             if (result.contents == null) {
                 Toast.makeText(activity, "Cancelled", Toast.LENGTH_LONG).show()
             } else {
-                Log.d("QRCODE", result.contents)
+                navigator.displayEventDetails(result.contents.split("/").last())
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -132,7 +133,8 @@ class TabsListFragment : BaseFragment<TabsListViewModel>(), View.OnClickListener
 
     fun startQRScanner(options: QuickPermissionsOptions) =
         runWithPermissions(Manifest.permission.CAMERA, options = options) {
-            IntentIntegrator(activity).initiateScan()
+            IntentIntegrator.forSupportFragment(this).initiateScan()
+
         }
 
     companion object {
