@@ -1,5 +1,6 @@
 package com.luna.eventerize.presentation.ui.fragments
 
+import android.Manifest
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -18,6 +19,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
+import com.google.zxing.integration.android.IntentIntegrator
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsRequest
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
@@ -50,30 +55,55 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             }
 
             R.id.fragment_event_details_download_images -> {
-                AlertDialog.Builder(context!!)
-                    .setTitle(getString(R.string.download_all_images_title))
-                    .setMessage(getString(R.string.download_all_images_message))
-                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
-
-                        val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
-                        val eventName = eventWrapper.event.title
-
-                        for(image in galleryWrapper) {
-                            downloadImage(image, dirPath, eventName)
-                        }
-
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton(getString(R.string.no)) { dialog, which ->
-                        dialog.dismiss()
-
-
-                    }
-                    .create()
-                    .show()
+                val options = QuickPermissionsOptions()
+                options.handleRationale = true
+                options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
+                options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
+                permissionDownloadImage(options)
             }
         }
     }
+
+    private fun permissionsPermanentlyDenied(req: QuickPermissionsRequest) {
+        // this will be called when some/all permissions required by the method are permanently
+        // denied. Handle it your way.
+        AlertDialog.Builder(context!!)
+            .setTitle("Permission refusée")
+            .setMessage(
+                "This is the custom permissions permanently denied dialog. " +
+                        "Please open app settings to open app settings for allowing permissions, " +
+                        "or cancel to end the permission flow."
+            )
+            .setPositiveButton("App Settings") { dialog, which -> req.openAppSettings() }
+            .setNegativeButton("Cancel") { dialog, which -> req.cancel() }
+            .setCancelable(false)
+            .show()
+    }
+
+    fun permissionDownloadImage(options: QuickPermissionsOptions) =
+        runWithPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, options = options) {
+            AlertDialog.Builder(context!!)
+                .setTitle(getString(R.string.download_all_images_title))
+                .setMessage(getString(R.string.download_all_images_message))
+                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+
+                    val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+                    val eventName = eventWrapper.event.title
+
+                    for(image in galleryWrapper) {
+                        downloadImage(image, dirPath, eventName)
+                    }
+
+                    dialog.dismiss()
+                }
+                .setNegativeButton(getString(R.string.no)) { dialog, which ->
+                    dialog.dismiss()
+
+
+                }
+                .create()
+                .show()
+        }
 
     private fun downloadImage(
         image: ImageWrapper,
