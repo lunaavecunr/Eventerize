@@ -36,19 +36,19 @@
     <string name="signup_error_cgu">Vous devez accepter les conditions</string>
     <string name="signup_error_password">Les mots de passe ne correspondent pas</string>
     <string name="signup_title">Inscription</string>
-    <string name="signup_error_save">La sauvegarde a échouée</string>
+    <string name="signup_error_save">La sauvegarde a échoué</string>
     <string name="end_date_before_begin_date">La date de fin se trouve avant la date de début!</string>
     <string name="generate_event">Générer un évènement</string>
     <string name="logo_choice">Choix du logo</string>
     <string name="logo_choice_message">Veuillez choisir une option pour ce logo</string>
     <string name="camera_chosen">Appareil photo</string>
-    <string name="gallery_chosen">Gallerie de photos</string>
+    <string name="gallery_chosen">Galerie de photos</string>
     <string name="no_title_event">Aucun titre n\'a été entré!</string>
     <string name="no_start_date">Aucune date de début n\'a été choisie!</string>
-    <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
+    <string name="no_end_date">Aucune date de fin n\'a été choisie!</string>
     <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
     <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
-    <string name="fragment_list_event_title">Liste des événements</string>
+    <string name="fragment_list_event_title">Liste des évènements</string>
 
     <!--EVENT DETAILS-->
     <string name="participant_label_single">participant</string>
@@ -56,9 +56,9 @@
     <string name="begin_label">Du</string>
     <string name="end_label">Au</string>
     <string name="no_members">Pas de participants</string>
-    <string name="event_detail_no_image_in_gallery">Pas de photos dans la gallerie!</string>
-    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la gallerie! Vous pouvez en ajouter
-        une par le boutton dans la barre de l\'application!
+    <string name="event_detail_no_image_in_gallery">Pas de photos dans la galerie!</string>
+    <string name="event_detail_gallery_no_image_text">Il n\'y a pas de photos dans la galerie! Vous pouvez en ajouter
+        une par le bouton dans la barre de l\'application!
     </string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -84,10 +84,10 @@
     </string>
     <string name="error_while_searching_image_to_destroy">La photo n\'existe pas!</string>
     <string name="error">Erreur</string>
-    <string name="destroying_image_error">Erreur lors de la suppresion de l\'image</string>
+    <string name="destroying_image_error">Erreur lors de la suppression de l\'image</string>
     <string name="cancelled_searching_image_to_destroy">Annulation de la suppression de l\'image</string>
     <string name="error_while_destroying_image">Impossible de supprimer l\'image</string>
-    <string name="download_all_images_message">Voulez-vous télécharger toutes les images de cet événement ?</string>
+    <string name="download_all_images_message">Voulez-vous télécharger toutes les images de cet évènement ?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="download_all_images_title">Téléchargement des images</string>
