@@ -26,6 +26,7 @@ import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.utils.ImageDownloader
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
+import com.parse.ParseUser
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
 
@@ -59,10 +60,27 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         event_details_picture_gallery_recycler_view.adapter = adapter
         adapter.setOnImageClick { displayImage(it) }
 
-
         val updateEvent = Observer<EventWrapper> {
             eventWrapper = it
             showEvent(it)
+            val currentUserIsMember = eventWrapper.event.members!!.indexOfFirst { member -> member.objectId == ParseUser.getCurrentUser().objectId }
+            if(currentUserIsMember == -1 && eventWrapper.event.owner!!.objectId != ParseUser.getCurrentUser().objectId){
+                val dialog = AlertDialog.Builder(context!!)
+                    .setTitle("Rejoindre l'événement")
+                    .setMessage("voulez vous rejoindre l'événement ?")
+                    .setPositiveButton(
+                        "oui"
+                    ) { _, _ ->
+                        viewModel.addMerbers(eventWrapper.event)
+                    }
+                    .setNegativeButton(
+                       "non"
+                    ) { _, _ ->
+                        activity?.onBackPressed()
+                    }
+                dialog.create()
+                dialog.show()
+            }
         }
 
         val updateAddImage = Observer<Boolean> {
