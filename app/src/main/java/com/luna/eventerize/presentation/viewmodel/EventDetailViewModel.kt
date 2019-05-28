@@ -23,6 +23,7 @@ class EventDetailViewModel: ViewModel() {
     val selectedPictureInGallery = MutableLiveData<ImageWrapper>()
     val eventWrapper:EventWrapper? = null
     var succesAddImages = MutableLiveData<Boolean>()
+    var succesAddMember = MutableLiveData<Boolean>()
 
     fun getEventById(id:String){
         repository.getEventById(id)
@@ -90,6 +91,43 @@ class EventDetailViewModel: ViewModel() {
         }
     }
 
+    fun addMerbers(event: Event) {
+
+        val members: ArrayList<ParseUser>
+        if (event.members != null) {
+            members = ArrayList<ParseUser>(event.members!!)
+        } else {
+            members = ArrayList()
+        }
+
+        members.add(ParseUser.getCurrentUser())
+        event.members = members
+        repository.saveEvent(event)
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    else -> {
+                        succesAddMember.postValue(true)
+                    }
+                }
+            }
+    }
+
     private fun generateByteArray(bitmap: Bitmap):ByteArray?{
         val bos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
@@ -125,4 +163,6 @@ class EventDetailViewModel: ViewModel() {
     fun getSelectedPictureInGallery():LiveData<ImageWrapper> = selectedPictureInGallery
 
     fun getSuccesAddImage(): LiveData<Boolean> = succesAddImages
+
+    fun getSuccessAddMember(): LiveData<Boolean> = succesAddMember
 }

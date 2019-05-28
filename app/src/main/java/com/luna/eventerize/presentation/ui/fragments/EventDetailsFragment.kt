@@ -26,6 +26,7 @@ import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
 import com.luna.eventerize.presentation.utils.ImageDownloader
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
+import com.parse.ParseUser
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
 
@@ -59,10 +60,32 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         event_details_picture_gallery_recycler_view.adapter = adapter
         adapter.setOnImageClick { displayImage(it) }
 
-
         val updateEvent = Observer<EventWrapper> {
             eventWrapper = it
             showEvent(it)
+            val currentUserIsMember: Int
+            if (eventWrapper.event.members != null) {
+                currentUserIsMember =
+                    eventWrapper.event.members!!.indexOfFirst { member -> member.objectId == ParseUser.getCurrentUser().objectId }
+            } else {
+                currentUserIsMember = -1
+            }
+            if(currentUserIsMember == -1 && eventWrapper.event.owner!!.objectId != ParseUser.getCurrentUser().objectId){
+                val dialog = AlertDialog.Builder(context!!)
+                    .setTitle("Rejoindre l'évènement")
+                    .setMessage("voulez vous rejoindre l'évènement ?")
+                    .setPositiveButton(
+                        "oui"
+                    ) { _, _ ->
+                        viewModel.addMerbers(eventWrapper.event)
+                    }
+                    .setNegativeButton(
+                       "non"
+                    ) { _, _ ->
+                        activity?.onBackPressed()
+                    }
+                dialog.show()
+            }
         }
 
         val updateAddImage = Observer<Boolean> {
@@ -71,8 +94,16 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             }
         }
 
+        val updateMember = Observer<Boolean> {
+            if(it) {
+                viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
+            }
+        }
+
         viewModel.getEvent().observe(this, updateEvent)
         viewModel.getSuccesAddImage().observe(this,updateAddImage)
+        viewModel.getSuccessAddMember().observe(this,updateMember)
+
 
         viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
     }
