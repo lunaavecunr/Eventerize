@@ -100,7 +100,7 @@ class EventDetailViewModel: ViewModel() {
             members = ArrayList()
         }
 
-        members.add(ParseUser())
+        members.add(ParseUser.getCurrentUser())
         event.members = members
         repository.saveEvent(event)
             .continueWith {

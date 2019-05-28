@@ -63,7 +63,13 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         val updateEvent = Observer<EventWrapper> {
             eventWrapper = it
             showEvent(it)
-            val currentUserIsMember = eventWrapper.event.members!!.indexOfFirst { member -> member.objectId == ParseUser.getCurrentUser().objectId }
+            val currentUserIsMember: Int
+            if (eventWrapper.event.members != null) {
+                currentUserIsMember =
+                    eventWrapper.event.members!!.indexOfFirst { member -> member.objectId == ParseUser.getCurrentUser().objectId }
+            } else {
+                currentUserIsMember = -1
+            }
             if(currentUserIsMember == -1 && eventWrapper.event.owner!!.objectId != ParseUser.getCurrentUser().objectId){
                 val dialog = AlertDialog.Builder(context!!)
                     .setTitle("Rejoindre l'événement")
@@ -78,7 +84,6 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                     ) { _, _ ->
                         activity?.onBackPressed()
                     }
-                dialog.create()
                 dialog.show()
             }
         }
@@ -89,8 +94,16 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             }
         }
 
+        val updateMember = Observer<Boolean> {
+            if(it) {
+                viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
+            }
+        }
+
         viewModel.getEvent().observe(this, updateEvent)
         viewModel.getSuccesAddImage().observe(this,updateAddImage)
+        viewModel.getSuccessAddMember().observe(this,updateMember)
+
 
         viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
     }
