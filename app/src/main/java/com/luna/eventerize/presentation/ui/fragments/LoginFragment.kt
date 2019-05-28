@@ -41,7 +41,7 @@ class LoginFragment : BaseFragment<LoginViewModel>(), View.OnClickListener {
         activity!!.title = getString(R.string.login_title)
         navigator = Navigator(fragmentManager!!)
         if (ParseUser.getCurrentSessionToken() != null) {
-            viewModel.sessionTokenValid(ParseUser.getCurrentSessionToken())
+           viewModel.sessionTokenValid(ParseUser.getCurrentSessionToken())
         }
         fragment_login_loginButton.setOnClickListener(this)
         fragment_login_createAccountTV.setOnClickListener(this)

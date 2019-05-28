@@ -1,5 +1,6 @@
 package com.luna.eventerize.presentation.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,9 @@ import com.luna.eventerize.data.model.EventerizeError
 import com.luna.eventerize.data.model.Image
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
+import com.parse.ParseFile
+import com.parse.ParseUser
+import java.io.ByteArrayOutputStream
 
 class EventDetailViewModel: ViewModel() {
     val repository = EventerizeApp.getInstance().repository
@@ -18,6 +22,8 @@ class EventDetailViewModel: ViewModel() {
     val gallery = MutableLiveData<List<ImageWrapper>>()
     val selectedPictureInGallery = MutableLiveData<ImageWrapper>()
     val eventWrapper:EventWrapper? = null
+    var succesAddImages = MutableLiveData<Boolean>()
+    var succesAddMember = MutableLiveData<Boolean>()
 
     fun getEventById(id:String){
         repository.getEventById(id)
@@ -46,6 +52,89 @@ class EventDetailViewModel: ViewModel() {
             }
     }
 
+    fun addPicture(imageBitMap: Bitmap, event: Event) {
+
+        val images: ArrayList<Image>
+        if(event.images != null) {
+            images = ArrayList(event.images!!)
+        } else {
+            images = ArrayList()
+        }
+        val image = Image()
+        image.user = ParseUser.getCurrentUser()
+        image.file = ParseFile(generateByteArray(imageBitMap))
+        images.add(image)
+        event.images = images
+        repository.saveEvent(event)
+            .continueWith {
+            when {
+                it.isCancelled -> {
+                    error.postValue(
+                        EventerizeError(
+                            EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                            EventerizeApp.getInstance().getString(R.string.login_error_title)
+                        )
+                    )
+                }
+                it.isFaulted -> {
+                    error.postValue(
+                        EventerizeError(
+                            it.error.message.toString(),
+                            EventerizeApp.getInstance().getString(R.string.login_error_title)
+                        )
+                    )
+                }
+                else -> {
+                   succesAddImages.postValue(true)
+                }
+            }
+        }
+    }
+
+    fun addMerbers(event: Event) {
+
+        val members: ArrayList<ParseUser>
+        if (event.members != null) {
+            members = ArrayList<ParseUser>(event.members!!)
+        } else {
+            members = ArrayList()
+        }
+
+        members.add(ParseUser.getCurrentUser())
+        event.members = members
+        repository.saveEvent(event)
+            .continueWith {
+                when {
+                    it.isCancelled -> {
+                        error.postValue(
+                            EventerizeError(
+                                EventerizeApp.getInstance().getString(R.string.login_connection_failed),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    it.isFaulted -> {
+                        error.postValue(
+                            EventerizeError(
+                                it.error.message.toString(),
+                                EventerizeApp.getInstance().getString(R.string.login_error_title)
+                            )
+                        )
+                    }
+                    else -> {
+                        succesAddMember.postValue(true)
+                    }
+                }
+            }
+    }
+
+    private fun generateByteArray(bitmap: Bitmap):ByteArray?{
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
+        return bos.toByteArray()
+    }
+
+
     fun updateImageGallery(eventWrapper: List<ImageWrapper>){
         gallery.postValue(eventWrapper)
     }
@@ -72,4 +161,8 @@ class EventDetailViewModel: ViewModel() {
     fun getEvent():LiveData<EventWrapper> = event
 
     fun getSelectedPictureInGallery():LiveData<ImageWrapper> = selectedPictureInGallery
+
+    fun getSuccesAddImage(): LiveData<Boolean> = succesAddImages
+
+    fun getSuccessAddMember(): LiveData<Boolean> = succesAddMember
 }

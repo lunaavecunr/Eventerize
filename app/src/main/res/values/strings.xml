@@ -48,8 +48,8 @@
     <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
     <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
     <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
-    <string name="fragment_list_event_title">Liste des événements</string>
     <string name="fragment_list_members_title">Liste des membres</string>
+    <string name="fragment_list_event_title">Liste des évènements</string>
 
     <!--EVENT DETAILS-->
     <string name="participant_label_single">participant</string>
@@ -94,4 +94,5 @@
     <string name="no">Non</string>
     <string name="download_all_images_title">Téléchargement des images</string>
     <string name="qr_code_title">Partage</string>
+    <string name="download_this_image">Télécharger l\'image</string>
 </resources>

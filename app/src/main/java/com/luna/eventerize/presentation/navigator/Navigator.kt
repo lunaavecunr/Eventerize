@@ -2,6 +2,8 @@ package com.luna.eventerize.presentation.navigator
 
 import androidx.fragment.app.FragmentManager
 import com.luna.eventerize.R
+import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
+import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 import com.luna.eventerize.presentation.ui.fragments.*
 
 class Navigator(fragmentManager: FragmentManager) {
@@ -38,8 +40,8 @@ class Navigator(fragmentManager: FragmentManager) {
         fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, EventDetailsFragment.newInstance(id)).addToBackStack(null).commit()
     }
 
-    fun displayPhoto(imageURL:String, photoId:String, eventId:String) {
-        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, PhotoDetailFragment.newInstance(imageURL,photoId,eventId)).addToBackStack(null).commit()
+    fun displayPhoto(imageURL:String, photoId:String, eventId:String, eventName : String, imageName: String) {
+        fragmentManager.beginTransaction().setCustomAnimations(R.animator.pop_fragment, R.animator.pop_out_fragment).replace(R.id.activity_auth_fragment, PhotoDetailFragment.newInstance(imageURL,photoId,eventId,eventName,imageName)).addToBackStack(null).commit()
     }
 
     fun displayShare(id: String) {

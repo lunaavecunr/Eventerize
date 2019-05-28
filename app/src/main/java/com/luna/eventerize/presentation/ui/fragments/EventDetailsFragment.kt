@@ -1,38 +1,39 @@
 package com.luna.eventerize.presentation.ui.fragments
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
-import android.media.MediaScannerConnection
-import android.net.Uri
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.view.*
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsRequest
 import com.downloader.Error
 import com.downloader.OnDownloadListener
 import com.downloader.PRDownloader
 import com.google.zxing.integration.android.IntentIntegrator
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
-import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
-import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsRequest
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
 import com.luna.eventerize.presentation.ui.datawrapper.EventWrapper
 import com.luna.eventerize.presentation.ui.datawrapper.ImageWrapper
 import com.luna.eventerize.presentation.ui.fragments.base.BaseFragment
+import com.luna.eventerize.presentation.utils.ImageDownloader
 import com.luna.eventerize.presentation.viewmodel.EventDetailViewModel
+import com.parse.ParseUser
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_event_details.*
-import java.io.File
 
 
 private const val INTENT_DETAILS_ID_EXTRA = "INTENT_DETAILS_ID_EXTRA"
@@ -43,9 +44,85 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
     private lateinit var adapter: GalleryAdapter
     private lateinit var galleryWrapper : List<ImageWrapper>
     private lateinit var eventWrapper : EventWrapper
-    override fun onClick(v: View?) {
 
-        when(v!!.id) {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        adapter = GalleryAdapter()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //Toolbar
+        navigator = Navigator(fragmentManager!!)
+        event_detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
+
+        event_details_picture_gallery_recycler_view.layoutManager =
+            StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        event_details_picture_gallery_recycler_view.adapter = adapter
+        adapter.setOnImageClick { displayImage(it) }
+
+        val updateEvent = Observer<EventWrapper> {
+            eventWrapper = it
+            showEvent(it)
+            val currentUserIsMember: Int
+            if (eventWrapper.event.members != null) {
+                currentUserIsMember =
+                    eventWrapper.event.members!!.indexOfFirst { member -> member.objectId == ParseUser.getCurrentUser().objectId }
+            } else {
+                currentUserIsMember = -1
+            }
+            if(currentUserIsMember == -1 && eventWrapper.event.owner!!.objectId != ParseUser.getCurrentUser().objectId){
+                val dialog = AlertDialog.Builder(context!!)
+                    .setTitle("Rejoindre l'évènement")
+                    .setMessage("voulez vous rejoindre l'évènement ?")
+                    .setPositiveButton(
+                        "oui"
+                    ) { _, _ ->
+                        viewModel.addMerbers(eventWrapper.event)
+                    }
+                    .setNegativeButton(
+                       "non"
+                    ) { _, _ ->
+                        activity?.onBackPressed()
+                    }
+                dialog.show()
+            }
+        }
+
+        val updateAddImage = Observer<Boolean> {
+            if(it) {
+                viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
+            }
+        }
+
+        val updateMember = Observer<Boolean> {
+            if(it) {
+                viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
+            }
+        }
+
+        viewModel.getEvent().observe(this, updateEvent)
+        viewModel.getSuccesAddImage().observe(this,updateAddImage)
+        viewModel.getSuccessAddMember().observe(this,updateMember)
+
+
+        viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_event_details, container, false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater!!.inflate(R.menu.menu_event_details, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
             R.id.fragment_event_details_show_members -> {
                 navigator.displayMembersList(eventWrapper.event.objectId)
             }
@@ -53,16 +130,59 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             R.id.participant_number -> {
 
             }
-
             R.id.fragment_event_details_download_images -> {
+                AlertDialog.Builder(context!!)
+                    .setTitle(getString(R.string.download_all_images_title))
+                    .setMessage(getString(R.string.download_all_images_message))
+                    .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        val options = QuickPermissionsOptions()
+                        options.handleRationale = true
+                        options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
+                        options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
+                        permissionDownloadImage(options)
+                    }
+            }
+            R.id.fragment_event_detail_fab_add_camera -> {
                 val options = QuickPermissionsOptions()
                 options.handleRationale = true
                 options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
                 options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
-                permissionDownloadImage(options)
+                permisionCamera(options)
+            }
+            R.id.fragment_event_detail_fab_add_galery -> {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "image/*"
+                startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
             }
         }
     }
+
+    fun permissionDownloadImage(options: QuickPermissionsOptions) =
+        runWithPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, options = options) {
+            AlertDialog.Builder(context!!)
+                .setTitle(getString(R.string.download_all_images_title))
+                .setMessage(getString(R.string.download_all_images_message))
+                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+
+                        val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+                        val eventName = eventWrapper.event.title
+
+                        for(image in galleryWrapper) {
+                            val imageUrl = image.image.file!!.url
+                            val fileName = image.image.file!!.name
+                            ImageDownloader().downloadImage(imageUrl, fileName, dirPath, eventName, context!!)
+                        }
+
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(getString(R.string.no)) { dialog, which ->
+                        dialog.dismiss()
+
+
+                    }
+                    .create()
+                    .show()
+            }
 
     private fun permissionsPermanentlyDenied(req: QuickPermissionsRequest) {
         // this will be called when some/all permissions required by the method are permanently
@@ -80,115 +200,35 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             .show()
     }
 
-    fun permissionDownloadImage(options: QuickPermissionsOptions) =
-        runWithPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, options = options) {
-            AlertDialog.Builder(context!!)
-                .setTitle(getString(R.string.download_all_images_title))
-                .setMessage(getString(R.string.download_all_images_message))
-                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
-
-                    val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
-                    val eventName = eventWrapper.event.title
-
-                    for(image in galleryWrapper) {
-                        downloadImage(image, dirPath, eventName)
-                    }
-
-                    dialog.dismiss()
-                }
-                .setNegativeButton(getString(R.string.no)) { dialog, which ->
-                    dialog.dismiss()
-
-
-                }
-                .create()
-                .show()
+    fun permisionCamera(options: QuickPermissionsOptions) =
+        runWithPermissions(Manifest.permission.CAMERA, options = options) {
+            val pictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(pictureIntent, REQUEST_TAKE_PHOTO)
         }
 
-    private fun downloadImage(
-        image: ImageWrapper,
-        dirPath: String?,
-        eventName: String?
-    ) {
-        val url = image.image.file!!.url
-        val fileName = image.image.file!!.url.split("/").last()
-        val file = File("$dirPath/Eventerize/$eventName/$fileName")
-
-        if (file.exists()) {
-
-        } else {
-            var builder = NotificationCompat.Builder(activity!!, "notif")
-                .setContentTitle("Eventerize")
-                .setContentText("Image download name : $fileName")
-                .setSmallIcon(R.mipmap.eventerize)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-
-            with(NotificationManagerCompat.from(context!!)) {
-                notify(0, builder.build())
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_SELECT_IMAGE_IN_ALBUM -> {
+                    val selectedImage = data!!.data
+                    val logo = Bitmap.createScaledBitmap(
+                        MediaStore.Images.Media.getBitmap(activity!!.contentResolver, selectedImage),
+                        512,
+                        384,
+                        false
+                    )
+                    viewModel.addPicture(logo, eventWrapper.event)
+                }
+                REQUEST_TAKE_PHOTO -> {
+                    if (data != null && data.extras != null) {
+                        Picasso.get().isLoggingEnabled = true
+                        val logo = data.extras.get("data") as Bitmap
+                        viewModel.addPicture(logo,eventWrapper.event)
+                    }
+                }
             }
-
-            val downloadId = PRDownloader.download(url, "$dirPath/Eventerize/$eventName", fileName)
-                .build()
-                .setOnStartOrResumeListener {
-                    onStart()
-                }
-                .setOnPauseListener {
-                    onPause()
-                }
-                .setOnCancelListener {
-
-                }
-                .setOnProgressListener { progress ->
-                    val PROGRESS_MAX = progress.totalBytes.toInt()
-
-                    NotificationManagerCompat.from(context!!).apply {
-                        // Issue the initial notification with zero progress
-                        builder.setProgress(PROGRESS_MAX, progress.currentBytes.toInt(), false)
-                        notify(0, builder.build())
-                    }
-                }
-                .start(object : OnDownloadListener {
-                    override fun onError(error: Error?) {
-                        Toast.makeText(context, "Download error server : " + error!!.isServerError, Toast.LENGTH_SHORT)
-                            .show()
-                        Toast.makeText(
-                            context,
-                            "Download error connect : " + error!!.isConnectionError,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    override fun onDownloadComplete() {
-                        NotificationManagerCompat.from(context!!).apply {
-                            builder.setContentText("Download complete")
-                                .setProgress(0, 0, false)
-                            notify(0, builder.build())
-                        }
-
-
-                        Toast.makeText(context, "Download completed for name : $fileName", Toast.LENGTH_SHORT).show()
-                        val fileCreated = File("$dirPath/Eventerize/$eventName/$fileName")
-
-
-                        var arr = arrayOf(fileCreated.absolutePath)
-
-                        var arr2 = arrayOf("images/*")
-                        MediaScannerConnection.scanFile(context, arr, arr2) { s: String, uri: Uri ->
-
-                        }
-
-                    }
-                })
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_event_details, container, false)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.menu_event_details, menu)
-        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -205,50 +245,8 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        adapter = GalleryAdapter()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        viewModel.getEventById(arguments?.getString(INTENT_DETAILS_ID_EXTRA)!!)
-
-        //Toolbar
-        navigator = Navigator(fragmentManager!!)
-        event_detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-        setHasOptionsMenu(true)
-        (activity as AppCompatActivity).setSupportActionBar(event_detail_toolbar)
-
-        event_details_picture_gallery_recycler_view.layoutManager =
-            StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        event_details_picture_gallery_recycler_view.adapter = adapter
-        adapter.setOnImageClick { displayImage(it) }
-
-        fragment_event_details_show_members.setOnClickListener(this)
-
-        val updateEvent = Observer<EventWrapper> {
-            eventWrapper = it
-            showEvent(it)
-        }
-
-        val updateGallery = Observer<List<ImageWrapper>> {
-            galleryWrapper = it
-            adapter.updateImageList(it)
-            if (it.isNullOrEmpty()) {
-                event_detail_no_image_in_gallery.visibility = View.VISIBLE
-            } else {
-                event_detail_no_image_in_gallery.visibility = View.INVISIBLE
-            }
-        }
-
-        viewModel.getEvent().observe(this, updateEvent)
-        viewModel.getGallery().observe(this, updateGallery)
-    }
-
     private fun displayImage(imageWrapper: ImageWrapper) {
-        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId)
+        navigator.displayPhoto(imageWrapper.image.file!!.url, imageWrapper.image.objectId, eventWrapper.event.objectId, eventWrapper.event.title!!, imageWrapper.image.file!!.name)
     }
 
     private fun showEvent(eventWrapper: EventWrapper) {
@@ -271,6 +269,9 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         //OnClickListener
         participant_number.setOnClickListener(this)
         fragment_event_details_download_images.setOnClickListener(this)
+        fragment_event_detail_fab_add_camera.setOnClickListener(this)
+        fragment_event_detail_fab_add_galery.setOnClickListener(this)
+        fragment_event_details_show_members.setOnClickListener(this)
 
         val imageWrapperList: MutableList<ImageWrapper> = mutableListOf()
 
@@ -280,43 +281,13 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             }
         }
 
-        viewModel.updateImageGallery(imageWrapperList)
-
+        adapter.updateImageList(imageWrapperList)
+        if (imageWrapperList.isNullOrEmpty()) {
+            event_detail_no_image_in_gallery.visibility = View.VISIBLE
+        } else {
+            event_detail_no_image_in_gallery.visibility = View.INVISIBLE
+        }
     }
-
-    //        val bitMatrix: BitMatrix
-//        try {
-//            bitMatrix = MultiFormatWriter().encode(
-//                "CeciEstUnTest",
-//                BarcodeFormat.QR_CODE,
-//                500, 500, null
-//            )
-//
-//        } catch (illegalArgumentException: IllegalArgumentException) {
-//            TODO()
-//        }
-//
-//        val bitMatrixWidth = bitMatrix.width
-//
-//        val bitMatrixHeight = bitMatrix.height
-//
-//        val pixels = IntArray(bitMatrixWidth * bitMatrixHeight)
-//
-//        for (y in 0 until bitMatrixHeight) {
-//            val offset = y * bitMatrixWidth
-//
-//            for (x in 0 until bitMatrixWidth) {
-//
-//                pixels[offset + x] = if (bitMatrix.get(x, y))
-//                    resources.getColor(R.color.black)
-//                else
-//                    resources.getColor(R.color.white)
-//            }
-//        }
-//        val bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444)
-//
-//        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight)
-//        qrcode.setImageBitmap(bitmap)
 
     companion object {
         fun newInstance(identifier: String = ""): EventDetailsFragment {

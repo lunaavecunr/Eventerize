@@ -3,6 +3,7 @@ package com.luna.eventerize.presentation.ui.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
@@ -78,6 +79,15 @@ class EventListFragment : BaseFragment<EventListViewModel>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_event_list, container, false)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return if (item!!.itemId == android.R.id.home) {
+            activity?.finishAffinity()
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {
