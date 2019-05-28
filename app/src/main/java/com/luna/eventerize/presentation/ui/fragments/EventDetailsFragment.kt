@@ -72,8 +72,8 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
             }
             if(currentUserIsMember == -1 && eventWrapper.event.owner!!.objectId != ParseUser.getCurrentUser().objectId){
                 val dialog = AlertDialog.Builder(context!!)
-                    .setTitle("Rejoindre l'événement")
-                    .setMessage("voulez vous rejoindre l'événement ?")
+                    .setTitle("Rejoindre l'évènement")
+                    .setMessage("voulez vous rejoindre l'évènement ?")
                     .setPositiveButton(
                         "oui"
                     ) { _, _ ->

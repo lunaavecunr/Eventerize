@@ -48,7 +48,7 @@
     <string name="no_end_date">Aucune date de fin n\'a été choisie</string>
     <string name="no_end_hour">Aucune heure de fin n\'a été choisie!</string>
     <string name="no_start_hour">Aucune heure de début n\'a été choisie!</string>
-    <string name="fragment_list_event_title">Liste des événements</string>
+    <string name="fragment_list_event_title">Liste des évènements</string>
 
     <!--EVENT DETAILS-->
     <string name="participant_label_single">participant</string>
