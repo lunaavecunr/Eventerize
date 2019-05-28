@@ -47,4 +47,9 @@ class Navigator(fragmentManager: FragmentManager) {
     fun displayShare(id: String) {
         fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, QRCodeFragment.newInstance(id)).addToBackStack(null).commit()
     }
+
+    fun displayMembersList(id: String) {
+        fragmentManager.beginTransaction().replace(R.id.activity_auth_fragment, MembersListFragment.newInstance(id)).addToBackStack(null).commit()
+    }
+
 }

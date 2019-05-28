@@ -18,6 +18,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
 import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsRequest
+import com.downloader.Error
+import com.downloader.OnDownloadListener
+import com.downloader.PRDownloader
+import com.google.zxing.integration.android.IntentIntegrator
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import com.luna.eventerize.R
 import com.luna.eventerize.presentation.navigator.Navigator
 import com.luna.eventerize.presentation.ui.adapter.GalleryAdapter
@@ -32,7 +37,6 @@ import kotlinx.android.synthetic.main.fragment_event_details.*
 
 
 private const val INTENT_DETAILS_ID_EXTRA = "INTENT_DETAILS_ID_EXTRA"
-
 
 class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickListener {
     override val viewModelClass = EventDetailViewModel::class
@@ -119,6 +123,10 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
 
     override fun onClick(v: View) {
         when (v.id) {
+            R.id.fragment_event_details_show_members -> {
+                navigator.displayMembersList(eventWrapper.event.objectId)
+            }
+
             R.id.participant_number -> {
 
             }
@@ -127,6 +135,34 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                     .setTitle(getString(R.string.download_all_images_title))
                     .setMessage(getString(R.string.download_all_images_message))
                     .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                        val options = QuickPermissionsOptions()
+                        options.handleRationale = true
+                        options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
+                        options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
+                        permissionDownloadImage(options)
+                    }
+            }
+            R.id.fragment_event_detail_fab_add_camera -> {
+                val options = QuickPermissionsOptions()
+                options.handleRationale = true
+                options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
+                options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
+                permisionCamera(options)
+            }
+            R.id.fragment_event_detail_fab_add_galery -> {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "image/*"
+                startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+            }
+        }
+    }
+
+    fun permissionDownloadImage(options: QuickPermissionsOptions) =
+        runWithPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, options = options) {
+            AlertDialog.Builder(context!!)
+                .setTitle(getString(R.string.download_all_images_title))
+                .setMessage(getString(R.string.download_all_images_message))
+                .setPositiveButton(getString(R.string.yes)) { dialog, which ->
 
                         val dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
                         val eventName = eventWrapper.event.title
@@ -147,20 +183,6 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
                     .create()
                     .show()
             }
-            R.id.fragment_event_detail_fab_add_camera -> {
-                val options = QuickPermissionsOptions()
-                options.handleRationale = true
-                options.rationaleMessage = "Nous avons vraiment besoin de ta caméra"
-                options.permanentDeniedMethod = { permissionsPermanentlyDenied(it) }
-                permisionCamera(options)
-            }
-            R.id.fragment_event_detail_fab_add_galery -> {
-                val intent = Intent(Intent.ACTION_GET_CONTENT)
-                intent.type = "image/*"
-                startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
-            }
-        }
-    }
 
     private fun permissionsPermanentlyDenied(req: QuickPermissionsRequest) {
         // this will be called when some/all permissions required by the method are permanently
@@ -249,6 +271,7 @@ class EventDetailsFragment : BaseFragment<EventDetailViewModel>(), View.OnClickL
         fragment_event_details_download_images.setOnClickListener(this)
         fragment_event_detail_fab_add_camera.setOnClickListener(this)
         fragment_event_detail_fab_add_galery.setOnClickListener(this)
+        fragment_event_details_show_members.setOnClickListener(this)
 
         val imageWrapperList: MutableList<ImageWrapper> = mutableListOf()
 

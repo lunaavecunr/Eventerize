@@ -31,6 +31,9 @@ class ViewModelFactory: ViewModelProvider.Factory  {
         if (modelClass.isAssignableFrom(QRCodeViewModel::class.java)) {
             return QRCodeViewModel() as T
         }
+        if (modelClass.isAssignableFrom(MembersListViewModel::class.java)) {
+            return MembersListViewModel() as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
